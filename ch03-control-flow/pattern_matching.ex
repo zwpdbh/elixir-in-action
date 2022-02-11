@@ -15,6 +15,24 @@ defmodule PM do
   def area({:circle, r}) do
     r * r * 3.14
   end
+  
+  def area(unknown) do
+    {:error, {:unknown_shape, unknown}}
+  end
+  
+  defmodule TestNum do
+    def test(x) when is_number(x) and x < 0 do
+      :negative
+    end
+    
+    def test(0) do
+      :zero
+    end
+    
+    def test(x) when is_number(x) and x > 0 do
+      :positive
+    end    
+  end    
 end
 
 # iex(34)> PM.area({:rectangle, 4, 5})
@@ -35,3 +53,16 @@ end
 # fun.({:square, 4})
 # fun.({:square, 4})
 # 16
+
+# fun.({:square, 4, 5})
+# fun.({:square, 4, 5})
+# {:error, {:unknown_shape, {:square, 4, 5}}}
+
+
+
+# iex(43)> TestNum.test(-1)
+# TestNum.test(-1)
+# :negative
+# iex(44)> TestNum.test(0)
+# TestNum.test(0)
+# :zero

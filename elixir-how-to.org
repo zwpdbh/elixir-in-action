@@ -328,6 +328,9 @@
   {13, 32, 10}
 #+end_src
 
+* How to handle exception error in guard
+- If an error is raised from inside the guard, it won't be propagated. And the guard expression will return false. The corresponding clause won't match.
+
 * How to match the content of variable
 #+begin_src elixir
   iex(30)> expected_name = "bob"
