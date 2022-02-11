@@ -220,7 +220,105 @@
       String.to_charlist("ABC")       
     #+end_src
 
-      
+* How to define Lambda function and use it 
+- basic lambda 
+  #+begin_src elixir
+    square = fn x ->
+      x * x
+    end
+
+    iex(2)> square.(24)
+    square.(24)
+    576
+  #+end_src
+  - The dot operator is to make the code explicit such that you know an anonymous function is being called.
+  - ~square(5)~ will be a named function defined somewhere in the module.
+- *Capture* makes us to make full function qualifier as lambda 
+  #+begin_src elixir
+    Enum.each([1, 2, 3, 4], &IO.puts/1)
+
+    iex(4)> Enum.each([1, 2, 3, 4], &IO.puts/1)
+    1
+    2
+    3
+    4
+    :ok
+  #+end_src
+  
+- The closure capture *doesn't* affect the previous defined lambda that references the same symbolic name
+  #+begin_src elixir
+    outside_var = 5
+    lambda = fn -> IO.puts(outside_var) end
+    outside_var = 6
+    lambda.() #=> 5
+  #+end_src
+  
+* How to use other types 
+1) range
+2) keyword list 
+   - A list of pair, where the first one is atom.
+   - Often used for small key-value structures.
+   - Often used as the last optional argument when define a function.
+3) MapSet, a set implementation
+4) Time and date
+   #+begin_src elixir
+     date = ~D[2008-09-30]
+     time = ~T[11:59:12]
+     naive_datetime = ~N[2018-01-31 11:59:12.000007]
+   #+end_src
+5) *IO lists*
+   - Special for incrementally building output that will be forwarded to an I/O service.
+   - Appending to an IO list is O(1), very useful to incrementally build a stream of bytes 
+     #+begin_src elixir
+       iolist = []
+       iolist = [iolist, "This"]
+       iolist = [iolist, "is"]
+       iolist = [iolist, "Amazing"]
+
+       iex(20)> iolist = []
+       iex(21)> [[], "This"]
+       iex(22)> [[[], "This"], "is"]
+       iex(23)> [[[[], "This"], "is"], "Amazing"]
+       iex(24)> IO.puts(iolist)
+       IO.puts(iolist)
+       ThisisAmazing
+       :ok
+     #+end_src
+
+* How to check the and load additional code paths 
+- load additional code path from command-line when started erlang runtime 
+  #+begin_src elixir
+    $ iex -pa my/code/path -pa another/code/path # from command-line to load additional code path 
+  #+end_src
+- once start runtime, check current loaded path 
+  #+begin_src elixir
+    :code.get_path # check path 
+  #+end_src  
+  
+* How to dynamically call a function  
+#+begin_src elixir
+  apply(IO, :puts, ["Dynamic function call."])
+#+end_src
+
+* How to run a single script
+- Create ~.exs~ file 
+  #+begin_src elixir :file script.exs
+    defmodule MyModule do
+      def run  do
+        IO.puts("Called Mymodule.run")
+      end
+    end
+
+    # Code outside of a module is executed immediately
+    MyModule.run
+  #+end_src
+
+- On terminal 
+  #+begin_src sh
+    elixir script.exs
+  #+end_src
+  - With ~--no-halt~, it will make the BEAM instance keep running. Useful when your script start other concurrent tasks.
+
 * Some notes 
   - Always keep in mind that a Boolean is just an atom that has a value of true or false.
   - short-circuit operators: ~||~, ~&&~, ~!~.
