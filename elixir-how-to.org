@@ -319,6 +319,30 @@
   #+end_src
   - With ~--no-halt~, it will make the BEAM instance keep running. Useful when your script start other concurrent tasks.
 
+* How to get current time 
+#+begin_src elixir
+  iex(28)> {_, time} = :calendar.local_time()
+  {{2022, 2, 11}, {13, 32, 10}}
+  iex(29)> time 
+  time 
+  {13, 32, 10}
+#+end_src
+
+* How to match the content of variable
+#+begin_src elixir
+  iex(30)> expected_name = "bob"
+  expected_name = "bob"
+  "bob"
+  iex(31)> {^expected_name, age} = {"bob", 25}
+  {^expected_name, age} = {"bob", 25}
+  {"bob", 25}
+  iex(32)> age 
+  age 
+  25
+#+end_src
+
+
+
 * Some notes 
   - Always keep in mind that a Boolean is just an atom that has a value of true or false.
   - short-circuit operators: ~||~, ~&&~, ~!~.
