@@ -345,7 +345,100 @@
 #+end_src
 
 
+* How to check the type of a variable
+  - From REPL 
+    #+begin_src elixir
+      iex(10)> i x
+      i x
+      Term
+        1
+      Data type
+        Integer
+      Reference modules
+        Integer
+      Implemented protocols
+        IEx.Info, Inspect, List.Chars, String.Chars
+    #+end_src
+  - From code 
+    #+begin_src elixir
+      defmodule Util do
+          def typeof(a) do
+              cond do
+                  is_float(a)    -> "float"
+                  is_number(a)   -> "number"
+                  is_atom(a)     -> "atom"
+                  is_boolean(a)  -> "boolean"
+                  is_binary(a)   -> "binary"
+                  is_function(a) -> "function"
+                  is_list(a)     -> "list"
+                  is_tuple(a)    -> "tuple"
+                  true           -> "idunno"
+              end    
+          end
+      end
+      
+      cases = [
+          1.337, 
+          1337, 
+          :'1337', 
+          true, 
+          <<1, 3, 3, 7>>, 
+          (fn(x) -> x end), 
+          {1, 3, 3, 7}
+      ]
+      
+      Enum.each cases, fn(case) -> 
+          IO.puts (inspect case) <> " is a " <> (Util.typeof case)
+      end
+    #+end_src
 
+* How to chain multiple pattern matching
+  #+begin_src elixir
+    defmodule ChainPattern do
+      # define some helper function
+      def extract_login(%{"login" => login}) do
+        {:ok, login}
+      end
+      def extract_login(_) do
+        {:error, "login missed"}
+      end
+    
+      def extract_email(%{"email" => email}) do
+        {:ok, email}
+      end
+      def extract_email(_) do
+        {:error, "email missed"}
+      end
+    
+      def extract_password(%{"password" => password}) do
+        {:ok, password}
+      end
+      def extract_password(_) do
+        {:error, "password missed"}
+      end
+    
+    
+      def extract_info(submitted) do
+        with {:ok, login} <-extract_login(submitted),
+          {:ok, email} <-extract_email(submitted),
+          {:ok, password} <-extract_password(submitted) do
+          {:ok, %{login: login, email: email, password: password}}
+        end
+      end
+    end
+    
+    submitted = %{
+      "login" => "alice",
+      "email" => "some_email",
+      "password" => "password",
+      "other_field" => "some_value",
+      "yet_another_not_wanted_field" => "..."
+    }
+    
+    # iex(20)> ChainPattern.extract_info(submitted)
+    # ChainPattern.extract_info(submitted)
+    # {:ok, %{email: "some_email", login: "alice", password: "password"}}
+  #+end_src
 * Some notes 
   - Always keep in mind that a Boolean is just an atom that has a value of true or false.
   - short-circuit operators: ~||~, ~&&~, ~!~.
