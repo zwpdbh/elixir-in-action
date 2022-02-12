@@ -439,6 +439,11 @@
     # ChainPattern.extract_info(submitted)
     # {:ok, %{email: "some_email", login: "alice", password: "password"}}
   #+end_src
+* How to build abstraction 
+  - Princple
+    - Module is used as the abstraction over the data type.
+    - Modifier functions should return data of the same type. 
+    - Query functions expect an instance of the data abstraction as the first argument and return another type of information.
 * Some notes 
   - Always keep in mind that a Boolean is just an atom that has a value of true or false.
   - short-circuit operators: ~||~, ~&&~, ~!~.
