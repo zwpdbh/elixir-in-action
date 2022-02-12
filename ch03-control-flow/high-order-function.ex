@@ -11,14 +11,16 @@ Enum.reduce([1, "2", 3], 0,
   end
 )
 
-# If we want to use named function instead of lambda
+# If we want to use named function instead of lambda. Notice the "&"
 defmodule Test do
-  def my_add(e, acc) do
-    if is_number(e) do
-      e + acc 
-    else 
-      acc
-    end
+  def sum_nums(lst) do
+    Enum.reduce(lst, 0, &add_num/2)
+  end
+  
+  defp add_num(n, acc) when is_number(n) do 
+    n + acc
+  end
+  defp add_num(_, acc) do 
+    acc
   end
 end
-Enum.reduce([1, "2", 3], 0, &Test.my_add/2)
