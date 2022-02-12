@@ -163,3 +163,16 @@ submitted = %{
 # iex(20)> ChainPattern.extract_info(submitted)
 # ChainPattern.extract_info(submitted)
 # {:ok, %{email: "some_email", login: "alice", password: "password"}}
+
+
+
+# Tail recursive
+# a non tail-recursive one 
+defmodule ListHelper do
+  def sum([]) do
+    0
+  end
+  def sum([head | tail]) do
+    head + sum(tail)
+  end
+end
