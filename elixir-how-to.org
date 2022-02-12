@@ -444,6 +444,23 @@
     - Module is used as the abstraction over the data type.
     - Modifier functions should return data of the same type. 
     - Query functions expect an instance of the data abstraction as the first argument and return another type of information.
+* How to debug
+  - Check the representation of a struct 
+    #+begin_src elixir
+      Fraction.new(1,4)
+      |> IO.inspect() 
+      |> Fraction.add(Fraction.new(1,4))
+      |> IO.inspect()
+      |> Fraction.value()
+      
+      # %Fraction{a: 1, b: 4}
+      # iex(70)> %Fraction{a: 1, b: 4}
+      # %Fraction{a: 1, b: 4}
+      # iex(71)> %Fraction{a: 8, b: 16}
+      # iex(72)> %Fraction{a: 8, b: 16}
+      # %Fraction{a: 8, b: 16}
+      # iex(73)> 0.5
+    #+end_src
 * Some notes 
   - Always keep in mind that a Boolean is just an atom that has a value of true or false.
   - short-circuit operators: ~||~, ~&&~, ~!~.
