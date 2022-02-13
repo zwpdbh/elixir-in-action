@@ -46,8 +46,18 @@ defmodule TodoList do
     end
   end
   
-  
+  # Create entries from a list of entry
+  def new(entries \\ []) do
+    Enum.reduce(
+      entries,
+      %TodoList{},
+      fn entry, todo_list_acc ->
+        add_entry(todo_list_acc, entry)
+      end
+    )
+  end
 end
+
 
 todo_list = TodoList.new() |>
   TodoList.add_entry(%{date: ~D[2018-12-19], title: "Denties"}) |>
@@ -56,5 +66,25 @@ todo_list = TodoList.new() |>
   
 TodoList.entries(todo_list, ~D[2018-12-19])
 # Data abstraction is achieved because instead of passing individual fileds of an entry, we encapulate it into one argument entry.
-
 put_in(todo_list[2].title, "Theater")
+
+
+# A module which read file and create TodoList (for p123 excercise)
+defmodule TodoList.CsvImporter do
+  def import(path) do
+    File.stream!(path)
+    |> Stream.map(fn x -> String.replace_trailing(x, "\n", "") end)
+    |> Stream.map(fn x -> String.split(x, ",") end)
+    |> Enum.map(fn [dateStr, title] -> to_entry(dateStr, title) end)
+    |> TodoList.new
+  end
+  
+  def to_entry(dateStr, title)do
+    [year, month, day] = String.split(dateStr, "/")
+    %{date: Date.from_erl({
+         String.to_integer(year), String.to_integer(month), String.to_integer(day)
+           }), title: title}
+  end
+end
+
+TodoList.CsvImporter.import("todo.csv")
