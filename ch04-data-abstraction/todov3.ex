@@ -88,3 +88,26 @@ defmodule TodoList.CsvImporter do
 end
 
 TodoList.CsvImporter.import("todo.csv")
+
+
+# Make our todo list collectable
+defimpl Collectable, for: TodoList do
+  def into(original) do
+    {original, &into_callback/2}
+  end
+  
+  defp into_callback(todo_list, {:cont, entry}) do
+    TodoList.add_entry(todo_list, entry)
+  end
+  
+  defp into_callback(todo_list, :done), do: todo_list
+  defp into_callback(todo_list, :halt), do: :ok
+end
+
+# Test it
+entries = [
+  %{date: ~D[2018-12-19], title: "Dentist"},
+  %{date: ~D[2018-12-20], title: "Shopping"},
+  %{date: ~D[2018-12-19], title: "Movies"}
+]
+for entry <- entries, into: TodoList.new(),  do: entry 

@@ -457,6 +457,10 @@
     - ~get_and_update_in/2~
   - Those macros rely on the *Access* module. So, if we want our custom data to work with Access, we need to implement a couple of function required by *Access* contract. See: [[https://hexdocs.pm/elixir/Access.html][Access behaviour]]
 
+* How to achieve polymorphism using protocols
+  - What is a protocol 
+    It is a module in which you declare functions without implementing them.
+  - The protocol implementation doesn't need to be part of any module. It means: you can implement a protocol for a type even if you can't modify the type's source code.
 * How to debug
   - Check the representation of a struct 
     #+begin_src elixir
