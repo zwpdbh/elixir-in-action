@@ -444,6 +444,19 @@
     - Module is used as the abstraction over the data type.
     - Modifier functions should return data of the same type. 
     - Query functions expect an instance of the data abstraction as the first argument and return another type of information.
+* How to update hierachical data 
+  - In general
+    - We can't directly modify part of it that resides deep in its tree.
+    - We have to walk down the tree to particular part that needs to be modified, and then transform it and all of its ancestors.
+    - The result is a copy of the entire model.
+  - Useful macros from Kernel:
+    - ~put_in/2~
+    - ~put_in/3~
+    - ~get_in/2~
+    - ~update_in/2~
+    - ~get_and_update_in/2~
+  - Those macros rely on the *Access* module. So, if we want our custom data to work with Access, we need to implement a couple of function required by *Access* contract. See: [[https://hexdocs.pm/elixir/Access.html][Access behaviour]]
+
 * How to debug
   - Check the representation of a struct 
     #+begin_src elixir
