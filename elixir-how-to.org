@@ -461,6 +461,22 @@
   - What is a protocol 
     It is a module in which you declare functions without implementing them.
   - The protocol implementation doesn't need to be part of any module. It means: you can implement a protocol for a type even if you can't modify the type's source code.
+
+* How to register a process
+  - If you know there will always be only one instance of some type of server, you can give the process a local name and use that name to send messages to the process. The name is called local because it has meaning only in the currently running BEAM instance.
+  - Using the registered server is much simpler becaue we don't need to pass server pid around through interface.
+  - Example
+    #+begin_src elixir
+      Process.register(self(), :some_name)
+      
+      send(:some_name, :msg)
+      receive do
+        msg -> IO.puts("received #{msg}")
+      end
+    #+end_src
+* How to handle unlimited process mailbox problem
+  - If a message is not match, it will be stored in mailbox with unlimited number. If we don't process them, they will slow down the system and even crash the system when all memory is consumed.
+  - For each server process, we should introduce a *match-all* receive clause that deals with unexpected kind of messages.
 * How to debug
   - Check the representation of a struct 
     #+begin_src elixir
