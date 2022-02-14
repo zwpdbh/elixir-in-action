@@ -27,6 +27,7 @@ defmodule Calculator do
     send(server_pid, {:div, value})
   end
 
+  # keep the mutable state using the private loop function
   defp loop(current_value) do
     new_value =
       receive do
