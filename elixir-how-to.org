@@ -477,6 +477,16 @@
 * How to handle unlimited process mailbox problem
   - If a message is not match, it will be stored in mailbox with unlimited number. If we don't process them, they will slow down the system and even crash the system when all memory is consumed.
   - For each server process, we should introduce a *match-all* receive clause that deals with unexpected kind of messages.
+
+* How to implement a general server process
+  - In general, there are 5 things to do 
+    - spawn a seperate process
+    - loop to infinite in that process  
+    - receive message
+    - send message back to the caller
+    - maintain state
+
+
 * How to debug
   - Check the representation of a struct 
     #+begin_src elixir
