@@ -10,7 +10,7 @@ defmodule ServerProcess do
 
   defp loop(callback_module, current_state) do
     receive do
-      {request, caller} ->
+      {:call, request, caller} ->
         {response, new_state} = callback_module.handle_call(request, current_state)
 
         send(caller, {:response, response})
@@ -18,12 +18,18 @@ defmodule ServerProcess do
     end
   end
 
+  # this got called from client to invoke call (synchronous) message
   def call(server_pid, request) do
-    send(server_pid, {request, self()})
+    send(server_pid, {:call, request, self()})
 
     receive do
       {:response, response} -> response
     end
+  end
+
+  # this got called from client to invoke cast (asynchronous) message
+  def cast(server_pid, request) do
+    send(server_pid, {:cast, request})
   end
 end
 
@@ -54,9 +60,6 @@ defmodule KeyValueStore do
   def start do
     ServerProcess.start(KeyValueStore)
   end
-end
+ end
 
-pid = ServerProcess.start(KeyValueStore)
-
-
-# This ServerProcess only support synchronous requests
+pid = KeyValueStore.start()
