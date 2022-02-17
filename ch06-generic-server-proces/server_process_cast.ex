@@ -15,6 +15,11 @@ defmodule ServerProcess do
 
         send(caller, {:response, response})
         loop(callback_module, new_state)
+
+      {:cast, request} ->
+        new_state = callback_module.handle_cast(request, current_state)
+
+        loop(callback_module, new_state)
     end
   end
 
@@ -48,9 +53,13 @@ defmodule KeyValueStore do
     {Map.get(state, key), state}
   end
 
+  def handle_cast({:put, key, value}, state) do
+    Map.put(state, key, value)
+  end
+
   # Helper functions used by user such that we hide the ServerProcess's abstraction call/2 from user.
   def put(pid, key, value) do
-    ServerProcess.call(pid, {:put, key, value})
+    ServerProcess.cast(pid, {:put, key, value})
   end
 
   def get(pid, key) do
@@ -63,3 +72,5 @@ defmodule KeyValueStore do
  end
 
 pid = KeyValueStore.start()
+KeyValueStore.put_async(pid, :some_key, :some_async_value)
+KeyValueStore.get(pid, :some_key)
