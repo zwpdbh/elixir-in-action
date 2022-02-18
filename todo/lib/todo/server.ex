@@ -1,43 +1,45 @@
 defmodule Todo.Server do
+  use GenServer
+
+  @impl GenServer
+  def init(_) do
+    {:ok, Todo.List.new()}
+  end
+
+  @impl GenServer
+  def handle_cast({:add_entry, new_entry}, todo_list) do
+    new_state = Todo.List.add_entry(todo_list, new_entry)
+    {:noreply, new_state}
+  end
+
+  @impl GenServer
+  def handle_cast({:update_entry, new_entry}, todo_list) do
+    new_state = Todo.List.update_entry(todo_list, new_entry)
+    {:noreply, new_state}
+  end
+
+  @impl GenServer
+  def handle_call({:entries, date}, _, todo_list) do
+    {:reply, Todo.List.entries(todo_list, date), todo_list}
+  end
+
   def start do
-    spawn(fn -> loop(Todo.List.new()) end)
+    GenServer.start(Todo.Server, nil, name: __MODULE__)
   end
 
-  # for each request we want to support, we have to 
-  # 1) add a dedicated clause in the process_message/2 function 
-  # 2) add a corresponding interface function 
-
-  def add_entry(todo_server, new_entry) do
-    send(todo_server, {:add_entry, new_entry})
+  def add_entry(entry) do
+    GenServer.cast(__MODULE__, {:add_entry, entry})
   end
 
-  def entries(todo_server, date) do
-    send(todo_server, {:entries, self(), date})
-
-    receive do
-      {:todo_entries, entries} -> entries
-    after
-      5000 -> {:error, :timeout}
-    end
+  def entries(date) do
+    GenServer.call(__MODULE__, {:entries, date})
   end
 
-  defp process_message(todo_list, {:add_entry, new_entry}) do
-    Todo.List.add_entry(todo_list, new_entry)
-  end
-
-  defp process_message(todo_list, {:entries, caller, date}) do
-    send(caller, {:todo_entries, Todo.List.entries(todo_list, date)})
-    todo_list
-  end
-
-  # TODO:: add other interface and server process
-
-  defp loop(todo_list) do
-    new_todo_list =
-      receive do
-        message -> process_message(todo_list, message)
-      end
-
-    loop(new_todo_list)
+  def update_entry(new_entry) do
+    GenServer.cast(__MODULE__, {:update_entry, new_entry})
   end
 end
+
+# {:ok, todo_server} = Todo.Server.start()
+# Todo.Server.add_entry(%{date: ~D[2018-12-19], title: "Dentist"})
+# Todo.Server.entries(~D[2018-12-19])

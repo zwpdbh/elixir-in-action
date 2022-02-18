@@ -28,7 +28,7 @@ defmodule KeyValueStore do
   def start do
     # register a local name
     # GenServer.start(KeyValueStore, nil, name: :KeyValueStore)
-    GenServer.start(KeyValueStore, nil, name: :__MODULE__)
+    GenServer.start(KeyValueStore, nil, name: __MODULE__)
   end
 
   # def put(pid, key, value) do
