@@ -10,7 +10,7 @@ defmodule KeyValueStore do
   # we need to define a handle_info/2 function to process custom plain message.
   @impl GenServer
   def handle_info(:cleanup, state) do
-    IO.puts "performing cleanup..."
+    IO.puts("performing cleanup...")
     {:noreply, state}
   end
 
@@ -20,7 +20,7 @@ defmodule KeyValueStore do
     {:noreply, Map.put(state, key, value)}
   end
 
-  @impl GenServer   
+  @impl GenServer
   def handle_call({:get, key}, _, state) do
     {:reply, Map.get(state, key), state}
   end
@@ -36,7 +36,7 @@ defmodule KeyValueStore do
   # end
   def put(key, value) do
     # GenServer.cast(KeyValueStore, {:put, key, value})
-    
+
     GenServer.cast(__MODULE__, {:put, key, value})
   end
 

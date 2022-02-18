@@ -69,7 +69,7 @@ defmodule KeyValueStore do
   def start do
     ServerProcess.start(KeyValueStore)
   end
- end
+end
 
 pid = KeyValueStore.start()
 KeyValueStore.put_async(pid, :some_key, :some_async_value)
