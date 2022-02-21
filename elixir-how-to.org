@@ -504,6 +504,11 @@
       # %Fraction{a: 8, b: 16}
       # iex(73)> 0.5
     #+end_src
+
+* How to get the number of currently running process 
+#+begin_src elixir
+  :erlang.system_info(:process_count)
+#+end_src
 * Some notes 
   - Always keep in mind that a Boolean is just an atom that has a value of true or false.
   - short-circuit operators: ~||~, ~&&~, ~!~.
