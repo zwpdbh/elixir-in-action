@@ -4,7 +4,7 @@ defmodule Todo.Database do
   @db_folder "./persist"
 
   def start do
-    # locally register the process
+    # locally register the process, make sure only one instance of the database process.
     GenServer.start(__MODULE__, nil, name: __MODULE__)
   end
 

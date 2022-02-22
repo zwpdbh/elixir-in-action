@@ -509,6 +509,13 @@
 #+begin_src elixir
   :erlang.system_info(:process_count)
 #+end_src
+* How state is maintained in server process 
+- In plain server process implementation
+  - State is passed as argument in loop clause. State is modified (new state) as the result of callback module's message handling.
+  - This means the callback module's ~handle_call/2~ and ~handle_cast/2~ need to pass state as argument
+- In GenServer 
+  - state is passed in from callback module's interface as argument
+  - state is passed in in ~handle_cast/2~ as argument
 * Some notes 
   - Always keep in mind that a Boolean is just an atom that has a value of true or false.
   - short-circuit operators: ~||~, ~&&~, ~!~.
@@ -524,6 +531,7 @@
 - Chapter05 
   - Introduces the concept of a server process. 
   - A server process is a beam process that use recurive call (loop) to handle different messages.
+    
 - Chapter06
   - Introduce the generic server process
     - Instead of directly handle different message in that server process, we provide the server process with a callback module.
@@ -536,10 +544,18 @@
          - In ~ServerProcess.call~ or ~ServerProcess.cast~, message will be received. This goes back to 2).
     - The generic server process does
       1) use endless recursive call to loop
-      2) in loop, maintain state
+      2) in loop, *maintain state*
       3) provide 2 type of interface functions to let callback module handle messages: one for sync, another for async.
     - The pattern is very similar to other patterns: delication, master-worker, actor.
   - Use ~GenServer~ instead of using our own implemented generic server process.
     - ~init/1~
     - ~handle_cast/2~
     - ~handle_call/3~
+      
+- Chapter07       
+  - We learned principles:
+    - Make server process do things in sequential way.
+    - Spawn multiple server processes to handle concurrency.
+    - In general, 
+      - if we need to do synchronization between multiple processes, we let one dedicate process to handle these.
+      - make concurrent process run independently.

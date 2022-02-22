@@ -72,5 +72,5 @@ defmodule KeyValueStore do
 end
 
 pid = KeyValueStore.start()
-KeyValueStore.put_async(pid, :some_key, :some_async_value)
+KeyValueStore.put(pid, :some_key, :some_async_value)
 KeyValueStore.get(pid, :some_key)
