@@ -516,6 +516,15 @@
 - In GenServer 
   - state is passed in from callback module's interface as argument
   - state is passed in in ~handle_cast/2~ as argument
+
+* How to create a singleton of a module
+- Implement ~GenServer~ in your module 
+  #+begin_src elixir
+    def start do
+      # locally register the process, make sure only one instance of the database process.
+      GenServer.start(__MODULE__, nil, name: __MODULE__)
+    end
+  #+end_src
 * Some notes 
   - Always keep in mind that a Boolean is just an atom that has a value of true or false.
   - short-circuit operators: ~||~, ~&&~, ~!~.
