@@ -560,6 +560,7 @@
     - ~init/1~
     - ~handle_cast/2~
     - ~handle_call/3~
+  - What is the context of state in GenServer ?? 
       
 - Chapter07       
   - We learned principles:
