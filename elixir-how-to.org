@@ -518,3 +518,28 @@
           read_cache || read_from_disk || read_from_database
         #+end_src
     
+
+  
+* Elixir in action study note 
+- Chapter05 
+  - Introduces the concept of a server process. 
+  - A server process is a beam process that use recurive call (loop) to handle different messages.
+- Chapter06
+  - Introduce the generic server process
+    - Instead of directly handle different message in that server process, we provide the server process with a callback module.
+    - The callback module receive and handle's the specific message
+      1) callback module call ~ServerProcess.start~ to register itself
+      2) callback module handle messages by call ~ServerProcess.call~ or ~ServerProcess.cast~ (those messages are sent into server process)
+      3) ~ServerProcess.call/cast~ goes into server process's loop:
+         - The message is processed in callback module's ~:handle_call~ or ~:handle_cast~. 
+         - Go back to server process loop, either update state to new state or send value in message to server process itself.
+         - In ~ServerProcess.call~ or ~ServerProcess.cast~, message will be received. This goes back to 2).
+    - The generic server process does
+      1) use endless recursive call to loop
+      2) in loop, maintain state
+      3) provide 2 type of interface functions to let callback module handle messages: one for sync, another for async.
+    - The pattern is very similar to other patterns: delication, master-worker, actor.
+  - Use ~GenServer~ instead of using our own implemented generic server process.
+    - ~init/1~
+    - ~handle_cast/2~
+    - ~handle_call/3~
