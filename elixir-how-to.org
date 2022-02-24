@@ -160,6 +160,8 @@
     - Can only update keys exist in map!
     - *Use map to hold structured* data is very common.
       
+* Why use struct instead of map
+- ~struct~ can catch key not match error at compile time. 
 * How to process binaries 
   - A binary is a chunk of byte
   - Create binary by enclosing the byte sequence
