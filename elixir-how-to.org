@@ -463,7 +463,7 @@
   - The protocol implementation doesn't need to be part of any module. It means: you can implement a protocol for a type even if you can't modify the type's source code.
 
 * How to register a process
-  - If you know there will always be only one instance of some type of server, you can give the process a local name and use that name to send messages to the process. The name is called local because it has meaning only in the currently running BEAM instance.
+  - If you know there will always be only one instance of some type of server, you can give the process a local name and use that name to send messages to the process. The name is called local because it has meaning only in the currently running BEAM instance.
   - Using the registered server is much simpler becaue we don't need to pass server pid around through interface.
   - Example
     #+begin_src elixir
@@ -560,7 +560,10 @@
     - ~init/1~
     - ~handle_cast/2~
     - ~handle_call/3~
-  - What is the context of state in GenServer ?? 
+  - What is the context of state in GenServer
+    - During loop in server process, it needs to maintain state. So the state needed to be carried in loop as argument.
+    - This also means, the callback module called inside the loop need to accept that state as argument.
+    - So, in GenServer, the state is carried through argument.
       
 - Chapter07       
   - We learned principles:
