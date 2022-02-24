@@ -617,4 +617,15 @@
     [name: name]
     name: name # if it is used as the last argument of a function
   #+end_src
+- Problems about starts project as ~iex -S mix phx.server~ from Emacs 
+  - Make sure the Emacs is running as Administrator.
+  - If it has postgres issue, go to the project root, and re-run ~mix ecto.create~.
+  - When start Phoenix project from Emacs using alchemist, the default command is ~iex -S mix~, we need to edit to ~iex -S mix phx.server~
+    
+- How to check Phoenix version 
+  cd into mix project root folder, run 
+  #+begin_src sh
+    mix phx.new --version
+  #+end_src
+    
   
