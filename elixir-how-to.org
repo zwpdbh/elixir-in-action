@@ -569,3 +569,44 @@
     - In general, 
       - if we need to do synchronization between multiple processes, we let one dedicate process to handle these.
       - make concurrent process run independently.
+
+        
+* Elixir with Phoenix notes 
+** 02-24 
+- create a project and start 
+  #+begin_src sh
+    mix phx.new hello
+    cd hello/
+    cd assets/
+    npm install
+    cd ..
+    mix ecto.create
+    mix phx.server
+  #+end_src
+  - visit http://localhost:4000
+- A new feature: print a string when you load a specific URL 
+  All actions is done in ~lib/hello_web~
+  1) Map requests coming in to a specific URL
+     - Edit router, specify the controller, and a action name.
+  2) tie a URL to a function on a controller
+     - Define a function in controller
+     - The name of the function should match the action name specified on router
+  3) Tie that function to a view
+     - But how how bind controller with view?
+       - We defined a module ~HelloWeb.HelloView~
+       - That file doesn’t actually do any work beyond tying the view for world with some code to render a template. We’ll rely on the defaults to render a template.
+     - Inside the action function from controller, we specify the render with a template
+  4) About request parameters
+     - Defined in router
+     - Extract out in controller with patter matching
+       - Notice the convention from string to atom
+     - Use it template(<action_name>.html.eex) with "@<parameter_name>".
+- About pattern matching, string and atom 
+  #+begin_src elixir
+    # from top to bottom, be shorthanded
+    [{:name, name}]
+    [:name => name]
+    [name: name]
+    name: name # if it is used as the last argument of a function
+  #+end_src
+  
