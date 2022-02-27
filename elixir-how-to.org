@@ -629,3 +629,21 @@
   #+end_src
     
   
+** 02-27
+   - A view in Phoenix is just a module, and templates are just functions.
+   - How to persistent out model data with database?
+     1) Modify models from lib: for example, ~lib/rumbl/accounts/user.ex~.
+        - This is for schema definition.
+     2) run ~ecto.gen.migration~
+        #+begin_src sh
+          mix ecto.gen.migration create_users
+        #+end_src
+        - This will create migration related .ex file 
+        - Edit the generated .ex file to define. This is for use code to operator database to create corresponding tables.
+        - In general, we write elixir code to create/update table schema.
+     3) run ~mix ecto.migrate~
+        
+     In general, 3 steps 
+     - In lib define our model using ~Ecto.Schema~.
+     - Generate migration file, in which we define database operations.
+     - Execute migration, by ~mix ecto.migrate~.
