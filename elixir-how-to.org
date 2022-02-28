@@ -638,8 +638,8 @@
         #+begin_src sh
           mix ecto.gen.migration create_users
         #+end_src
-        - This will create migration related .ex file 
-        - Edit the generated .ex file to define. This is for use code to operator database to create corresponding tables.
+        - This will create migration ~<timesteamp>_create_users.exs~ file in path ~priv/migrations/~. 
+        - Edit the generated ~.exs~ file to define. This is for use code to operator database to create corresponding tables.
         - In general, we write elixir code to create/update table schema.
      3) run ~mix ecto.migrate~
         
@@ -647,3 +647,7 @@
      - In lib define our model using ~Ecto.Schema~.
      - Generate migration file, in which we define database operations.
      - Execute migration, by ~mix ecto.migrate~.
+       
+** 02-28
+- After 
+- Use ~mix phx.routes~ to check all available routes in our web application.
