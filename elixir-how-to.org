@@ -691,8 +691,23 @@
        alias Rumbl.Accounts.User
        alias Rumbl.RumblWeb.Router.Helpers, as: Routes
 
+       # this one is not valid 
        changeset = User.registration_changeset(%User{}, %{username: "max", name: "Max", password: "123"})
+
+       # this one is valid 
+       changeset = User.registration_changeset(%User{}, %{username: "max", name: "Max", password: "asecret"})
      #+end_src
+     
+- Check point02 
+  - To fix already existing user to make them have valid password
+    #+begin_src elixir
+      recompile()
+      alias Rumbl.Repo
+
+      for u <- Repo.all(User) do 
+          Repo.update!(User.registration_changeset(u, %{password: "tmppass"}))
+      end
+    #+end_src
 
 - Problem001
   #+begin_src text
