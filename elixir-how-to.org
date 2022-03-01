@@ -642,7 +642,9 @@
         - Edit the generated ~.exs~ file to define. This is for use code to operator database to create corresponding tables.
         - In general, we write elixir code to create/update table schema.
      3) run ~mix ecto.migrate~
-        
+        - In this step, the actual table is created. 
+
+          
      In general, 3 steps 
      - In lib define our model using ~Ecto.Schema~.
      - Generate migration file, in which we define database operations.
@@ -651,3 +653,31 @@
 ** 02-28
 - After 
 - Use ~mix phx.routes~ to check all available routes in our web application.
+  
+  
+
+
+** 03-01
+- After migration (create user table, we could test it from iex shell)
+  #+begin_src elixir
+    alias Rumbl.Repo
+    alias Rumbl.Accounts.User
+
+    Repo.insert(%User{name: "Jose", username: "josevalim"})
+    Repo.insert(%User{name: "Bruce", username: "redrapids"})
+    Repo.insert(%User{name: "Chris", username: "mccord"})
+  #+end_src
+  
+- Check ~Phoenix.HTML.FormData~ contract to understand how the changes in the changeset available to the form.
+  
+- How to refer to specific routes in the application
+  - Use ~YourApplication.Router.Helpers~. In fact, phx help use with ~alias RumblWeb.Router.Helpers, as: Routes~.
+  - So, we can get any route through ~Routes.some_path~.
+    
+    
+- Problem001
+  #+begin_src text
+    lib/rumbl/accounts.ex:48: Users.__struct__/1 is undefined, cannot expand struct Users. Make sure the struct name is correct. If the struct name exists and is correct but it still cannot be found, you likely have cyclic module usage in your code
+  #+end_src
+  - When I add a new user, it shows this.
+  - Following error message, I could solve this: there is a typo in accounts.ex which I use ~%Users{}~ instead of should use ~%User{}~.
