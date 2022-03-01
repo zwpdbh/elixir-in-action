@@ -646,7 +646,9 @@
 
           
      In general, 3 steps 
-     - In lib define our model using ~Ecto.Schema~.
+     - In lib modify our model 
+       - Define schema using ~Ecto.Schema~
+       - Define corresponding changeset.
      - Generate migration file, in which we define database operations.
      - Execute migration, by ~mix ecto.migrate~.
        
@@ -673,8 +675,25 @@
 - How to refer to specific routes in the application
   - Use ~YourApplication.Router.Helpers~. In fact, phx help use with ~alias RumblWeb.Router.Helpers, as: Routes~.
   - So, we can get any route through ~Routes.some_path~.
+
+- Install application as dependencies
+  - edit ~mix.exs~
     
-    
+  - ~mix deps.get~
+
+- Check point01 
+  1) Install password feature dependencies
+  2) In ~user.ex~
+     - define schema for password and password_hash
+     - create our ~registration_changeset~
+  3) Test in iex shell 
+     #+begin_src elixir
+       alias Rumbl.Accounts.User
+       alias Rumbl.RumblWeb.Router.Helpers, as: Routes
+
+       changeset = User.registration_changeset(%User{}, %{username: "max", name: "Max", password: "123"})
+     #+end_src
+
 - Problem001
   #+begin_src text
     lib/rumbl/accounts.ex:48: Users.__struct__/1 is undefined, cannot expand struct Users. Make sure the struct name is correct. If the struct name exists and is correct but it still cannot be found, you likely have cyclic module usage in your code
