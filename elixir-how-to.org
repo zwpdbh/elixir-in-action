@@ -709,6 +709,12 @@
       end
     #+end_src
 
+- Check point03 
+  1) At this point, all users shall meet the requirement: new user registration need to have passworld.
+  2) In Account module, use User module's registration changeset. (model)
+  3) In user_controller, use exposed function from Account module.
+  4) Modify new user html to provide slot for pasword. (view)
+
 - Problem001
   #+begin_src text
     lib/rumbl/accounts.ex:48: Users.__struct__/1 is undefined, cannot expand struct Users. Make sure the struct name is correct. If the struct name exists and is correct but it still cannot be found, you likely have cyclic module usage in your code
