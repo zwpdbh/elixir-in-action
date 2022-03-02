@@ -705,7 +705,7 @@
       alias Rumbl.Repo
 
       for u <- Repo.all(User) do 
-          Repo.update!(User.registration_changeset(u, %{password: "tmppass"}))
+          Repo.update!(User.registration_changeset(u, %{password: "gghh3344"}))
       end
     #+end_src
     - 
