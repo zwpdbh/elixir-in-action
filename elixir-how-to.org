@@ -721,3 +721,15 @@
   #+end_src
   - When I add a new user, it shows this.
   - Following error message, I could solve this: there is a typo in accounts.ex which I use ~%Users{}~ instead of should use ~%User{}~.
+    
+** 03-02 
+- Check Point 01 
+  - Expose a function to validate username and password.
+  - Use RESTful session API for 
+    - GET for new session login form
+    - POST for login
+    - DELETE for logout
+      
+      
+- Check Point 02 
+  - Change the layout of the application to handle the new user features
