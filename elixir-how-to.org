@@ -748,7 +748,7 @@
 - Check Point 02 
   - Change the layout of the application to handle the new user features
     
-- Problem02
+- Problem01
   - When I go home to execute steps from check point02. I got error:
     #+begin_src text
       iex(3)> for u <- Repo.all(User) do 
@@ -759,3 +759,6 @@
           (ecto 3.7.1) lib/ecto/repo/queryable.ex:16: Ecto.Repo.Queryable.all/3
     #+end_src
     - Here, I forgot to refer User as ~alias Rumbl.Accounts.User~. After execute ~alias Rumbl.Accounts.User~. The problem solved.
+      
+- What is the differences between pipeline and plugs?
+      
