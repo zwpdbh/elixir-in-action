@@ -708,6 +708,7 @@
           Repo.update!(User.registration_changeset(u, %{password: "tmppass"}))
       end
     #+end_src
+    - 
 
 - Check point03 
   1) At this point, all users shall meet the requirement: new user registration need to have passworld.
@@ -715,7 +716,20 @@
   3) In user_controller, use exposed function from Account module.
   4) Modify new user html to provide slot for pasword. (view)
 
-- Problem001
+- Check point04 
+  Check if there is a new user in the session and store it in ~conn.assigns~ for every incoming request. In other words, we need to prevent user to access certain action when there is no session record.
+  - loading data from session
+  - use it to restric user access
+    
+- Check point05 
+  Add a mechanism to log the users in.
+  - create login function in auth.ex
+    - assigns current user
+    - put session and configuration_session to reuse.    
+  - use login function in user controller
+
+    
+- Problem01
   #+begin_src text
     lib/rumbl/accounts.ex:48: Users.__struct__/1 is undefined, cannot expand struct Users. Make sure the struct name is correct. If the struct name exists and is correct but it still cannot be found, you likely have cyclic module usage in your code
   #+end_src
@@ -733,3 +747,15 @@
       
 - Check Point 02 
   - Change the layout of the application to handle the new user features
+    
+- Problem02
+  - When I go home to execute steps from check point02. I got error:
+    #+begin_src text
+      iex(3)> for u <- Repo.all(User) do 
+          Repo.update!(User.registration_changeset(u, %{password: "tmppass"}))
+      end
+      ...(3)> ...(3)> ** (Protocol.UndefinedError) protocol Ecto.Queryable not implemented for User of type Atom, the given module does not exist. This protocol is implemented for the following type(s): Atom, BitString, Ecto.Query, Ecto.SubQuery, Tuple
+          (ecto 3.7.1) lib/ecto/queryable.ex:40: Ecto.Queryable.Atom.to_query/1
+          (ecto 3.7.1) lib/ecto/repo/queryable.ex:16: Ecto.Repo.Queryable.all/3
+    #+end_src
+    - Here, I forgot to refer User as ~alias Rumbl.Accounts.User~. After execute ~alias Rumbl.Accounts.User~. The problem solved.
