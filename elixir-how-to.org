@@ -287,6 +287,10 @@
        :ok
      #+end_src
 
+* How to use lib from mix 
+1) In mix.exs, add the lib into ~deps~.
+2) In iex, run ~recompile()~ or disconnect from iex and re-run alchemist-iex-project-run: "C-c a i p".
+3) Test the example of lib in iex shell.
 * How to check the and load additional code paths 
 - load additional code path from command-line when started erlang runtime 
   #+begin_src elixir
