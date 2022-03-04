@@ -766,3 +766,16 @@
       
 - What is the differences between pipeline and plugs?
       
+** 03-04 
+1. What is user registration 
+   - Apply changeset to Repo user.
+   - User has username and password 
+2. What happended when user do a registration    
+   - We create a ~new(conn, _params_)~ in our controller to handle the get request to our url ~/users/new~.
+     - In which we use ~Accounts.change_registration~ which is an wrapper for ~user.registration_changeset~.
+       - In which the user's params like username, passoword are validate by changeset and applyied with ~put_change~.
+3. How template and changeset are binded?
+   - A changeset could be passed into template like this: ~render(conn, "new.html", changeset: changeset)~.
+4. What is the differences between ~new~ and ~create~ from user_controller.ex
+   - ~new~ is used in controller to handle request to ~/users/new~, it is used for rendering the form.
+   - ~create~ is used in form ~Routes.user_path(@conn, :create)~, it is used for submiting the form.
