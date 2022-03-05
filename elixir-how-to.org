@@ -768,6 +768,31 @@
   - A context encapsulates all business logic for a common purpose.
   - This way, we can interact with our business logic from controllers, channels, or remote APIs, *without* having to duplicate code.
   - In other words, a controller exists to work with context functions.
-  - A controller parses end user requests, calls context functions, and translates those results into something the end user can understand.
+  - A controller parses end user requests, calls context functions, and translates those results into something the end user can understand. In other words, *the controller's job is to translate whatever our business logic returns into something meaningfull for the user*.
   - The context doesn't know about the controller, and the controller doesn't know about the business rules.
   - When build a context, think about the way of how the context is available to the controller.
+    
+- How to make a function plug available across controller and views?
+  - In ~rumbl_web.ex~ import the plug function in both controller and router
+    #+begin_src elixir
+      def router do
+        quote do
+          use Phoenix.Router
+          ...
+          import RumblWeb.Auth, only: [authenticate_user: 2]
+        end
+      end
+
+      def controller do
+        quote do
+          use Phoenix.Controller, namespace: RumblWeb
+          ...
+          import RumblWeb.Auth, only: [authenticate_user: 2]
+        end
+      end
+    #+end_src
+    - Where the ~2~ is the number of arguments expected by the ~authenticate_user~.
+
+- What is the relationship between view and templates 
+  - A view pick all its corresponding templates and transform them into functions.
+  - If a view is ~rumbl_web/view/video_view.ex~, then the templates are located at ~rumbl_web/templates/video/~.
