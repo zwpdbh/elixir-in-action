@@ -17,7 +17,7 @@
     #+begin_src text
       alias IO, as: MyIO
     #+end_src
-  - For example, let’s say you have a Geometry.Rectangle module. You can alias it in your client module and use a shorter name
+  - For example, let鈥檚 say you have a Geometry.Rectangle module. You can alias it in your client module and use a shorter name
     #+begin_src elixir
       defmodule MyModule do 
         alias Geometry.Rectangle, as: Rectange 
@@ -602,7 +602,7 @@
   3) Tie that function to a view
      - But how how bind controller with view?
        - We defined a module ~HelloWeb.HelloView~
-       - That file doesn’t actually do any work beyond tying the view for world with some code to render a template. We’ll rely on the defaults to render a template.
+       - That file doesn鈥檛 actually do any work beyond tying the view for world with some code to render a template. We鈥檒l rely on the defaults to render a template.
      - Inside the action function from controller, we specify the render with a template
   4) About request parameters
      - Defined in router
@@ -762,3 +762,12 @@
       
 - What is the differences between pipeline and plugs?
       
+** 03-05 
+- What is a context?
+  - A context in Phoenix is just a module that groups functions with a shared purpose.
+  - A context encapsulates all business logic for a common purpose.
+  - This way, we can interact with our business logic from controllers, channels, or remote APIs, *without* having to duplicate code.
+  - In other words, a controller exists to work with context functions.
+  - A controller parses end user requests, calls context functions, and translates those results into something the end user can understand.
+  - The context doesn't know about the controller, and the controller doesn't know about the business rules.
+  - When build a context, think about the way of how the context is available to the controller.
