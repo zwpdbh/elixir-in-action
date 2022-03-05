@@ -763,36 +763,83 @@
 - What is the differences between pipeline and plugs?
       
 ** 03-05 
-- What is a context?
-  - A context in Phoenix is just a module that groups functions with a shared purpose.
-  - A context encapsulates all business logic for a common purpose.
-  - This way, we can interact with our business logic from controllers, channels, or remote APIs, *without* having to duplicate code.
-  - In other words, a controller exists to work with context functions.
-  - A controller parses end user requests, calls context functions, and translates those results into something the end user can understand. In other words, *the controller's job is to translate whatever our business logic returns into something meaningfull for the user*.
-  - The context doesn't know about the controller, and the controller doesn't know about the business rules.
-  - When build a context, think about the way of how the context is available to the controller.
+1. What is a context?
+   - A context in Phoenix is just a module that groups functions with a shared purpose.
+   - A context encapsulates all business logic for a common purpose.
+   - This way, we can interact with our business logic from controllers, channels, or remote APIs, *without* having to duplicate code.
+   - In other words, a controller exists to work with context functions.
+   - A controller parses end user requests, calls context functions, and translates those results into something the end user can understand. In other words, *the controller's job is to translate whatever our business logic returns into something meaningfull for the user*.
+   - The context doesn't know about the controller, and the controller doesn't know about the business rules.
+   - When build a context, think about the way of how the context is available to the controller.
     
-- How to make a function plug available across controller and views?
-  - In ~rumbl_web.ex~ import the plug function in both controller and router
-    #+begin_src elixir
-      def router do
-        quote do
-          use Phoenix.Router
-          ...
-          import RumblWeb.Auth, only: [authenticate_user: 2]
-        end
-      end
+2. How to make a function plug available across controller and views?
+   - In ~rumbl_web.ex~ import the plug function in both controller and router
+     #+begin_src elixir
+       def router do
+         quote do
+           use Phoenix.Router
+           ...
+           import RumblWeb.Auth, only: [authenticate_user: 2]
+         end
+       end
 
-      def controller do
-        quote do
-          use Phoenix.Controller, namespace: RumblWeb
-          ...
-          import RumblWeb.Auth, only: [authenticate_user: 2]
-        end
-      end
-    #+end_src
-    - Where the ~2~ is the number of arguments expected by the ~authenticate_user~.
+       def controller do
+         quote do
+           use Phoenix.Controller, namespace: RumblWeb
+           ...
+           import RumblWeb.Auth, only: [authenticate_user: 2]
+         end
+       end
+     #+end_src
+     - Where the ~2~ is the number of arguments expected by the ~authenticate_user~.
 
-- What is the relationship between view and templates 
-  - A view pick all its corresponding templates and transform them into functions.
-  - If a view is ~rumbl_web/view/video_view.ex~, then the templates are located at ~rumbl_web/templates/video/~.
+3. What is the relationship between view and templates 
+   - A view pick all its corresponding templates and transform them into functions.
+   - If a view is ~rumbl_web/view/video_view.ex~, then the templates are located at ~rumbl_web/templates/video/~.
+    
+4. How to find a video's associated user without creating the bundling data:
+   #+begin_src elixir
+     query = Ecto.assoc(video, :user)
+     Repo.one(query)
+   #+end_src
+   - Notice, here we avoid including a complete user info into video to find out this answer.
+5. When building relationship between module, we generally to avoid having cyclic dependencies. That is, prefer the one-way relationship. Here, the Video schema depends on User.
+    
+6. Problems 
+   - `Rumbl.Multimedia.Video` that was not loaded when try to associate a video with a user 
+     #+begin_src elixir
+       {:ok, video} = Rumbl.Multimedia.create_video(%{title: "new video", url: "http://example.com",
+                                               
+       alias Ecto.Changeset
+       alias Rumbl.Repo
+
+       user = Rumbl.Accounts.get_user_by(username: "zhaowei")
+       changeset = video |> Changeset.change() |> Changeset.put_assoc(:user, user)
+     #+end_src
+     - Error message 
+       #+begin_src text
+         ,** (RuntimeError) attempting to cast or change association `user` from `Rumbl.Multimedia.Video` that was not loaded. Please preload your associations before manipulating them through changesets
+       #+end_src
+       - The error message says the Video.user is not loaded.
+
+     - Solution, we need to preload it:
+       #+begin_src elixir
+         video = Rumbl.Repo.preload(video, :user)
+       #+end_src
+       - The ~preload~ accepts one name or a collection of association names. After Ecto tries to fetch the association, we can reference the video.user. It is great for boundling data (we include a complete user info into the video).
+       - Now, we could do the associate now.
+     - At last, don't forget to make changeset take effect
+       #+begin_src elixir
+         video = Repo.update!(changeset)
+         # check user binded to that video
+         video.user
+       #+end_src
+     - The above shows the steps to create an association between video and user. We could also do the following without the ~put_assoc~. 
+       #+begin_src elixir
+         video = video
+         |> Changeset.change()
+         |> Changeset.put_change(:user_id, user.id)
+         |> Repo.update!()
+
+         video = Repo.preload(video, :user)
+       #+end_src
