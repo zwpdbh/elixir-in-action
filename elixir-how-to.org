@@ -17,7 +17,7 @@
     #+begin_src text
       alias IO, as: MyIO
     #+end_src
-  - For example, let鈥檚 say you have a Geometry.Rectangle module. You can alias it in your client module and use a shorter name
+  - For example, let閳ユ獨 say you have a Geometry.Rectangle module. You can alias it in your client module and use a shorter name
     #+begin_src elixir
       defmodule MyModule do 
         alias Geometry.Rectangle, as: Rectange 
@@ -287,6 +287,10 @@
        :ok
      #+end_src
 
+* How to use lib from mix 
+1) In mix.exs, add the lib into ~deps~.
+2) In iex, run ~recompile()~ or disconnect from iex and re-run alchemist-iex-project-run: "C-c a i p".
+3) Test the example of lib in iex shell.
 * How to check the and load additional code paths 
 - load additional code path from command-line when started erlang runtime 
   #+begin_src elixir
@@ -602,7 +606,7 @@
   3) Tie that function to a view
      - But how how bind controller with view?
        - We defined a module ~HelloWeb.HelloView~
-       - That file doesn鈥檛 actually do any work beyond tying the view for world with some code to render a template. We鈥檒l rely on the defaults to render a template.
+       - That file doesn閳ユ獩 actually do any work beyond tying the view for world with some code to render a template. We閳ユ獟l rely on the defaults to render a template.
      - Inside the action function from controller, we specify the render with a template
   4) About request parameters
      - Defined in router
@@ -762,6 +766,19 @@
       
 - What is the differences between pipeline and plugs?
       
+** 03-04 
+1. What is user registration 
+   - Apply changeset to Repo user.
+   - User has username and password 
+2. What happended when user do a registration    
+   - We create a ~new(conn, _params_)~ in our controller to handle the get request to our url ~/users/new~.
+     - In which we use ~Accounts.change_registration~ which is an wrapper for ~user.registration_changeset~.
+       - In which the user's params like username, passoword are validate by changeset and applyied with ~put_change~.
+3. How template and changeset are binded?
+   - A changeset could be passed into template like this: ~render(conn, "new.html", changeset: changeset)~.
+4. What is the differences between ~new~ and ~create~ from user_controller.ex
+   - ~new~ is used in controller to handle request to ~/users/new~, it is used for rendering the form.
+   - ~create~ is used in form ~Routes.user_path(@conn, :create)~, it is used for submiting the form.
 ** 03-05 
 1. What is a context?
    - A context in Phoenix is just a module that groups functions with a shared purpose.
