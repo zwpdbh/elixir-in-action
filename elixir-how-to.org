@@ -291,6 +291,7 @@
 1) In mix.exs, add the lib into ~deps~.
 2) In iex, run ~recompile()~ or disconnect from iex and re-run alchemist-iex-project-run: "C-c a i p".
 3) Test the example of lib in iex shell.
+4) If we want to shortcut the name, we could use ~alias~ to create short name.
 * How to check the and load additional code paths 
 - load additional code path from command-line when started erlang runtime 
   #+begin_src elixir
@@ -821,8 +822,10 @@
    #+end_src
    - Notice, here we avoid including a complete user info into video to find out this answer.
 5. When building relationship between module, we generally to avoid having cyclic dependencies. That is, prefer the one-way relationship. Here, the Video schema depends on User.
+
+6. How to use query to restrict CRUD operation of Video are limited to current user?
     
-6. Problems 
+7. Problems 
    - `Rumbl.Multimedia.Video` that was not loaded when try to associate a video with a user 
      #+begin_src elixir
        {:ok, video} = Rumbl.Multimedia.create_video(%{title: "new video", url: "http://example.com",
