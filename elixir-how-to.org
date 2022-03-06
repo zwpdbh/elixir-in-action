@@ -583,6 +583,14 @@
 
         
 * Elixir with Phoenix notes 
+** About changeset 
+- What is changeset?
+  - A changeset defines some contains/validation for our data.
+  - We use it by ~import Ecto.Changeset~ and it defines a lot of useful functions.
+  - Use that module, we could validate our data which we want to insert into our db.
+  - It will return a result with true or false, plus the changes (our validated/filtered data).
+- How template and changeset are binded?
+  - A changeset could be passed into template like this: ~render(conn, "new.html", changeset: changeset)~.  
 ** 02-24 
 - create a project and start 
   #+begin_src sh
@@ -775,9 +783,8 @@
    - We create a ~new(conn, _params_)~ in our controller to handle the get request to our url ~/users/new~.
      - In which we use ~Accounts.change_registration~ which is an wrapper for ~user.registration_changeset~.
        - In which the user's params like username, passoword are validate by changeset and applyied with ~put_change~.
-3. How template and changeset are binded?
-   - A changeset could be passed into template like this: ~render(conn, "new.html", changeset: changeset)~.
-4. What is the differences between ~new~ and ~create~ from user_controller.ex
+
+3. What is the differences between ~new~ and ~create~ from user_controller.ex
    - ~new~ is used in controller to handle request to ~/users/new~, it is used for rendering the form.
    - ~create~ is used in form ~Routes.user_path(@conn, :create)~, it is used for submiting the form.
 ** 03-05 
@@ -914,5 +921,14 @@
    - We could use ~mix ecto.rollback~ to migration down.
    - For example, we just did some migration. But we found we need to add an extra field for our just created table.
    - We could use ~mix ecto.rollback~ to revert the migration. Edit the change, then do ~mix ecto.migrate~ to apply the changes.
+4. Seeding and associating categories
+   - How to use script to populate our data while maintain database constrains
+   - How to associate videos and categories
+     - Fetch all categories name and IDs from db.
+     - Sort them by name
+     - Pass them into view as "select" input.
+5. Problem: my categories currently don't have unique value even when I already specify the unique contraint from schema.
+
+
 
   
