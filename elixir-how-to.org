@@ -928,6 +928,7 @@
      - Sort them by name
      - Pass them into view as "select" input.
 5. Problem: my categories currently don't have unique value even when I already specify the unique contraint from schema.
+   - 
 
 
 
