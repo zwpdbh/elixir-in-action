@@ -17,7 +17,7 @@
     #+begin_src text
       alias IO, as: MyIO
     #+end_src
-  - For example, let’s say you have a Geometry.Rectangle module. You can alias it in your client module and use a shorter name
+  - For example, let閳ユ獨 say you have a Geometry.Rectangle module. You can alias it in your client module and use a shorter name
     #+begin_src elixir
       defmodule MyModule do 
         alias Geometry.Rectangle, as: Rectange 
@@ -291,6 +291,7 @@
 1) In mix.exs, add the lib into ~deps~.
 2) In iex, run ~recompile()~ or disconnect from iex and re-run alchemist-iex-project-run: "C-c a i p".
 3) Test the example of lib in iex shell.
+4) If we want to shortcut the name, we could use ~alias~ to create short name.
 * How to check the and load additional code paths 
 - load additional code path from command-line when started erlang runtime 
   #+begin_src elixir
@@ -582,6 +583,14 @@
 
         
 * Elixir with Phoenix notes 
+** About changeset 
+- What is changeset?
+  - A changeset defines some contains/validation for our data.
+  - We use it by ~import Ecto.Changeset~ and it defines a lot of useful functions.
+  - Use that module, we could validate our data which we want to insert into our db.
+  - It will return a result with true or false, plus the changes (our validated/filtered data).
+- How template and changeset are binded?
+  - A changeset could be passed into template like this: ~render(conn, "new.html", changeset: changeset)~.  
 ** 02-24 
 - create a project and start 
   #+begin_src sh
@@ -606,7 +615,7 @@
   3) Tie that function to a view
      - But how how bind controller with view?
        - We defined a module ~HelloWeb.HelloView~
-       - That file doesn’t actually do any work beyond tying the view for world with some code to render a template. We’ll rely on the defaults to render a template.
+       - That file doesn閳ユ獩 actually do any work beyond tying the view for world with some code to render a template. We閳ユ獟l rely on the defaults to render a template.
      - Inside the action function from controller, we specify the render with a template
   4) About request parameters
      - Defined in router
@@ -774,9 +783,8 @@
    - We create a ~new(conn, _params_)~ in our controller to handle the get request to our url ~/users/new~.
      - In which we use ~Accounts.change_registration~ which is an wrapper for ~user.registration_changeset~.
        - In which the user's params like username, passoword are validate by changeset and applyied with ~put_change~.
-3. How template and changeset are binded?
-   - A changeset could be passed into template like this: ~render(conn, "new.html", changeset: changeset)~.
-4. What is the differences between ~new~ and ~create~ from user_controller.ex
+
+3. What is the differences between ~new~ and ~create~ from user_controller.ex
    - ~new~ is used in controller to handle request to ~/users/new~, it is used for rendering the form.
    - ~create~ is used in form ~Routes.user_path(@conn, :create)~, it is used for submiting the form.
 5. What is login for a user 
@@ -795,3 +803,149 @@
      - Store the user ID in the session every time a user registers or a user login.
      - Check if there is a new user in the session and store it in the conn.assign for every incoming request.
        - Do this in our plug ~call~.
+** 03-05 
+1. What is a context?
+   - A context in Phoenix is just a module that groups functions with a shared purpose.
+   - A context encapsulates all business logic for a common purpose.
+   - This way, we can interact with our business logic from controllers, channels, or remote APIs, *without* having to duplicate code.
+   - In other words, a controller exists to work with context functions.
+   - A controller parses end user requests, calls context functions, and translates those results into something the end user can understand. In other words, *the controller's job is to translate whatever our business logic returns into something meaningfull for the user*.
+   - The context doesn't know about the controller, and the controller doesn't know about the business rules.
+   - When build a context, think about the way of how the context is available to the controller.
+    
+2. How to make a function plug available across controller and views?
+   - In ~rumbl_web.ex~ import the plug function in both controller and router
+     #+begin_src elixir
+       def router do
+         quote do
+           use Phoenix.Router
+           ...
+           import RumblWeb.Auth, only: [authenticate_user: 2]
+         end
+       end
+
+       def controller do
+         quote do
+           use Phoenix.Controller, namespace: RumblWeb
+           ...
+           import RumblWeb.Auth, only: [authenticate_user: 2]
+         end
+       end
+     #+end_src
+     - Where the ~2~ is the number of arguments expected by the ~authenticate_user~.
+
+3. What is the relationship between view and templates 
+   - A view pick all its corresponding templates and transform them into functions.
+   - If a view is ~rumbl_web/view/video_view.ex~, then the templates are located at ~rumbl_web/templates/video/~.
+    
+4. How to find a video's associated user without creating the bundling data:
+   #+begin_src elixir
+     query = Ecto.assoc(video, :user)
+     Repo.one(query)
+   #+end_src
+   - Notice, here we avoid including a complete user info into video to find out this answer.
+5. When building relationship between module, we generally to avoid having cyclic dependencies. That is, prefer the one-way relationship. Here, the Video schema depends on User.
+
+6. How to use query to restrict CRUD operation of Video are limited to current user?
+    
+7. Problems 
+   - `Rumbl.Multimedia.Video` that was not loaded when try to associate a video with a user 
+     #+begin_src elixir
+       {:ok, video} = Rumbl.Multimedia.create_video(%{title: "new video", url: "http://example.com",
+                                               
+       alias Ecto.Changeset
+       alias Rumbl.Repo
+
+       user = Rumbl.Accounts.get_user_by(username: "zhaowei")
+       changeset = video |> Changeset.change() |> Changeset.put_assoc(:user, user)
+     #+end_src
+     - Error message 
+       #+begin_src text
+         ,** (RuntimeError) attempting to cast or change association `user` from `Rumbl.Multimedia.Video` that was not loaded. Please preload your associations before manipulating them through changesets
+       #+end_src
+       - The error message says the Video.user is not loaded.
+
+     - Solution, we need to preload it:
+       #+begin_src elixir
+         video = Rumbl.Repo.preload(video, :user)
+       #+end_src
+       - The ~preload~ accepts one name or a collection of association names. After Ecto tries to fetch the association, we can reference the video.user. It is great for boundling data (we include a complete user info into the video).
+       - Now, we could do the associate now.
+     - At last, don't forget to make changeset take effect
+       #+begin_src elixir
+         video = Repo.update!(changeset)
+         # check user binded to that video
+         video.user
+       #+end_src
+     - The above shows the steps to create an association between video and user. We could also do the following without the ~put_assoc~. 
+       #+begin_src elixir
+         video = video
+         |> Changeset.change()
+         |> Changeset.put_change(:user_id, user.id)
+         |> Repo.update!()
+
+         video = Repo.preload(video, :user)
+       #+end_src
+
+** 03-06
+1. What is context generator 
+   Currently, we have met the following kind of generators 
+   1) mix.ecto.gen.migration, generate only migration files
+   2) mix phx.gen.html, generate migrations, schemas, context, as well as controllers, views, and templates.
+   3) mix phx.gen.context,useful for generating a resource with all of its context function.
+   4) mix phx.gen.schema, useful for creating a resource when we want to define the context functions by ourselves.
+    
+   For more information, type ~mix help GENERATOR_NAME~ in the terminal.
+  
+2. How to add category into existing video?  
+   1) We choose to use ~mix phx.gen.schema~ to generate schema.
+      #+begin_src sh
+        mix phx.gen.schema Multimedia.Category categories name:string
+      #+end_src
+      - We choose this because we probably don't need most of the generated context function.
+      - It produces two related files 
+        - ~category.ex~
+        - ~xxx_create_categories.exs~. This file contains the migration which will create tables in db. 
+   2) Edit the generated migration file to fit our need.
+      - Edit the "name" field as NOT NULL and create a unique index for it.
+      - At this stage, we also edit the corresponding video schema from Video.ex to create a belongs-to relationship.
+   3) Use ~mix ecto.gen.migration~ to generate a migration to add the category_id to our video table.
+      #+begin_src sh
+        mix ecto.gen.migration add_category_id_to_video
+      #+end_src
+      - This command generate a migration with empty content left for us to fill.
+      - Define the database contraint between videos and categories.
+        #+begin_src elixir
+          defmodule Rumbl.Repo.Migrations.AddCategoryIdToVideo do
+            use Ecto.Migration
+
+            def change do
+              alter table(:videos) do
+                add :category_id, references(:categories)
+              end
+            end
+          end
+        #+end_src
+   4) Finally, migrate our database with our new migrations. 
+      #+begin_src sh
+        mix ecto.migrate
+      #+end_src
+     
+   In general, we defines two migrations, one is to create categories table, another is to add the constrains on the existing video table.
+
+3. How to regret a just did migration?
+   - We could use ~mix ecto.rollback~ to migration down.
+   - For example, we just did some migration. But we found we need to add an extra field for our just created table.
+   - We could use ~mix ecto.rollback~ to revert the migration. Edit the change, then do ~mix ecto.migrate~ to apply the changes.
+4. Seeding and associating categories
+   - How to use script to populate our data while maintain database constrains
+   - How to associate videos and categories
+     - Fetch all categories name and IDs from db.
+     - Sort them by name
+     - Pass them into view as "select" input.
+5. Problem: my categories currently don't have unique value even when I already specify the unique contraint from schema.
+   - 
+
+
+
+  
