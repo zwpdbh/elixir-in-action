@@ -662,7 +662,10 @@
   - Use that module, we could validate our data which we want to insert into our db.
   - It will return a result with true or false, plus the changes (our validated/filtered data).
 - How template and changeset are binded?
-  - A changeset could be passed into template like this: ~render(conn, "new.html", changeset: changeset)~.  
+  - A changeset could be passed into template like this: ~render(conn, "new.html", changeset: changeset)~.
+- What is the differences between validation and constraint
+  - Validation executed before touching the db. And constraint rely on the database.
+  - Therefore, validation happends before constraint.
 ** 02-24 
 - create a project and start 
   #+begin_src sh
@@ -1023,6 +1026,61 @@
   
 
 
+** 03-07 
+- How to delete all created categories
+  - Currently, there are multiple duplicated values. I plan to delete all of them and create some values.
+  - Delete existing categories
+    #+begin_src elixir
+      alias Rumbl.Repo
+      alias Rumbl.Multimedia.Category
 
+      import Ecto.Query, only: [from: 2]
+
+      query = Category
+      Rumbl.Repo.delete_all(Category)
+    #+end_src
+  - Populate category 
+    #+begin_src elixir
+      alias Rumbl.Multimedia
+
+      for category <- ~w(Action Drama Romance Comedy Sci-fi) do
+        Multimedia.create_category!(category)
+      end
+    #+end_src
+  - Why my changeset doesn't impose constraint?
+    #+begin_src elixir
+      import Ecto.Changeset
+
+      alias Rumbl.Repo
+
+      alias Rumbl.Multimedia.Video
+      alias Rumbl.Multimedia.Category
+
+      def create_category!(name) do
+        %Category{}
+        |> create_category_changeset(%{name: name})
+        Repo.insert!(%Category{name: name}, on_conflict: :nothing)
+      end
+
+      def create_category_changeset(category, attrs) do
+        category
+        |> cast(attrs, [:name])
+        |> validate_required([:name])
+        |> unique_constraint(:name)
+      end
+    #+end_src
+    - Test it with 
+      #+begin_src elixir
+        alias Rumbl.Multimedia
+        Multimedia.create_category!("Action")
+
+        alias Rumbl.Multimedia.Category
+        Multimedia.create_category_changeset(%Category{}, %{name: "Action"})
+      #+end_src
+      - It should shows false, but the valid is true...
+        
+- What is a migration? How to delete the category table and create it again?
+  - ref: [[https://elixirforum.com/t/how-to-delete-drop-table/40018/6][How to delete/drop table?]]
+  
 * Elixir code example 
 ** [[https://elixirforum.com/t/pattern-matching-encoded-json/2950][pattern matching encoded json]]
