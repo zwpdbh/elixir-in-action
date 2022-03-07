@@ -779,3 +779,19 @@
 4. What is the differences between ~new~ and ~create~ from user_controller.ex
    - ~new~ is used in controller to handle request to ~/users/new~, it is used for rendering the form.
    - ~create~ is used in form ~Routes.user_path(@conn, :create)~, it is used for submiting the form.
+5. What is login for a user 
+   - A user is login when the session contains the user's username.
+6. How to implement authentication feature (login and logout)
+   - We implement authentication as a plug. So, we can add it to a plug pipeline for our router.
+   - There are two kinds of plugs, one is function plugs and another is module plugs. When to prefer module plug over function plug?
+     - When we want to share a plug across more than one module.
+   - In module plug, there are two methods matters:
+     - init
+     - call
+       - its second argument is the result of ~init~.
+       - its first argument is the ~conn~ which is ~Plug.Conn~ struct.
+     So, we need to import ~import Plug.Conn~.
+   - The plug for authentication implementation:
+     - Store the user ID in the session every time a user registers or a user login.
+     - Check if there is a new user in the session and store it in the conn.assign for every incoming request.
+       - Do this in our plug ~call~.
