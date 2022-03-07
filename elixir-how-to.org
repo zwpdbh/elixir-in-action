@@ -17,7 +17,7 @@
     #+begin_src text
       alias IO, as: MyIO
     #+end_src
-  - For example, let閳ユ獨 say you have a Geometry.Rectangle module. You can alias it in your client module and use a shorter name
+  - For example, you have a Geometry.Rectangle module. You can alias it in your client module and use a shorter name
     #+begin_src elixir
       defmodule MyModule do 
         alias Geometry.Rectangle, as: Rectange 
