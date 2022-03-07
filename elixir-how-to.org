@@ -541,7 +541,55 @@
           read_cache || read_from_disk || read_from_database
         #+end_src
     
+* How to use elixir to request access token 
+#+begin_src elixir
+  defmodule Script do
+    @secret "84G7Q~JiELHPu3XuNKqckEB1eavVnMpHmnoZh"
+    @client_id "2470ca86-3843-4aa2-95b8-97d3a912ff69"
+    @tenant "72f988bf-86f1-41af-91ab-2d7cd011db47"
+    @scope "https://microsoft.onmicrosoft.com/3b4ae08b-9919-4749-bb5b-7ed4ef15964d/.default"  
+    @moduledoc """
+    A HTTP client for doing RESTful action for DeploymentService.
+    """
+    def get_access_token() do
+      url = "https://login.microsoftonline.com/#{@tenant}/oauth2/v2.0/token"
 
+      case HTTPoison.post(url, urlencoded_body(), header()) do
+        {:ok, %HTTPoison.Response{status_code: 200, body: body}}  ->
+          IO.puts body
+        {:ok, %HTTPoison.Response{status_code: 404}} ->
+          IO.puts "Not found :("
+        {:error, %HTTPoison.Error{reason: reason}} ->
+          IO.inspect reason      
+      end
+    end
+
+    def header() do
+      [{"Content-type", "application/x-www-form-urlencoded"}]
+    end
+  
+    def urlencoded_body() do
+      %{"client_id" => @client_id,
+        "client_secret" => @secret,
+        "scope" => @scope,
+        "grant_type" => "client_credentials"}
+      |> URI.encode_query
+    end
+
+    def json_body() do
+      %{
+        call: "Mycall",
+        params: [
+          %{
+            page: "01",
+            filter: "filter01"
+          }
+        ]
+      }
+      |> Poison.encode!
+    end
+  end
+#+end_src
 * How to do OAuth
 - ref: [[https://github.com/danschultzer/pow][Pow is a robust, modular, and extendable authentication and user management solution for Phoenix and Plug-based apps.]]
 * Elixir in action study note 
