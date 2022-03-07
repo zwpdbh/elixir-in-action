@@ -551,17 +551,43 @@
     @moduledoc """
     A HTTP client for doing RESTful action for DeploymentService.
     """
-    def get_access_token() do
+    def request_access_token() do
       url = "https://login.microsoftonline.com/#{@tenant}/oauth2/v2.0/token"
 
       case HTTPoison.post(url, urlencoded_body(), header()) do
         {:ok, %HTTPoison.Response{status_code: 200, body: body}}  ->
-          IO.puts body
+
+          body
+          |> Poison.decode
+          |> fetch_access_token
+          # |> IO.puts
+
         {:ok, %HTTPoison.Response{status_code: 404}} ->
           IO.puts "Not found :("
         {:error, %HTTPoison.Error{reason: reason}} ->
           IO.inspect reason      
       end
+    end
+
+    def trigger_workflow(token) do
+      definition_name = "AuroraK8sDynamicCsi"
+      url = "https://xscndeploymentservice.westus2.cloudapp.azure.com/api/Workflow?definitionName=#{definition_name}"
+      HTTPoison.post(
+        url,
+        json_body(),
+        [
+          {"Content-type", "application/json"},
+          {"Authorization", "Bearer #{token}"},
+          {"accept", "text/plain"}])
+    end
+
+    def test() do
+      request_access_token()
+      |> trigger_workflow
+    end
+
+    def fetch_access_token({:ok, %{"access_token" => access_token}}) do
+      access_token
     end
 
     def header() do
@@ -578,13 +604,11 @@
 
     def json_body() do
       %{
-        call: "Mycall",
-        params: [
-          %{
-            page: "01",
-            filter: "filter01"
-          }
-        ]
+        SubscriptionId: "33922553-c28a-4d50-ac93-a5c682692168",
+        DeploymentLocation: "East US 2 EUAP",
+        Counter: "1",
+        AzureDiskStorageClassAsk: "Random",
+        AzureDiskPvcSize: "13"
       }
       |> Poison.encode!
     end
@@ -997,3 +1021,8 @@
 
 
   
+
+
+
+* Elixir code example 
+** [[https://elixirforum.com/t/pattern-matching-encoded-json/2950][pattern matching encoded json]]
