@@ -1019,11 +1019,59 @@
      - Sort them by name
      - Pass them into view as "select" input.
 5. Problem: my categories currently don't have unique value even when I already specify the unique contraint from schema.
-   - 
+   - The way I created table categories using migration 
+     #+begin_src elixir
+       defmodule Rumbl.Repo.Migrations.RecreateCategory do
+         use Ecto.Migration
 
+         def change do
+           create table(:categories) do
+             add :name, :string, null: false
 
+             timestamps()
+           end
 
-  
+           create unique_index(:categories, [:name])
+         end
+       end
+     #+end_src
+
+   - The way how I add Category using changeset 
+     - In multimedia.ex 
+       #+begin_src elixir
+         alias Rumbl.Multimedia.Category
+
+         def create_category!(name) do
+           %Category{}
+           |> Category.changeset(%{name: name})
+
+           Repo.insert!(%Category{name: name}, on_conflict: :nothing)
+         end
+       #+end_src
+
+     - In category.ex 
+       #+begin_src elixir
+         defmodule Rumbl.Multimedia.Category do
+           use Ecto.Schema
+
+           import Ecto.Changeset
+           import Ecto.Query
+
+           schema "categories" do
+             field :name, :string
+
+             timestamps()
+           end
+
+           def changeset(category, attrs) do
+             category
+             |> cast(attrs, [:name])
+             |> validate_required([:name])
+             |> unique_constraint(:name)    
+           end
+         end
+
+       #+end_src
 
 
 ** 03-07 
@@ -1079,8 +1127,51 @@
       #+end_src
       - It should shows false, but the valid is true...
         
-- What is a migration? How to delete the category table and create it again?
+- How to delete the category table and create it again?
   - ref: [[https://elixirforum.com/t/how-to-delete-drop-table/40018/6][How to delete/drop table?]]
+  - Steps 
+    1) Generate a migration
+       #+begin_src sh
+         mix ecto.gen.migration drop_category
+       #+end_src
+       - This command will contain a ~change~ function. By adding our custom logic into that ~change~ function, we could apply custom changes.
+    2) Add change function to the migration 
+       #+begin_src elixir
+         defmodule Rumbl.Repo.Migrations.DropCategory do
+           use Ecto.Migration
+
+           def change do
+             drop table("categories"), mode: :cascade
+           end
+         end
+       #+end_src
+    3) Apply those changes 
+       #+begin_src sh
+         mix ecto.migrate
+       #+end_src
   
+** 03-10
+- After we define our model using schema, how migration understand that model?
+  - It doesn't. We have to define the migration content by ourselves.
+  - For example:
+    - In our account/user.ex, we defined the following models 
+      #+begin_src elixir
+        defmodule Rumbl.Accounts.User do
+          use Ecto.Schema
+          import Ecto.Changeset
+
+          schema "users" do
+            field(:name, :string)
+            field(:username, :string)
+            timestamps()
+          end
+        end
+      #+end_src
+    - mix ecto.gen.migration create_users
+      - This will generate migration file named like: creating priv/repo/migrations/20180315023132_create_users.exs
+    - In that create_users.exs, the change is empty. We have to define how to operation the database.
+      So, we have to define how to create table, create attributes, and create indexes.
+    - At last, we use ~mix ecto.migrate~ to migrate up the database.
+    
 * Elixir code example 
 ** [[https://elixirforum.com/t/pattern-matching-encoded-json/2950][pattern matching encoded json]]
