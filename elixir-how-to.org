@@ -9,7 +9,7 @@
   - Rules
     - Module name starts with uppercase letter and is usually formated as CamelCase style.
     - Use ~.~ in module to represent herachichy. We could also define child module inside module.
-    - Function name are like abc_def. 
+    - Function name are like abc_def.
 
 * How to call functions from other module 
   - We could import other module into current module, to allow us to call functions without module prefix.
@@ -1173,5 +1173,9 @@
       So, we have to define how to create table, create attributes, and create indexes.
     - At last, we use ~mix ecto.migrate~ to migrate up the database.
     
+** 03-12 
+- How the test cases could know our helper functions?
+  - We define our helper functions in Rumbl.TestHelpers module.
+  - We then import them globally in Rumbl.DataCase module in ~test/support/data_case.ex~.
 * Elixir code example 
 ** [[https://elixirforum.com/t/pattern-matching-encoded-json/2950][pattern matching encoded json]]

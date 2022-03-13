@@ -72,4 +72,29 @@ defmodule Ch07 do
       where: c.name == "Sci-fi",
       select: {u, v}
   end
+
+  def test_constraint do
+    import Ecto.Query
+    alias Rumbl.Repo
+    alias Rumbl.Multimedia.{Video, Category}
+
+    category = Repo.get_by(Category, name: "Drama")
+    video = Repo.one(from v in Video, limit: 1)
+
+    changeset = Video.changeset(video, %{category_id: category.id})
+    Repo.update(changeset)
+
+    # try update video with a category that does't exist
+    changeset = Video.changeset(video, %{category_id: 9999})
+    #?? it should fail, but why it pass?
+  end
+
+  def test_constraint_delete do
+    alias Rumbl.Repo
+    alias Rumbl.Multimedia.Category
+
+    category = Repo.get_by(Category, name: "Drama")
+    Repo.delete(category)
+  end
+  
 end
