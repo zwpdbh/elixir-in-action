@@ -666,6 +666,129 @@
 - What is the differences between validation and constraint
   - Validation executed before touching the db. And constraint rely on the database.
   - Therefore, validation happends before constraint.
+** About channels
+- Channel is used for creating persistent connections.
+- Components 
+  1. Endpoint, in your Phoenix app's *Endpoint* module
+     #+begin_src elixir :file lib/rumbl_web/endpoint.ex
+       socket "/socket", RumblWeb.UserSocket,
+         websocket: true,
+         longpoll: false
+     #+end_src
+  2. Socket Handler
+     - On client side, we establish socket connection to the route
+       #+begin_src elixir :file assets/js/socket.js
+         import {Socket} from "phoenix"
+
+         let socket = new Socket("/socket", {
+           params: {token: window.userToken},
+           logger: (kind, msg, data) => {console.log(`${kind}: ${msg}`, data)}
+         })
+
+         export default socket
+       #+end_src
+       - The point here is to create websocket connection to connect to ~/socket~ defined in RumblWeb.Endpoint module.
+
+     - On server side, inside RumblWeb.UserSocket module
+       #+begin_src elixir :file rumbl_web/channels/user_socket.ex
+         defmodule RumblWeb.UserSocket do
+           use Phoenix.Socket
+
+           channel "videos:*", RumblWeb.VideoChannel
+
+           def connect(_params, socket, _connect_info) do
+             {:ok, socket}
+           end
+
+           def id(_socket) do
+             nil
+           end
+         end
+       #+end_src
+       - Whenever a client sends a message whose topic starts with "videos:", it will be routed to our ~VideoChannel~.
+       - Implemented two callbacks.
+         
+  3. Define ~VideoChannel~ module to manage messages.
+     #+begin_src elixir :file rumbl_web/channels/video_channel.ex
+       defmodule RumblWeb.VideoChannel do
+         use RumblWeb, :channel
+
+         # "videos:" <> video_id will match all topics starting with "videos:"
+         # and assign the rest of the topic to the video_id variable
+         def join("videos:" <> video_id, _params, socket) do
+           {:ok, assign(socket, :video_id, String.to_integer(video_id))}
+         end
+       end
+     #+end_src
+     - Let clients to join a given topic.
+
+  4. Get the client and server talking
+     - Create socket and join a channel.
+       #+begin_src js
+       socket.connect()
+       let vidChannel = socket.channel("videos:" + videoId)
+
+       vidChannel.join()
+         .receive("ok", resp => console.log("joined the video channel", resp))
+         .receive("error", reason => {
+           console.log("join failed", reason)
+         })
+       #+end_src
+
+     - Sending and Receiving events 
+       - On client 
+         #+begin_src js
+           vidChannel.on("ping", ({count} => console.log("PING", count)))
+         #+end_src
+
+       - On server 
+         #+begin_src elixir
+           defmodule RumblWeb.VideoChannel do
+             use RumblWeb, :channel
+
+             # "videos:" <> video_id will match all topics starting with "videos:"
+             # and assign the rest of the topic to the video_id variable
+             def join("videos:" <> video_id, _params, socket) do
+               # {:ok, assign(socket, :video_id, String.to_integer(video_id))}
+
+               :timer.send_interval(5000, :ping)
+               {:ok, socket}
+             end
+
+             def handle_info(:ping, socket) do
+               count = socket.assigns[:count] || 1
+
+               push(socket, "ping", %{count: count})
+               {:noreply, assign(socket, :count, count + 1)}
+             end
+           end
+         #+end_src
+         - Our server send to "videos:" channel a message for every 5 second.
+         - ~handle_info~ callback is invoked whenever an elixir message reaches the channel.
+           
+           
+
+- In general,
+  - On server
+    - Define a socket module and mount it as a socket endpoint. Inside this socket module:
+      - Implement ~id/1~ and ~connect/3~ methods.
+      - Define channel routes with its channel module.
+    - Define a channel module 
+      - Define how client join a given topic by implementing ~join/3~.
+      - Handle incoming events by using 
+        - ~handle_in~
+        - ~handle_out~
+        - ~handle_info~
+  - On client
+    - Import socket, connect to an socket endpoint defined by server.
+    - Create socket connection and join in a channel.
+    - Handle channel's event like ~someChannel.on("someEvent", callback)~.
+       
+       
+
+     
+
+
 ** 02-24 
 - create a project and start 
   #+begin_src sh
