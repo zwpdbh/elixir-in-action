@@ -1307,5 +1307,8 @@
   3) mix ecto.create
   4) mix ecto.migrate
     
+** 03-19 
+- How the js code in ~assets/js~ folder are available to the pages(template)
+- See, chapter10
 * Elixir code example 
 ** [[https://elixirforum.com/t/pattern-matching-encoded-json/2950][pattern matching encoded json]]
