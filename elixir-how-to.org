@@ -1303,12 +1303,34 @@
 ** 03-18
 - How to drop a entire dev database and recreate all associated tables?
   1) mix ecto.drop rumbl_dev --force-drop
-  2) mix ecto.migrations (Use this command to check the current migrations available.)
-  3) mix ecto.create
+  2) mix ecto.create
+  3) mix ecto.migrations (Use this command to check the current migrations available.)
   4) mix ecto.migrate
     
 ** 03-19 
 - How the js code in ~assets/js~ folder are available to the pages(template)
 - See, chapter10
+  
+** 03-21
+- How to quickly generate model (including schema and database change migration)
+  #+begin_src sh
+    mix phx.gen.schema Multimedia.Annotation annotations \
+        body:text at:integer \
+        user_id:references:users \
+        video_id:references:videos
+  #+end_src
+  - This command is create model annotation which including 4 fields 
+    - body
+    - at
+    - user_id
+    - video_id
+  - The result of running this command are two files one is migration_change. Another is annotation.ex file which changeset and schema.
+  - *Notice*, the schema here doesn't wire annotation with user or video.
+  - To bind relationship between annotation with user and video. We need to do it with manually with careful decision.
+  - *Don't forgot* to modify the corresponding video or user's schema to make space for annotation.
+  
+
 * Elixir code example 
 ** [[https://elixirforum.com/t/pattern-matching-encoded-json/2950][pattern matching encoded json]]
+
+
