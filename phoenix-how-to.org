@@ -7,12 +7,64 @@
 ** How authentication is implemented in Rumbl application as plug
 - In Rumbl, authentication is implemented with two plugs:
   - One is type of function plug, ~def authenticate_user(conn, _opts)~. It is used in ~user_controller~ module for action [:index, :show].
+    #+begin_src elixir :file lib/rumbl_web/router.ex
+      plug :authenticate_user when action in [:index, :show]
+    #+end_src
   - Another is type of module plug, the ~RumblWeb.Auth~. It is used in pipeline ~browser~.
+    #+begin_src elixir :file lib/rumbl_web/controllers/auth.ex
+      pipeline :browser do
+        plug :accepts, ["html"]
+        ...
+        # our own plug
+        plug RumblWeb.Auth
+      end
+    #+end_src
 - The module plug makes sure the conn's ~current_user~ property exist with value equals to ~user~ or ~nil~. This is for every connection.
 - The function plug makes sure request to UserController's index and show path must contains ~user~.
+
+** Controller are module plug to be used as [[https://hexdocs.pm/phoenix/controllers.html#action-fallback][action fallback]]
+- Action fallback allows us to centralize error handling code in plugs which are called when a controller action fails to return a ~%Plug.Conn{}~ struct.
 
     
 * Pipelines and Plugs 
 - Pipelines are a series of plugs that can be attached to specific scopes.
 - Routes are defined inside scopes and scopes may pipe through multiple pipelines.
+- The router invokes a pipeline on a route defined *within* a scope. Routes outside of a scope have no pipelines.
+** How to create pipelines
+- Define custom pipelines anywhere in the router module.
 
+* How to redirect a request 
+- For example, we want to redirect user after he/she created account.
+  #+begin_src elixir
+    def create(conn, %{"user" => user_params}) do
+      case Accounts.register_user(user_params) do
+        # Do login if we insert the newly registered user in database.
+        {:ok, user} ->
+          conn
+          |> RumblWeb.Auth.login(user)
+          |> put_flash(:info, "#{user.name} created!")
+          |> redirect(to: Routes.user_path(conn, :index))
+
+        {:error, %Ecto.Changeset{} = changeset} ->
+          render(conn, "new.html", changeset: changeset)
+      end
+    end
+  #+end_src
+  - *Notice*: Route helper function ~Routes.user_path~ is used to make sure the redirect path is correct.
+
+
+* Controller 
+** How to pass multiple values when render a template 
+- For one value, we could use key: value pair as the third argument. Such as: ~render(conn, "show.html", messenger: messenger)~.
+- For multiple values, we could use ~Plug.Conn.assign~:
+  #+begin_src elixir
+    def show(conn, %{"messenger" => messenger}) do
+      conn
+      |> assign(:messenger, messenger)
+      |> assign(:receiver, "Dweezil")
+      |> render("show.html")
+    end
+  #+end_src
+
+
+* 
