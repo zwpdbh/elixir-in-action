@@ -1,0 +1,18 @@
+* How to use Plug 
+- ref: https://hexdocs.pm/phoenix/plug.html
+  - For example, without using Plug, if we want to validate something in an controller, we will use nested blocks of code. 
+    After using Plug, we could replace those nested block of code wit ha flattened series of plug transformations.
+  - The ~halt(conn)~ the is key. It tells Plug that the next plug should not be invoked.
+    
+** How authentication is implemented in Rumbl application as plug
+- In Rumbl, authentication is implemented with two plugs:
+  - One is type of function plug, ~def authenticate_user(conn, _opts)~. It is used in ~user_controller~ module for action [:index, :show].
+  - Another is type of module plug, the ~RumblWeb.Auth~. It is used in pipeline ~browser~.
+- The module plug makes sure the conn's ~current_user~ property exist with value equals to ~user~ or ~nil~. This is for every connection.
+- The function plug makes sure request to UserController's index and show path must contains ~user~.
+
+    
+* Pipelines and Plugs 
+- Pipelines are a series of plugs that can be attached to specific scopes.
+- Routes are defined inside scopes and scopes may pipe through multiple pipelines.
+
