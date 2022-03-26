@@ -1198,5 +1198,8 @@
 
 * Elixir code example 
 ** [[https://elixirforum.com/t/pattern-matching-encoded-json/2950][pattern matching encoded json]]
-
-
+* How to implement network protocols 
+** TODO ref: [[https://www.youtube.com/watch?v=-FiQhkV7JYk][Going low level with TCP sockets and :gen_tcp - Orestis Markou - ElixirConf EU 2018]] 
+** TODO ref: [[https://github.com/spawnfest/wishvpn][wishvpn -- using Erlang]]
+** TODO ref: [[https://github.com/meh/elixir-socket][Elixir sockets made decent]]
+** ref: [[https://www.youtube.com/watch?v=UoxzAPBVuQs][Building a MySQL Database Driver in Elixir by Mohd Maqbool]]

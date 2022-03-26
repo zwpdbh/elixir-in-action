@@ -217,4 +217,9 @@
 
 
 * Other what/how
+** How to construct js code for channels 
+- Our js code will follow these patterns 
+  - Use "let Something = {}" to include all the code in it, then export it as "export default Something".
+  - It will contain "init" method as constructor.
+  - Other functions will be binded to it as "this.someFunction".
 
