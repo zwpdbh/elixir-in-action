@@ -91,7 +91,6 @@
 
 * Channels    
 ** About channels
-- Channel is used for creating persistent connections.
 - Components 
   1. Endpoint, in your Phoenix app's *Endpoint* module
      #+begin_src elixir :file lib/rumbl_web/endpoint.ex
@@ -208,9 +207,71 @@
     - Create channel using ~socket.channel~. After that join the channel(~someChannel.join~) and receive message (~someChannel.receive~).
     - Handle channel's event like ~someChannel.on("someEvent", callback)~.
        
-       
+** TODO General steps recorded from Rumbl application 
+In this application, we are using channels to build video annotation in real time.
 
-     
+1. Confirm we could establish the websocket connection. Here, we prepare the client and server for the channel.
+   1) Use JavaScript to build Phoenix client.
+      - Create a Video module in ~assets/js/video.js~.
+      - Initialize it from ~assets/js/app.js~.
+   2) In ~assets/js/user-socket.js~, we create socket and export this module.
+   3) The ~rumbl_web/channels/user_socket.ex~ defines the ~UserSocket~ module which serves as the starting point for all socket connections.
+
+   At this point, you should be able to connect to socket.
+
+2. Create the channel 
+   1) Define the channel the client will join: match a topic with a channel module.
+      #+begin_src elixir
+        channel "videos:*", RumblWeb.VideoChannel
+      #+end_src
+
+   2) Implement the VideoChannel module. It will alow connections through ~join~ function.
+      #+begin_src elixir
+        def join("videos:" <> video_id, _params, socket) do
+          ...
+        end
+      #+end_src
+      - Notice the pattern matching: it will match all topics starting with "videos:", and assign the rest of the topic to the ~video_id~.
+
+   3) Modify the ~video.js~ to 
+      - Create channel from the socket and give it our topic.
+      - Join the channel with ~receive~.
+
+3. Sending and receiving events (socket(different endpoint) --> channel(different topic) --> different event)
+   1) On server side, in our ~RumblWeb.VideoChannel~ module, we implement handle_in, handle_out, and handle_info. 
+      - Conceptually, we are taking a socket and returning a transformed socket.
+      - We could ~push~ some event.
+   2) On client side, receive that message with ~channel.on(event, callback)~.
+   3) Modify server side
+      - Handle the specific event(new_annotation) and broadcast it to all connected socket with event type: "new_annotation".
+   4) Modify client side
+      - When user click a button, we push annotation to channel with "new_annotation" event type with payload.
+      - Listen on "new_annotation" event and render the received message.
+      - Render annotation is done by creating a div with content and append that div to some element.
+
+      So, user click, push event --> server, receive it and broadcast it back to all client --> client handle event and display.
+
+4. Socket authentication
+   1) Expose the token to the client side in "lib/rumbl_web/templates/layout/app.html.heex".
+      #+begin_src html
+        <script>window.userToken = "<%= assigns[:user_token] %>"</script>
+      #+end_src
+
+   2) Add the ~:user_token~ to ~conn.assigns~ whenever we have a current user.
+   3) Pass the user token to the ~Socket~ constructor on the client
+   4) Update RumblWeb.UserSocket module using pattern matching for ~connect/2~ function.
+
+5. Persisting annotation
+
+
+
+
+
+
+
+
+
+
 
 
 
