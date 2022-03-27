@@ -303,6 +303,28 @@ In this application, we are using channels to build video annotation in real tim
        - During join/rejoin channel: compute this last seen id from all annotations's ids.
        - During an "new_annotation" event, just use this new arrived resp's id which is the last annotation's id.
 
+7. Tracking presence on a channel
+   1) Generate a presence module 
+      #+begin_src sh
+        mix phx.gen.presence
+      #+end_src
+      - The generated ~lib/rumbl_web/channels/presence.ex~ defines the functions we required for tracking presence on a channel.
+      - Add this module to *supervisor tree* in ~lib/rumbl/application.ex~.
+   2) On server, we ask Phoenix to track broadcast messages to our socket's topic about users coming and going. So, make changes on VideoChannel module 
+      - Send self a message when join in ~join~.
+      - In ~handle_info~, send message to all presence socket and ask RumblWeb.Presence module to track user.
+   3) On client
+      - Create element to hold user-lists.
+      - In video.js ~import {Presence} from "phoenix"~ and define callback function for ~presence.onSync~ in which we update the user-lists' content.
+   4) To display online users not just showing ID, we will build a context function to fetch the usernames for a list of ids.
+      - Build ~list_users_with_ids/1~ function in Rumbl.Accounts module.
+      - Use that function in RumblWeb.Presence module to decorate our presence information in ~fetch~ callback.
+      - Don't forget to do modification in ~presence.onSync~ in video.js.
+
+      
+      
+
+        
 
 * Ecto Queries and Constraints 
 ** Select 
