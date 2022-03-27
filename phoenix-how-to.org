@@ -262,19 +262,54 @@ In this application, we are using channels to build video annotation in real tim
    4) Update RumblWeb.UserSocket module using pattern matching for ~connect/2~ function.
 
 5. Persisting annotation
+   Extend multimedia context to attach those annotations to videos and users in DB.
+   1) Use ecto to generate schema 
+      #+begin_src sh
+        mix phx.gen.schema Multimedia.Annotation annotations body:text \
+            at:integer user_id:references:users video_id:references:videos
+
+        mix ecto.migrate
+      #+end_src
+
+   2) Wire up new relationships to Accounts.User and Multimedia.Video schemas. (Make choices!)
+      - Don't expose every association between modules. For example, here we don't want Accounts.User schema know about Multimedia.Annotations. (May revisit later)
+      - Add ~has_many~ to Multimedia.Video
+        #+begin_src elixir
+          has_many :annotations, Rumbl.Multimedia.Annotation
+        #+end_src
+   3) Update generated Annotation schema: make :user, :video fields "belongs_to".
+   4) Implement read and write video annotations features from Multimedia context rather than the schema. 
+      - For example:
+        - ~annotation_video~ which create annotation for a user and video.
+        - ~list_annotation~ which list all annotations for a given video.
+      - Head back to VideoChannel module to intergrate those features.
+   5) If we refresh page the messages are gone even they are in the DB. We need to pass the messages to the client when a user joins the channel.
+      - Update RumblWeb.VideoChannel's ~join~ function to pass down a list of annotations. (server side)
+      - Update ~vidChannel.join()~ from ~video.js~ (client side)
+   6) Schedule the annotations to appear synced up with the video playback. 
+      - Instead of rendering all annotations immediately on join, we schedule them to render based on the current player time.
+
+6. Handling disconnects
+   We need to prevent client to see duplicated message when it rejoin the channel after an unstable network.
+   - General idea:
+     - The idea is we track a ~last_seen_id~ on the client. Then whenever we rejoin a crash or disconnect, we send our ~last_seen_id~ to server.
+     - That way server could just send the data we missed.
+   - On server side, we need to return annotations after the ~last_seen_id~.
+     - So, we need to modify ~list_annotations~ function.
+     - Also, modify the place in VideoChannel module where calls ~list_annotations~.
+   - On client side
+     - We need to create and pass the ~last_seen_id~ to video channel, so it could be extract and used from server side. This is done from the second argument of ~socket.channel~. Phoenix will send those custom params when a user joins the channel.
+     - Track this ~last_seen_id~:
+       - During join/rejoin channel: compute this last seen id from all annotations's ids.
+       - During an "new_annotation" event, just use this new arrived resp's id which is the last annotation's id.
 
 
-
-
-
-
-
-
-
-
-
-
-
+* Ecto Queries and Constraints 
+** Select 
+1) Find the user whose id == 1 from User table
+   #+begin_src elixir
+     Rumbl.Repo.get_by(User, id: 1)
+   #+end_src
 
 
 * Other what/how
