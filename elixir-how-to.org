@@ -616,42 +616,14 @@
 #+end_src
 * How to do OAuth
 - ref: [[https://github.com/danschultzer/pow][Pow is a robust, modular, and extendable authentication and user management solution for Phoenix and Plug-based apps.]]
-* Elixir in action study note 
-- Chapter05 
-  - Introduces the concept of a server process. 
-  - A server process is a beam process that use recurive call (loop) to handle different messages.
-    
-- Chapter06
-  - Introduce the generic server process
-    - Instead of directly handle different message in that server process, we provide the server process with a callback module.
-    - The callback module receive and handle's the specific message
-      1) callback module call ~ServerProcess.start~ to register itself
-      2) callback module handle messages by call ~ServerProcess.call~ or ~ServerProcess.cast~ (those messages are sent into server process)
-      3) ~ServerProcess.call/cast~ goes into server process's loop:
-         - The message is processed in callback module's ~:handle_call~ or ~:handle_cast~. 
-         - Go back to server process loop, either update state to new state or send value in message to server process itself.
-         - In ~ServerProcess.call~ or ~ServerProcess.cast~, message will be received. This goes back to 2).
-    - The generic server process does
-      1) use endless recursive call to loop
-      2) in loop, *maintain state*
-      3) provide 2 type of interface functions to let callback module handle messages: one for sync, another for async.
-    - The pattern is very similar to other patterns: delication, master-worker, actor.
-  - Use ~GenServer~ instead of using our own implemented generic server process.
-    - ~init/1~
-    - ~handle_cast/2~
-    - ~handle_call/3~
-  - What is the context of state in GenServer
-    - During loop in server process, it needs to maintain state. So the state needed to be carried in loop as argument.
-    - This also means, the callback module called inside the loop need to accept that state as argument.
-    - So, in GenServer, the state is carried through argument.
-      
-- Chapter07       
-  - We learned principles:
-    - Make server process do things in sequential way.
-    - Spawn multiple server processes to handle concurrency.
-    - In general, 
-      - if we need to do synchronization between multiple processes, we let one dedicate process to handle these.
-      - make concurrent process run independently.
+
+* How to check a module's available functions 
+- <ModuleName>.__info__(:functions)
+- Example 
+  #+begin_src elixir
+    KeyValueStore.__info__(:functions)
+    [get: 2, handle_call: 2, handle_cast: 2, init: 0, put: 3, start: 0]
+  #+end_src
 
         
 * Elixir with Phoenix notes 

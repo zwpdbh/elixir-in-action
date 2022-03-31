@@ -1,0 +1,63 @@
+* A simple ServerProcess (ch05 from Elixir in Action)
+** The Generic server process 
+1. A *server process* is a beam process that use recurive call (loop) to handle different messages.
+   - Instead of directly handle different message in that server process, we provide the server process with a *callback module*.
+     
+2. The key to understand ServerProcess and callback module is:
+   - *The state related with our custom module is maintained inside server process, not by callback module(client) itself*.
+   - Therefore, the callback module is a group of pure functions.
+   - For example in KeyValueStore, the state which is a map of key and value is updated not in the KeyValueStore module but in the ServerProcess module, in its recursive loop.
+   - *callback functions* are always invoked in the server process., such as ~init/0~ and ~handle_call/2~.
+   - *interface functions* are run in the client processes.
+
+     
+3. The generic server process does
+   1) use endless recursive call to loop
+   2) in loop, *maintain state*
+   3) provide 2 type of interface functions to let callback module handle messages: one for sync, another for async.
+      
+4. The callback module receive and handle's the specific message.
+   1) callback module call ~ServerProcess.start~ to register itself
+   2) callback module handle messages by calling ~ServerProcess.call~ or ~ServerProcess.cast~. 
+      - So, those messages are sent into server process in which the state could be updated.
+      - The ~ServerProcess.call~ or ~ServerProcess.cast~ will send message to server_pid, so the messages are process in recursive ~loop~.
+   3) ~ServerProcess.call/cast~ goes into server process's loop.
+      In ServerProcess's recursive loop:
+      - The message is processed by *callback module*'s ~:handle_call~ or ~:handle_cast~ which all need to return a new state. 
+      - For ~:call~, we need to send message back before loop with new state.
+        - Because the ~ServerProcess.call~ is blocking to receive this message.
+      - After ~ServerProcess.call~ or ~ServerProcess.cast~ return. This goes back to in callback module 2).
+        
+* GenServer (ch06 from Elixir in Action)
+** How to use GenServer in our module 
+1) "use GenServer"
+2) Define callback functions: 
+   - ~init/1~
+   - ~handle_cast/2~
+   - ~handle_call/3~
+3) Define interface function for our module
+   - Use ~GenServer.start/2~ to start the process.
+   - Use ~GenServer.cast/2~, ~GenServer.call/2~ to issue requests.
+     
+** What is the context of state in GenServer
+- During loop in server process, it needs to maintain state. So the state needed to be carried in loop as argument.
+- This also means, the callback module called inside the loop need to accept that state as argument.
+- So, in GenServer, the state is carried through argument.
+
+** How to handle plain messages 
+- We may need to handle messages that aren't specific to GenServer. 
+  - For example, periodically send message by ~:timer.send_interval(5000, :cleanup)~.
+- Use GenServer callback ~handle_info~ to handle it:
+  #+begin_src elixir
+    def handle_info(:cleanup, state) do
+      IO.puts "performance cleanup"
+      {:noreply, state}
+    end
+  #+end_src
+    
+* Principles for building concurrency system (ch07 from Elixir in Action)
+- Make server process do things in sequential way.
+- Spawn multiple server processes to handle concurrency.
+- In general, 
+  - if we need to do synchronization between multiple processes, we let one dedicate process to handle these.
+  - make concurrent process run independently.

@@ -1,9 +1,20 @@
 defmodule KeyValueStore do
   use GenServer
 
+  def start do
+    GenServer.start(KeyValueStore, nil)
+  end
+
+  def put(pid, key, value) do
+    GenServer.cast(pid, {:put, key, value})
+  end
+
+  def get(pid, key) do
+    GenServer.call(pid, {:get, key})
+  end
+  
   @impl GenServer
   def init(_) do
-    :timer.send_interva(5000, :cleanup)
     {:ok, %{}}
   end
 
@@ -23,30 +34,6 @@ defmodule KeyValueStore do
   @impl GenServer
   def handle_call({:get, key}, _, state) do
     {:reply, Map.get(state, key), state}
-  end
-
-  def start do
-    # register a local name
-    # GenServer.start(KeyValueStore, nil, name: :KeyValueStore)
-    GenServer.start(KeyValueStore, nil, name: __MODULE__)
-  end
-
-  # def put(pid, key, value) do
-  #   GenServer.cast(pid, {:put, key, value})
-  # end
-  def put(key, value) do
-    # GenServer.cast(KeyValueStore, {:put, key, value})
-
-    GenServer.cast(__MODULE__, {:put, key, value})
-  end
-
-  # def get(pid, key) do
-  #   GenServer.call(pid, {:get, key})
-  # end
-
-  # __MODULE__ will be replaced with the name of the module where the code resides:
-  def get(key) do
-    GenServer.call(__MODULE__, {:get, key})
   end
 end
 
