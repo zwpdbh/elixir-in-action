@@ -1203,3 +1203,94 @@
 ** TODO ref: [[https://github.com/spawnfest/wishvpn][wishvpn -- using Erlang]]
 ** TODO ref: [[https://github.com/meh/elixir-socket][Elixir sockets made decent]]
 ** ref: [[https://www.youtube.com/watch?v=UoxzAPBVuQs][Building a MySQL Database Driver in Elixir by Mohd Maqbool]]
+
+* How to implement workflow 
+** Refs 
+- [[https://hexdocs.pm/gen_stage/GenStage.html][Stages are data-exchange steps that send and/or receive data from other stages.]]
+- [[https://elixirforum.com/t/suggestions-for-workflow-automation-sequencing/32149][Suggestions for workflow & automation sequencing]]
+- [[https://www.youtube.com/watch?v=aPh4Z3SioB8][Dataflow Programming]]
+  
+** Requirements 
+- Workflow must be composed from other workflow. This means one step in a workflow could also be a workflow by itself.
+- Workflow could be defined at runtime (probably from external sources)
+- Workflows can be executed as trees.
+  #+begin_src text
+                 +-------+      +-------+
+                 |       |      |       |
+        +-------->   F   +------>   B   |
+        |        |       |      |       |
+        |        +-------+      +-------+
+    +---+---+    +-------+      +-------+
+    |       |    |       |      |       |
+    |   X   +---->   Y   +----->+   Z   |
+    |       |    |       |      |       |
+    +-------+    +-------+      +-------+
+  #+end_src
+  - F, and Y depend on X, so F and Y could be run only when X is true.
+  - ANd F and Y are independent to each other. They can run in parallel.
+  
+** My notes 
+- General idea 
+  - The idea is that you build a model of the computation as a data structure separate from the execution at runtime, how you implement this can be optimized depending on your domain.  
+- It seems there are two approaches 
+  1. Module each step in workflow as simple functions. 
+     - Every workflow is just a function in its most basic form.
+     - Functions could be chained by ~|>~ operator as another function's definition.
+     - The workflow could be defined at runtime as MFA (Module, Function, Arguments) tuples.
+       #+begin_src elixir
+         apply(module, function, arguments)
+       #+end_src
+     - A simple example could be 
+       #+begin_src elixir
+         defmodule St.Workflow do
+  
+           def step01(params) do
+             IO.puts("step01")
+             params
+           end
+
+
+           def step02(params) do
+             IO.puts("step02")
+             params
+           end
+
+           def step03(params) do
+             IO.puts("step03")
+             params
+           end
+
+           def workflow01(params) do
+             params
+             |> step01
+             |> step02
+           end
+
+
+           def workflow02(params) do
+             params
+             |> step02
+             |> step03
+           end
+
+           def workflow03(params) do
+             params
+             |> workflow01
+             |> workflow02
+           end
+
+           def execute([head | tail], [params]) do
+             apply(St.Workflow, String.to_atom(head), [params])
+             execute(tail, [params])
+           end
+
+           def execute([], [params]) do
+             params
+           end
+         end
+
+         St.Workflow.execute(["workflow01", "workflow03"], [%{}])
+       #+end_src
+     
+  2. Module each step in workflow as a elixir process which receive and send messages.
+       
