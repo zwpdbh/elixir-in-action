@@ -63,9 +63,52 @@
    - Each of those callbacks receive the current state and must return its new version, which is used by the GenServer loop in place of the old one.
   
   
-* Principles for building concurrency system (ch07 from Elixir in Action)
+* Building concurrency system (ch07 from Elixir in Action)
+** General rules 
 - Make server process do things in sequential way.
 - Spawn multiple server processes to handle concurrency.
 - In general, 
   - if we need to do synchronization between multiple processes, we let one dedicate process to handle these.
   - make concurrent process run independently.
+
+** How to build a concurrency system (to-do lists example)
+- Goal: a distributed HTTP server than can handle many end users who are simultaneously manipulating many to-do lists.
+- Component
+  - A pure functional Todo.List abstraction.
+  - A to-do server process that can be used to manage one to-do list for a long time.
+
+  
+* How to build a concurency system
+** Components
+1. Workflow module 
+   - A pure group of functions. 
+     - Each function receive a "params" map, and return a modifed "params" map.
+   - State: it has no interal state, this module only have pure functions to make functions in this module composible.
+     
+2. WorkflowExecution module
+   - A module for managing a workflow's execution.
+   - State: 
+     - A map contains a workflow execution's context.
+     - It will be passed as the first argument to each workflow during execution.
+   - Features of this module 
+     1) Life cycle management of a workfow
+        - when start, when finished
+     2) Check current workflow's status (how???)
+        - A workfow's log could reflect its status.
+        - When a step of workflow is executed, it could send mesage to a pid to update its status(the params map).
+          - DeploymentService use the concept of "Execution Pointers" to indicate each steps's status
+          - We also need to record similar information, such that if something goes wrong, we could clean up created resources.
+     3) Terminate a workflow 
+        - A workflow could become terminated if it is finished.
+        - Or, we could kill it.
+          
+   - So, the first argument of workflow should contains ??
+     #+begin_src elixir
+       %{}
+     #+end_src
+   - In general, WorkflowExecution spawn a group workflow and manage them.         
+
+
+
+      
+
