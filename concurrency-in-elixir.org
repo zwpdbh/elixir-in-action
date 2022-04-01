@@ -54,7 +54,15 @@
       {:noreply, state}
     end
   #+end_src
-    
+
+** Understand the GenServer-powered processes. 
+1) A client process starts the server by calling ~GenServer.start~ and providing the callback module. This creates the new server process which is powered by ~GenServer~.
+2) When a message is received, ~GenServer~ invokes callback functions to handle it. Therefore, callback functions are always executed in server process.
+3) The client process state is maintained in the GenServer loop but it is defined and manipulated by the callback functions:
+   - It starts with ~init/1~ which defines the initial state that is then passed to subsequent ~handle_*~ callbacks.
+   - Each of those callbacks receive the current state and must return its new version, which is used by the GenServer loop in place of the old one.
+  
+  
 * Principles for building concurrency system (ch07 from Elixir in Action)
 - Make server process do things in sequential way.
 - Spawn multiple server processes to handle concurrency.
