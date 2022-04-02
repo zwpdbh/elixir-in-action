@@ -76,18 +76,125 @@
 - Component
   - A pure functional Todo.List abstraction.
   - A to-do server process that can be used to manage one to-do list for a long time.
+  - A cache for managing a map: we create Todo.Server instances or fetch the existing ones.
+    - key is the to-do list name
+    - value is the to-do server pid.
+   
+    This is how we work with multple to-do lists: run one instance of the existing to-do server for each to-do list.
+    
+* Fault-tolerance basics (ch08 from Elixir in Action)
+** Rumtime error types
+   BEAM distinguish 3 types of runtime errors ~:error~, ~:exit~, or ~:throw~.
+1) For ~:error~
+   - For example, invalid arithmetic expression, call a nonexistent function, patter-matching error.
+   - You can *raise* your own error by using ~raise/1~ macro. If a function eplicitly raises an error, it should be appended with the ~!~ character to its name, for instance, ~File.open!~.
+2) For ~:exit~
+   - Use ~exit/1~ to exit the current process.
+3) For ~:throw~
+   - ~throw(:thrown_value)~
+   - The purpose of throws is allow nonlocal returns. 
+   
+** Linking processes (*bidirectional*)
+1) If two processes are linked, and one of the terminates, the other process receives a *exit signal*, a notification that a process has crashed.
+   - A exit signal contains the pid of the crashed process and the *exit reasion*.
 
-  
-* How to build a concurency system
-** Components
+2) When a process terminates abnormally, the linked process is also take down.
+3) How to create linked process 
+   - If a link is created when you start a process, use ~spawn_link/1~.
+   - Otherwise, use ~Process.link/1~ which connect the current process with another process.
+4) Usually we don't want a linked process to crash. We could detect the process crash using *trapping exits*.
+   #+begin_src elixir
+     spawn(fn ->
+       Process.flag(:trap_exit, true)
+       spawn_link(fn -> raise("something went wrong") end)
+
+       Process.sleep(1000)
+       receive do
+         msg -> IO.inspect(msg)
+       end
+     end)
+   #+end_src
+   - Format of the exit singal message is: ~{:EXIT, from_pid, exit_reason}~.
+     + If a process is terminated due to a throw or an error, the exit reason is a tuple in the form ~{reason, where}~.
+     + If a process is terminated due to an exit, the reason is a term provided to ~exit/1~.
+** Monitors (*unidirectional*)
+1) Make the current process monitor the target process. 
+   #+begin_src elixir
+     monitor_ref = Proccess.monitor(target_pid)
+   #+end_src
+   - If the monitored process dies, your process receives a message in the format:
+     ~{:DOWN, monitor_ref, :process, from_pid, exit_reasion}~.
+2) Stop the monitor 
+   #+begin_src elixir
+     Process.demonitor(monitor_ref)
+   #+end_src
+
+3) Exits are propagated through GenServer calls.
+   When you issue a synchronous request via ~GenServer.call~, if a server process crashes, an exit signal will occur in your client process.
+   
+** Supervisors 
+1) A supervisor is a generic process whose only responsibility is to receive links and monitor notifications, and do something when a process crashes.
+2) Processes that aren't supervisors are called *workers*.
+3) When invoke ~Supervisor.start_link(child_specs, options)~, the following happens:
+   - The new process is started, powered by the ~Supervisor~ module.
+   - The supervisor process goesthrough the list of child specifications and starts each child, one by one.
+   - Each specification is resolved, if needed, by invoking ~child_spec/1~ from the corresponding module.
+   - The supervisor starts the child process, according to the ~:start~ filed of the child specification.
+
+4) Start the supervisor as a module 
+   #+begin_src elixir
+     defmodule Todo.System do
+       def start_link do
+         Supervisor.start_link(
+           [Todo.Cache],
+           strategy: :one_for_one
+         )
+       end
+     end
+
+     # Todo.System.start_link()
+   #+end_src
+   
+   Another callback module way to use supervisor 
+   #+begin_src elixir
+     defmodule Todo.System do
+       use Supervisor
+
+       def start_link do
+         Supervisor.start_link(__MODULE__, nil)
+       end
+
+       def init(_) do
+         Supervisor.init([Todo.Cache], strategy: :one_for_one)
+       end
+     end
+   #+end_src
+
+5) Learned functions 
+   #+begin_src elixir
+     # Get the pid from registered name
+     cache_pid = Process.whereis(Todo.Cache)
+
+     # Kill the process
+     Process.exit(cache_pid, :kill)
+
+     # Verify what the injected implementation of child_spec/1 returns:
+     Todo.Cache.child_spec(nil)
+
+     # check the number of running processes:
+     :erlang.system_info(:process_count)
+   #+end_src
+   
+* TODO How to build a concurency system
+** Components (with implementation order)
 1. Workflow module 
    - A pure group of functions. 
      - Each function receive a "params" map, and return a modifed "params" map.
-   - State: it has no interal state, this module only have pure functions to make functions in this module composible.
+   - Interal state: it has no interal state, this module only have pure functions to make functions in this module composible.
      
 2. WorkflowExecution module
-   - A module for managing a workflow's execution.
-   - State: 
+   - A module for managing a workflow's execution. It will implement ~GenServer~.
+   - Interal state: 
      - A map contains a workflow execution's context.
      - It will be passed as the first argument to each workflow during execution.
    - Features of this module 
@@ -102,11 +209,41 @@
         - A workflow could become terminated if it is finished.
         - Or, we could kill it.
           
-   - So, the first argument of workflow should contains ??
+   - So, the first argument of workflow should contains ???
      #+begin_src elixir
        %{}
      #+end_src
-   - In general, WorkflowExecution spawn a group workflow and manage them.         
+     
+3. WorkflowManager module (how we work with multiple workflow executions)
+   1) One workflow execution --- manage one workflow
+      - A workflow execution maintains the state of a scenario test.
+   2) A workflow manager --- manage multiple workflow executions (we run only one instance of this process)
+      - A workflow manager manage multiple workflow execution
+        - Do statistic collection
+        - For some of execution, need to *sync* their result into group.
+      - Given a workflow execution id, we create WorkflowExecution instance or fetch the existing one.
+      - WorkflowManager module will implement ~GenServer~
+        
+   (see page 183 about how Todo.Cache is implemented)
+
+   Concurrent behavior:
+   1. Multiple clients (possibly a large number of http requests) issue requests to the single WorkflowManager process.
+   2. Multiple clients communicate with multiple WorkflowExecution processes.
+   3. Each WorkflowExecution process are independent to each other.
+     
+4. Database (how to persisting data)
+   - Database module will use ~GenServer~.
+   - The persisting data is all the workflow executions' state.
+   - Database module, manage a pool of database workers, and forward database requests to them.
+   - DatabaseWorker module, perform read/write operations on the database.
+
+     
+     
+   
+
+   
+
+
 
 
 
