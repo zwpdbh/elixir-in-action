@@ -1,0 +1,22 @@
+* Ch03: Introduction to Evolutionary Computation 
+** 3.2 Extracting the essentials of biological evolution
+** 3.3 Formulating a Given Problem in Evolutionary Terms
+- One of the representation for a computer program, or a function, which yields easily to mutation and variation, is through the use of trees.
+  - The leaf nodes can be elements like: 0, 1, Pi, input.
+  - The non-leaf nodes are the mathematical functions(operators).
+  - Very easy to create mutation offspring:
+    - adding new nodes to the tree, in random locations
+    - take two or more trees and swap branches between them.
+  - Multi-rooted trees as graphs.
+    
+** 3.4 The Different Flavors of Evolutionary Algorithms
+Create a genotype encoding with a mapping to phenotype, a fitness function, a selection algorithm, and the mutation oeprator you wish to apply during the reproduction/offspring-creation phase.
+Four most commonly known variations of evolutionary computation (EC):
+1. Genetic algorithms (GA)
+   - Primarily relies on crossover.
+2. Genetic Programming (GP)
+   - A specialized type of GA that deals with not string encoded genotypes or chromosomes, but tree based programs.
+3. Evolutionary Strategies (ES)
+   - ES is another variation on the simple GA approach, which evolves not only the genotype, but also these evolutionary parameters, the evolutionary strategy itself.
+4. Evolutionary algorithms
+  

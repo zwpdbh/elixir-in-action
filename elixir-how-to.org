@@ -1,9 +1,5 @@
-* How to define functions 
-  - Functions with same name but different arity is different function.
-* How to define private function 
-  - def is public, defp is private
-  
-* How to organize code 
+* DONE How to organize code 
+CLOSED: [2022-04-03 周日 13:12]
   - A module is a collection of functions, like namespace. Functions must be defined inside a module.
   - A file can contain multiple module.
   - Rules
@@ -11,7 +7,8 @@
     - Use ~.~ in module to represent herachichy. We could also define child module inside module.
     - Function name are like abc_def.
 
-* How to call functions from other module 
+* DONE How to call functions from other module 
+CLOSED: [2022-04-03 周日 13:13]
   - We could import other module into current module, to allow us to call functions without module prefix.
   - We could use change the module's name 
     #+begin_src text
@@ -28,17 +25,15 @@
       end
     #+end_src
     
-* How define constants in modules
-  - Module attributes.
-    - ~@~ constant exists only during the compilation of the module.
-    
-* How to compile the code 
+* DONE How to compile the code 
+CLOSED: [2022-04-03 周日 13:13]
   - In Emacs, ~M-x alchemist-iex-send-last-sexp~.
   - In terminal, ~iex geometry.ex~.
   
   The code will be compiled and resulting module is loaded into the runtime.
   
-* How to do type specification
+* DONE How to do type specification
+CLOSED: [2022-04-03 周日 13:13]
   #+begin_src elixir
     defmodule Circle do
       @pi 3.14
@@ -50,16 +45,18 @@
     end
   #+end_src
   
-* How to get the integer from div
+* DONE How to get the integer from div
+CLOSED: [2022-04-03 周日 13:13]
   - The division operator ~/~ always return float.
   - To get integer use 
     - ~div~ to get the integer part.
     - ~rem~ to get the remainder
   
-* How to define constant 
+* DONE How to define constant 
+CLOSED: [2022-04-03 周日 13:13]
   - *Atom*, like ~:this_is_an_atom~
 
-* How to use Tuples
+* How to use Tuples                                           :DataStructure:
   #+begin_src elixir
     person = {"bob", 25}
     
@@ -67,7 +64,7 @@
     put_elem(person, 1, 100) # => {"bob", 100}
   #+end_src
   - Untyped structure, or record, group a *fixed* number of element together.
-* How to use List 
+* How to use List                                             :DataStructure:
   #+begin_src elixir
     iex(11)>prime_numbers = [2, 3, 5, 7]
     [2, 3, 5, 7]
@@ -117,51 +114,105 @@
     [:new_element, 5, :value, true]
   #+end_src
   
-* How to use Map 
-  - As key/value store 
-    #+begin_src elixir
-      # Dynamically sized map 
-      empty_map = %{}
-      
-      # map with value
-      squares = %{1 => 1, 2 => 4, 3 => 9}
-      # or 
-      squares = Map.new([{1, 1}, {2, 4}, {3, 9}])
-      
-      # fetch value for a given key 
-      squares[2] # where 1 is the key, => 4
-      squares[7] # => nil
-      # or 
-      Map.get(squares, 2) # => 4
-      Map.get(squares, 8, :not_found) #=> :not_found, use this to specify default value.
-      Map.fetch(squares, 5) #=> :error  This will distinguishly produce  
-      # or raise exception 
-      Map.fetch!(squares, 5)
-    #+end_src
-  - power dynamically sized key/value structures, overlap Tuples' feature but let you to access fields by name
-    #+begin_src elixir
-      bob = %{:name => "Bob", :age => 25, :works_at => "Initech"}
-      # if keys are atom, we could short as 
-      bob = %{name: "Bob", age: 25, works_at: "Initech"}
-       
-      
-      # fetch 
-      bob[:works_at] # => Initech
-      bod[:non_exist_key] #=> nil 
-      # or use short syntax if key is atom 
-      bob.age #=> 25
-      # though it will get KeyError if the key is not exist
-      
-      
-      next_bob = %{bob | age: 26}
-      # => %{age: 26, name: "Bob", works_at: "Initech"}
-      next_bob = %{bob | age: 26, works_at: "no_where"} # change multiple key/value
-    #+end_src
-    - Can only update keys exist in map!
-    - *Use map to hold structured* data is very common.
-      
-* Why use struct instead of map
-- ~struct~ can catch key not match error at compile time. 
+* Tuples, keywork lists, map and struct                       :DataStructure:
+Two key pieces missing from tuples and lists:
+- Tuples are relatively annonymous structures. Relying on specific order and number of components in tuples can create maintainance headaches.
+- Lists have similar problems: the usual appraoches to list processing assume that lists are just sequences of similar parts.
+  
+Sometimes we want to call things out by name instead of number, or pattern matching to a specific location.  
+
+** Mixing lists and tuples 
+- How to convert two lists into a single list of tuples or vice versa?
+  #+begin_src elixir
+    list1 = ["Hydrogen", "Helium", "Lithium"]
+    list2 = ["H", "He", "Li"]
+    list3 = [1, 2 ,3]
+
+    element_list = Enum.zip(list1, list2) # [{"Hydrogen", "H"}, {"Helium", "He"}, {"Lithium", "Li"}]
+    seperate_lists = Enum.unzip(element_list) # {["Hydrogen", "Helium", "Lithium"], ["H", "He", "Li"]}
+  #+end_src
+  
+** Keyword lists 
+1. It is used to process lists of tuples containing two elements that can be considered as "key and value" pair, where the key is an atom.
+2. Elixir display them in keywork list format.
+   
+** Map 
+From lists to map: Keyword lists are a convenient way to address content stored in lists by key, but underneath, Elixir is still walking through the list. That might be OK if you have other plans for that list requiring walking through all of it, but it can be unnecessary overhead if you’re planning to use keys as your only approach to the data.
+
+1. As key/value store 
+   #+begin_src elixir
+     # Dynamically sized map 
+     empty_map = %{}
+
+     # map with value
+     squares = %{1 => 1, 2 => 4, 3 => 9}
+     # or 
+     squares = Map.new([{1, 1}, {2, 4}, {3, 9}])
+
+     # fetch value for a given key 
+     squares[2] # where 1 is the key, => 4
+     squares[7] # => nil
+     # or 
+     Map.get(squares, 2) # => 4
+     Map.get(squares, 8, :not_found) #=> :not_found, use this to specify default value.
+     Map.fetch(squares, 5) #=> :error  This will distinguishly produce  
+     # or raise exception 
+     Map.fetch!(squares, 5)
+   #+end_src
+2. Power dynamically sized key/value structures, overlap Tuples' feature but let you to access fields by name
+   #+begin_src elixir
+     bob = %{:name => "Bob", :age => 25, :works_at => "Initech"}
+     # if keys are atom, we could short as 
+     bob = %{name: "Bob", age: 25, works_at: "Initech"}
+
+
+     # fetch 
+     bob[:works_at] # => Initech
+     bod[:non_exist_key] #=> nil 
+     # or use short syntax if key is atom 
+     bob.age #=> 25
+     # though it will get KeyError if the key is not exist
+
+
+     next_bob = %{bob | age: 26}
+     # => %{age: 26, name: "Bob", works_at: "Initech"}
+     next_bob = %{bob | age: 26, works_at: "no_where"} # change multiple key/value
+   #+end_src
+   - Can only update keys exist in map!
+   - *Use map to hold structured* data is very common.
+
+** Struct 
+From maps to structs: Structs are extensions built on top of maps that provide compile-time checks and default values.
+1. Define struct 
+   #+begin_src elixir
+     defstruct [
+       :account_name,
+       :account_key,
+       :aad_token_provider,
+       :cloud_environment_suffix,
+       :is_development_factory
+     ]
+   #+end_src
+
+
+* Protocols
+1. What is a protocol 
+   - It is a module in which you declare functions without implementing them.
+2. Why we need protocol if we already could achieve polymorphism using patter matching?
+   (Remember: polymorphism means you want behavior to vary depending on the data type.)
+   1) Consider this example, we have a simple Utility module to tell use the types of input variable:
+      #+begin_src elixir
+        defmodule Utility do
+          def type(value) when is_binary(value), do: "string"
+          def type(value) when is_integer(value), do: "integer"
+          # ... other implementations ...
+        end
+      #+end_src
+      - This only works well if we implement this code and this code is not shared by multiple apps. Because there would be no easy way to extend its features.
+   2) Protocol can help us:
+      - The protocol implementation doesn't need to be part of any module. It means: you can implement a protocol for a type even if you can't modify the type's source code.
+      - Dispatching on a protocol is available to any data type that has implemented the protocol and a protocol can be implemented by anyone, at any time.
+
 * How to process binaries 
   - A binary is a chunk of byte
   - Create binary by enclosing the byte sequence
@@ -464,10 +515,6 @@
     - ~get_and_update_in/2~
   - Those macros rely on the *Access* module. So, if we want our custom data to work with Access, we need to implement a couple of function required by *Access* contract. See: [[https://hexdocs.pm/elixir/Access.html][Access behaviour]]
 
-* How to achieve polymorphism using protocols
-  - What is a protocol 
-    It is a module in which you declare functions without implementing them.
-  - The protocol implementation doesn't need to be part of any module. It means: you can implement a protocol for a type even if you can't modify the type's source code.
 
 * How to register a process
   - If you know there will always be only one instance of some type of server, you can give the process a local name and use that name to send messages to the process. The name is called local because it has meaning only in the currently running BEAM instance.

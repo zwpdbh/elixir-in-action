@@ -1,0 +1,8 @@
+* From RESTful API to SDK (use [[https://github.com/elixir-azure/ex_microsoft_azure_storage][elixir-azure]] as example )
+** How ~list_containers~ works
+- Notes
+#+begin_src text
+  new_azure_storage_request() -- from container.ex 
+	
+	
+#+end_src  
