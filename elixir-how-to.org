@@ -181,18 +181,29 @@ From lists to map: Keyword lists are a convenient way to address content stored 
    - Can only update keys exist in map!
    - *Use map to hold structured* data is very common.
 
-** Struct 
-From maps to structs: Structs are extensions built on top of maps that provide compile-time checks and default values.
-1. Define struct 
-   #+begin_src elixir
-     defstruct [
-       :account_name,
-       :account_key,
-       :aad_token_provider,
-       :cloud_environment_suffix,
-       :is_development_factory
-     ]
-   #+end_src
+** Struct (tagged map)
+From maps to structs: Structs are extensions built on top of maps that provide compile-time checks and default values. 
+#+begin_src elixir
+  defmodule Microsoft.Azure.Storage do
+    @derive {Inspect, except: [:account_key]}
+    defstruct [
+      :account_name,
+      :account_key,
+      :aad_token_provider,
+      :cloud_environment_suffix,
+      :is_development_factory
+    ]
+    ...
+  end
+#+end_src
+- It is only possible to define a struct per module, as the struct it tied to the module itself
+- Its fields:
+  - could be a keyword list
+  - or, a list of atoms as in this example: in this case, the atoms in the list will be used as the struct's field names and they will all default to ~nil~.
+- About ~@derive~ 
+  - ref: [[https://hexdocs.pm/elixir/Protocol.html#derive/3][derive/3]]
+  - It is used with ~defstruct~, see [[https://hexdocs.pm/elixir/Kernel.html#defstruct/1-deriving][deriving]].
+- Here, we define a custom strcut and make it could be inspected, except ~:account_key~ field.
 
 
 * Protocols
@@ -212,6 +223,27 @@ From maps to structs: Structs are extensions built on top of maps that provide c
    2) Protocol can help us:
       - The protocol implementation doesn't need to be part of any module. It means: you can implement a protocol for a type even if you can't modify the type's source code.
       - Dispatching on a protocol is available to any data type that has implemented the protocol and a protocol can be implemented by anyone, at any time.
+      - So, rewrite those features as a protocol 
+        #+begin_src elixir
+          defprotocol Utility do
+            @spec type(t) :: String.t()
+            def type(value)
+          end
+
+          #  spread them over multiple files as needed
+          defimpl Utility, for: BitString do
+            def type(_value), do: "string"
+          end
+
+          defimpl Utility, for: Integer do
+            def type(_value), do: "integer"
+          end
+        #+end_src
+      - Functions defined in a protocol may have more than one input, but the dispatching will always be based on the data type of the first input.
+3. The power of Elixir’s extensibility comes when protocols and structs are used together.
+4. [[https://elixir-lang.org/getting-started/protocols.html#deriving][Deriving]]
+   
+   
 
 * How to process binaries 
   - A binary is a chunk of byte

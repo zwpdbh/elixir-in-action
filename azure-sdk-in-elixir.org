@@ -2,7 +2,27 @@
 ** How ~list_containers~ works
 - Notes
 #+begin_src text
-  new_azure_storage_request() -- from container.ex 
+  From list_containers 
 	
+  new_azure_storage_request() -- from container.ex 
+
+  storage = %Storage{} -- from request_builder.ex 	
+    - defined in storage.ex	
+
+		
+  # prepare request params	
+  %{
+    storage_context: storage,
+    method: :get ,
+    url: "/",
+    query: ??
+  }	
+		
+  # sign_and_call	
+  - Tesla
+    adapter(:ibrowse)	
+    Tesla.build_client()
+	
+  - What is "(&RestClient.request(connection, &1)"
 	
 #+end_src  
