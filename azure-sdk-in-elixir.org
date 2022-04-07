@@ -26,3 +26,22 @@
   - What is "(&RestClient.request(connection, &1)"
 	
 #+end_src  
+
+* How to contribute to this project 
+- General steps 
+  1) Create a personal fork of the project on Github.
+  2) Clone the fork on your local machine. Your remote repo on Github is called ~origin~.
+  3) Add the original repository as a remote called ~upstream~.
+  4) If you created your fork a while ago be sure to pull upstream changes into your local repository.
+  5) Create a new branch to work on! Branch from ~develop~ if it exists, else from ~master~.
+  6) Implement/fix your feature, comment your code.
+     - Follow the code style of the project, including indentation.
+     - If the project has tests run them!
+     - Write or adapt tests as needed.
+     - Add or change the documentation as needed.
+     - Squash your commits into a single commit with git's [[https://docs.github.com/en/get-started/using-git/about-git-rebase][interactive rebase]]. Create a new branch if necessary.
+  7) Push your branch to your fork on Github, the remote ~origin~.
+  8) From your fork open a pull request in the correct branch. Target the project's ~develop~ branch if there is one, else go for ~master~.
+  9) Once the pull request is approved and merged you can pull the changes from ~upstream~ to your local repo and delete your extra branch(es).
+     
+  Notice: Your commit message should describe what the commit, when applied, does to the code – not what you did to the code.
