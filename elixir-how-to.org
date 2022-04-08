@@ -1353,4 +1353,3 @@ From maps to structs: Structs are extensions built on top of maps that provide c
    - [[https://resources.infosecinstitute.com/topic/pdf-file-format-basic-structure/][PDF file format: Basic structure]]
 2) Refs
    - [[https://elixirforum.com/t/lib-for-pdf-processing/2992][Lib for pdf processing]]
-
