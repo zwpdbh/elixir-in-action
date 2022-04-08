@@ -1345,3 +1345,12 @@ From maps to structs: Structs are extensions built on top of maps that provide c
      
   2. Module each step in workflow as a elixir process which receive and send messages.
        
+
+
+* Preparation for my website 
+** How to process PDF (extract text from a large PDF file)
+1) PDF format explain 
+   - [[https://resources.infosecinstitute.com/topic/pdf-file-format-basic-structure/][PDF file format: Basic structure]]
+2) Refs
+   - [[https://elixirforum.com/t/lib-for-pdf-processing/2992][Lib for pdf processing]]
+
