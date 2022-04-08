@@ -1,0 +1,5 @@
+* Refs
+- [[http://nicolasdilley.com/?p=1][How to write an interpreter using Elixir]]
+- [[https://medium.com/@sfhrizvi/writing-lispex-a-lisp-interpreter-in-elixir-423cd2c439ac][Writing Lispex, a Lisp interpreter in Elixir]]
+
+  
