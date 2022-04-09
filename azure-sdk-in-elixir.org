@@ -45,3 +45,7 @@
   9) Once the pull request is approved and merged you can pull the changes from ~upstream~ to your local repo and delete your extra branch(es).
      
   Notice: Your commit message should describe what the commit, when applied, does to the code – not what you did to the code.
+
+
+* How to use [[https://github.com/zabirauf/ex_microsoftbot#elixir-microsoft-bot-framework-client][Elixir Microsoft Bot Framework Client]]
+

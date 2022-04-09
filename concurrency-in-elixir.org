@@ -30,19 +30,23 @@
         
 * GenServer (ch06 from Elixir in Action)
 ** How to use GenServer in our module 
-1) "use GenServer"
-2) Define callback functions: 
+1) Define server callback functions: 
    - ~init/1~
    - ~handle_cast/2~
    - ~handle_call/3~
-3) Define interface function for our module
+2) Define client API:
    - Use ~GenServer.start/2~ to start the process.
    - Use ~GenServer.cast/2~, ~GenServer.call/2~ to issue requests.
+     
+The client is any process that invokes the client functions.
+The server is always the process identify or process name that we explicitly pass as argument to the client API.     
      
 ** What is the context of state in GenServer
 - During loop in server process, it needs to maintain state. So the state needed to be carried in loop as argument.
 - This also means, the callback module called inside the loop need to accept that state as argument.
-- So, in GenServer, the state is carried through argument.
+- So, in GenServer, the state is carried as
+  - the last argument for server all callbacks
+  - the last element in the return tuple
 
 ** How to handle plain messages 
 - We may need to handle messages that aren't specific to GenServer. 
@@ -61,7 +65,7 @@
 3) The client process state is maintained in the GenServer loop but it is defined and manipulated by the callback functions:
    - It starts with ~init/1~ which defines the initial state that is then passed to subsequent ~handle_*~ callbacks.
    - Each of those callbacks receive the current state and must return its new version, which is used by the GenServer loop in place of the old one.
-  
+4) A [[https://elixir-lang.org/downloads/cheatsheets/gen-server.pdf][GenServer cheat sheet]]
   
 * Building concurrency system (ch07 from Elixir in Action)
 ** General rules 
