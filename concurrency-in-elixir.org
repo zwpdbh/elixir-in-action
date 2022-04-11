@@ -137,58 +137,72 @@ The server is always the process identify or process name that we explicitly pas
    When you issue a synchronous request via ~GenServer.call~, if a server process crashes, an exit signal will occur in your client process.
    
 ** Supervisors 
-1) A supervisor is a generic process whose only responsibility is to receive links and monitor notifications, and do something when a process crashes.
-2) Processes that aren't supervisors are called *workers*.
-3) When invoke ~Supervisor.start_link(child_specs, options)~, the following happens:
-   - The new process is started, powered by the ~Supervisor~ module.
-   - The supervisor process goesthrough the list of child specifications and starts each child, one by one.
-   - Each specification is resolved, if needed, by invoking ~child_spec/1~ from the corresponding module.
-   - The supervisor starts the child process, according to the ~:start~ filed of the child specification.
+- A supervisor is a generic process whose only responsibility is to receive links and monitor notifications, and do something when a process crashes.
+- Processes that aren't supervisors are called *workers*.
+- When invoke ~Supervisor.start_link(child_specs, options)~, the following happens:
+  1) The new process is started, powered by the ~Supervisor~ module.
+  2) The supervisor process goes through the list of child specifications and starts each child, one by one.
+  3) Each specification is resolved, if needed, by invoking ~child_spec/1~ from the corresponding module. 
+     - The ~child_spec/1~ function is automatically defined when we use Agent, GenServer and Supervisor, etc.
+  4) The supervisor starts the child process, according to the ~:start~ filed of the child specification.
 
-4) Start the supervisor as a module 
-   #+begin_src elixir
-     defmodule Todo.System do
-       def start_link do
-         Supervisor.start_link(
-           [Todo.Cache],
-           strategy: :one_for_one
-         )
-       end
-     end
+- Start the supervisor as a module 
+  #+begin_src elixir
+    defmodule Todo.System do
+      def start_link do
+        Supervisor.start_link(
+          [Todo.Cache],
+          strategy: :one_for_one
+        )
+      end
+    end
 
-     # Todo.System.start_link()
-   #+end_src
+    # Todo.System.start_link()
+  #+end_src
    
-   Another callback module way to use supervisor 
-   #+begin_src elixir
-     defmodule Todo.System do
-       use Supervisor
+  Another callback module way to use supervisor 
+  #+begin_src elixir
+    defmodule Todo.System do
+      use Supervisor
 
-       def start_link do
-         Supervisor.start_link(__MODULE__, nil)
-       end
+      def start_link do
+        Supervisor.start_link(__MODULE__, nil)
+      end
 
-       def init(_) do
-         Supervisor.init([Todo.Cache], strategy: :one_for_one)
-       end
-     end
-   #+end_src
+      def init(_) do
+        Supervisor.init([Todo.Cache], strategy: :one_for_one)
+      end
+    end
+  #+end_src
 
-5) Learned functions 
-   #+begin_src elixir
-     # Get the pid from registered name
-     cache_pid = Process.whereis(Todo.Cache)
+** Other notes 
+- Every time you add a new child to a supervisor, it is important to evaluate if the supervisor strategy is correct as well as the order of child processes.
 
-     # Kill the process
-     Process.exit(cache_pid, :kill)
+- Learned functions 
+  #+begin_src elixir
+    # Get the pid from registered name
+    cache_pid = Process.whereis(Todo.Cache)
 
-     # Verify what the injected implementation of child_spec/1 returns:
-     Todo.Cache.child_spec(nil)
+    # Kill the process
+    Process.exit(cache_pid, :kill)
 
-     # check the number of running processes:
-     :erlang.system_info(:process_count)
-   #+end_src
-   
+    # Verify what the injected implementation of child_spec/1 returns:
+    Todo.Cache.child_spec(nil)
+
+    # check the number of running processes:
+    :erlang.system_info(:process_count)
+  #+end_src
+  
+** Current questions
+- Explain ~start_link~, ~child_spec~, 
+- Why use ETS?
+  - Notice that before our changes KV.Registry.lookup/2 sent requests to the server, but now it reads directly from the ETS table, which is shared across all processes. That’s the main idea behind the cache mechanism we are implementing.
+- Differences between task, agents, generic servers, and supervisors.
+  - Common
+  - Different 
+    
+- About task 
+  - Pass a two-element tuple as child specification, which in turn will invoke Task.start_link/1.
 * TODO How to build a concurency system
 ** Components (with implementation order)
 1. Workflow module 
