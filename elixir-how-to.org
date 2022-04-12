@@ -273,6 +273,45 @@ From maps to structs: Structs are extensions built on top of maps that provide c
     #+begin_src elixir
       <<1, 2>> <> <<3, 4>> # => <<1, 2, 3, 4>>
     #+end_src
+** How to view a string's binary representation
+#+begin_src elixir
+  # A common trick in Elixir when you want to see the inner binary representation of a string is to concatenate the null byte <<0>> to it:
+  iex> "hełło" <> <<0>>
+  <<104, 101, 197, 130, 197, 130, 111, 0>>
+
+  # Alternatively, you can view a string’s binary representation by using IO.inspect/2:
+  iex> IO.inspect("hełło", binaries: :as_binaries)
+  <<104, 101, 197, 130, 197, 130, 111>>
+#+end_src
+
+** How to match on a binary of unknown size 
+#+begin_src elixir
+  iex> <<0, 1, x::binary>> = <<0, 1, 2, 3>>
+  <<0, 1, 2, 3>>
+  iex> x
+  <<2, 3>>
+#+end_src
+
+** How to match n bytes in a binary 
+#+begin_src elixir
+  iex> <<head::binary-size(2), rest::binary>> = <<0, 1, 2, 3>>
+  <<0, 1, 2, 3>>
+  iex> head
+  <<0, 1>>
+  iex> rest
+  <<2, 3>>
+#+end_src
+
+** How to pattern match on string with multibyte characters 
+#+begin_src elixir
+  iex> <<x::utf8, rest::binary>> = "über"
+  "über"
+  iex> x == ?ü
+  true
+  iex> rest
+  "ber"
+#+end_src
+- Therefore, when pattern matching on strings, it is important to use the utf8 modifier.
 
 * How to represent string 
   - String in elixir is either a binary or a list type.
