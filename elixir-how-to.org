@@ -291,6 +291,11 @@ From maps to structs: Structs are extensions built on top of maps that provide c
   iex> x
   <<2, 3>>
 #+end_src
+- Matching on arbitrary length can only be done at end of the pattern and not anywhere else.
+- If you have the data which can be arbitrary bit length then you can add ~bitstring~ instead, so the pattern now looks like.  
+  #+begin_src elixir
+    <<header :: size(8), data :: bitstring>>
+  #+end_src
 
 ** How to match n bytes in a binary 
 #+begin_src elixir
