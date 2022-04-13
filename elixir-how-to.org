@@ -245,7 +245,7 @@ From maps to structs: Structs are extensions built on top of maps that provide c
    
    
 
-* How to process binaries 
+* How to process binary
   - A binary is a chunk of byte
   - Create binary by enclosing the byte sequence
     #+begin_src elixir
@@ -318,6 +318,25 @@ From maps to structs: Structs are extensions built on top of maps that provide c
 #+end_src
 - Therefore, when pattern matching on strings, it is important to use the utf8 modifier.
 
+** Example: chunk from PNG 
+- Chunk format 
+  #+begin_src text
+    +--------------+----------------+-------------------+
+    |  Length (32) | Chunk type (32)| Data (Length size)|
+    +--------------+----------------+-------------------+
+    |   CRC (32)   |
+    +--------------+
+  #+end_src
+- Pattern matching the chunk format 
+  #+begin_src elixir
+    <<length     :: size(32),
+      chunk_type :: size(32),
+      chunk_data :: binary - size(length),
+      crc        :: size(32),
+      chunks     :: binary>>
+  #+end_src
+  - Another way of defining n byte length is ~binary - size(n)~. 
+  - =Note=: we matched ~length~ in pattern and used in the pattern as well. In Elixir pattern matching you can use the assigned variable in the pattern following it, thats why we are able to extract the ~chunk_data~ based on the ~length~.
 * How to represent string 
   - String in elixir is either a binary or a list type.
   - String inter -- evaluate values in string template
@@ -748,7 +767,11 @@ From maps to structs: Structs are extensions built on top of maps that provide c
     [get: 2, handle_call: 2, handle_cast: 2, init: 0, put: 3, start: 0]
   #+end_src
 
-        
+* Dynamic dispatch 
+- Ref: [[https://dnlserrano.dev/2019/12/21/behaviours-and-dynamic-dispatch.html][Behaviours and Dynamic dispatch]]
+  - It shows how to use Behaviours to transform a dynamic dispatch on function to dynamic dispath on module.
+
+
 * Elixir with Phoenix notes 
 ** 02-24 
 - create a project and start 
