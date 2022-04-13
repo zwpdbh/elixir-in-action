@@ -1,8 +1,8 @@
 # So, this module with Behaviour could achieve m by n functions.
 # We define m modules to implement n callbacks 
 defmodule MD do
-  @callback prepare_it(integer) :: {:ok, String.t}
-  @callback prepare_it({integer, integer}) :: {:ok, String.t}
+  @callback prepare_it({Any, Any, Any}) :: {:ok, String.t}
+  @callback prepare_it({Any, Any}) :: {:ok, String.t}
 
   def prepare(some_type, some_value) do
     some_type_impl = prepare_for(some_type)
@@ -23,7 +23,7 @@ defmodule MD.Coffee do
   @behaviour MD
 
   @impl MD
-  def prepare_it(x) do
+  def prepare_it({x, _y, _z}) do
     {:ok, "#{x}"}
   end
 
@@ -37,7 +37,7 @@ end
 defmodule MD.Tea do
   @behaviour MD
 
-  def prepare_it(x) do
+  def prepare_it({x, _y, _z}) do
     {:ok, "minus #{x}"}
   end
 
