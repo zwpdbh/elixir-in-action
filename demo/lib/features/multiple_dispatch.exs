@@ -1,6 +1,6 @@
 # So, this module with Behaviour could achieve m by n functions.
 # We define m modules to implement n callbacks 
-defmodule MD do
+defmodule MultiDispatch do
   @callback prepare_it({Any, Any, Any}) :: {:ok, String.t}
   @callback prepare_it({Any, Any}) :: {:ok, String.t}
 
@@ -10,32 +10,32 @@ defmodule MD do
   end
 
   def prepare_for(:coffee) do
-    MD.Coffee
+    MultiDispatch.Coffee
   end
 
   def prepare_for(:tea) do
-    MD.Tea
+    MultiDispatch.Tea
   end
 end
 
 
-defmodule MD.Coffee do
-  @behaviour MD
+defmodule MultiDispatch.Coffee do
+  @behaviour MultiDispatch
 
-  @impl MD
+  @impl MultiDispatch
   def prepare_it({x, _y, _z}) do
     {:ok, "#{x}"}
   end
 
-  @impl MD
+  @impl MultiDispatch
   def prepare_it({x, y}) do
     {:ok, "#{x} * #{y}"}
   end
 end
 
 
-defmodule MD.Tea do
-  @behaviour MD
+defmodule MultiDispatch.Tea do
+  @behaviour MultiDispatch
 
   def prepare_it({x, _y, _z}) do
     {:ok, "minus #{x}"}
@@ -43,6 +43,17 @@ defmodule MD.Tea do
 
   def prepare_it({x, y}) do
     {:ok, "#{x} / #{y}"}
+  end
+end
+
+defmodule MultiDispatch.Demo do
+  def test do
+    IO.inspect MultiDispatch.prepare(:coffee, {10, 20})
+    IO.inspect MultiDispatch.prepare(:coffee, {10, 20, 30})
+
+    IO.inspect MultiDispatch.prepare(:tea, {10, 20})
+
+    MultiDispatch.prepare(:tea, {10, 20, 30})
   end
 end
 
