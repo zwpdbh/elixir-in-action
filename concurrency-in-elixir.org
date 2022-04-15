@@ -1,11 +1,11 @@
-* A simple ServerProcess (ch05 from Elixir in Action)
+* A simple ServerProcess (ch06 from Elixir in Action)
 ** The Generic server process 
 1. A *server process* is a beam process that use recurive call (loop) to handle different messages.
    - Instead of directly handle different message in that server process, we provide the server process with a *callback module*.
      
 2. The key to understand ServerProcess and callback module is:
    - *The state related with our custom module is maintained inside server process, not by callback module(client) itself*.
-   - Therefore, the callback module is a group of pure functions.
+   - Therefore, the callback module is a group of =pure functions=.
    - For example in KeyValueStore, the state which is a map of key and value is updated not in the KeyValueStore module but in the ServerProcess module, in its recursive loop.
    - *callback functions* are always invoked in the server process., such as ~init/0~ and ~handle_call/2~.
    - *interface functions* are run in the client processes.
@@ -37,9 +37,9 @@
 2) Define client API:
    - Use ~GenServer.start/2~ to start the process.
    - Use ~GenServer.cast/2~, ~GenServer.call/2~ to issue requests.
-     
-The client is any process that invokes the client functions.
-The server is always the process identify or process name that we explicitly pass as argument to the client API.     
+3) Some notes
+   - The client is any process that invokes the client/interface functions.
+   - The server is always the process identify or process name that we explicitly pass as argument to the client API.     
      
 ** What is the context of state in GenServer
 - During loop in server process, it needs to maintain state. So the state needed to be carried in loop as argument.
@@ -196,7 +196,7 @@ The server is always the process identify or process name that we explicitly pas
 ** Current questions
 - Explain ~start_link~, ~child_spec~, 
 - Why use ETS?
-  - Notice that before our changes KV.Registry.lookup/2 sent requests to the server, but now it reads directly from the ETS table, which is shared across all processes. That’s the main idea behind the cache mechanism we are implementing.
+  - Notice that before our changes KV.Registry.lookup/2 sent requests to the server, but now it reads directly from the ETS table, which is shared across all processes. That鈥檚 the main idea behind the cache mechanism we are implementing.
 - Differences between task, agents, generic servers, and supervisors.
   - Common
   - Different 
@@ -267,3 +267,13 @@ The server is always the process identify or process name that we explicitly pas
 
       
 
+
+
+
+* Nodes -- ch16 in Programming Elixir
+- A common pattern: we have a module that is responsible both for spawning a process and for providing the external interface to that process.
+- The general rue is to register your process names when your application starts.
+- About input, output, pid and nodes (p227)
+  - In elixir, you identify an open file or device by the pid of its I/O server.
+  - The default device used by IO.puts is returned by the function ~:erlang.group_leader~.
+  - So, by register the pid returned by ~group_leader~ under a global name, such as our node name. We can pass it to IO.puts. The output appears in the registered node terminal window.

@@ -39,7 +39,7 @@ defmodule Scheduler do
         send(pid, {:shutdown})
 
         if length(processes) > 1 do
-          # we only delete works when there are no more jobs
+          # we only begin to delete works when there are no more jobs
           schedule_processes(List.delete(processes, pid), queue, results)
         else
           Enum.sort(results, fn {n1, _}, {n2, _} -> n1 <= n2 end)
