@@ -1,0 +1,5 @@
+In this component, we seperate a server module using GenServer into 3 parts:
+1. Sequence, The API module, which exposes interfaces to the user to call. It forward those rquest to our Server module.
+2. Sequence.Server, The Server module, which implement GenServer's callback functions to handle different messages. 
+   It doesn't contain any business logic.
+3. Sequence.Impl, The business logic is implemented in Impl module. Its function will be used by server module.

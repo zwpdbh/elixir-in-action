@@ -771,7 +771,15 @@ From maps to structs: Structs are extensions built on top of maps that provide c
 - Ref: [[https://dnlserrano.dev/2019/12/21/behaviours-and-dynamic-dispatch.html][Behaviours and Dynamic dispatch]]
   - It shows how to use Behaviours to transform a dynamic dispatch on function to dynamic dispath on module.
 
-
+* Difference between alias, use, require and import in Elixir 
+1) ~alias~ is used to give shortcut names for a model.
+2) ~import~: Aliases are great for shortening module names but what if we use functions from given module extensively and want to skip using module name part? 
+   ~import~ imports all public functions and macros from given module.
+3) ~require~ is different from either ~import~ or ~alias~. 
+   - It is used like ~alias~, but different from it that it will compile module first.
+   - So, if a module contains a macro, and we ant to use at SomeModule.SomeMacro, ~require~ will work but not ~alias~.
+4) ~use~ allow us to inject any code in the current module. 
+   
 * Elixir with Phoenix notes 
 ** 02-24 
 - create a project and start 

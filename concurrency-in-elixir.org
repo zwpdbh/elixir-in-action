@@ -196,7 +196,7 @@
 ** Current questions
 - Explain ~start_link~, ~child_spec~, 
 - Why use ETS?
-  - Notice that before our changes KV.Registry.lookup/2 sent requests to the server, but now it reads directly from the ETS table, which is shared across all processes. That鈥檚 the main idea behind the cache mechanism we are implementing.
+  - Notice that before our changes KV.Registry.lookup/2 sent requests to the server, but now it reads directly from the ETS table, which is shared across all processes. That閳ユ獨 the main idea behind the cache mechanism we are implementing.
 - Differences between task, agents, generic servers, and supervisors.
   - Common
   - Different 
@@ -277,3 +277,85 @@
   - In elixir, you identify an open file or device by the pid of its I/O server.
   - The default device used by IO.puts is returned by the function ~:erlang.group_leader~.
   - So, by register the pid returned by ~group_leader~ under a global name, such as our node name. We can pass it to IO.puts. The output appears in the registered node terminal window.
+
+* OTP: Servers -- ch17 in Programming Elixir
+1. ~start_link~ function asks GenServer to start a new process and link to us.
+   - The second argument to ~start_link~ is the state which comes from the GenServer's callback function ~init~.
+   - You can think of ~init~ as being like the constructor in an OOP language.
+     - A constructor takes values and creates the object's initial state.
+     - ~init~ takes some initial value and uses it to construct the state of the server.
+2. Tracing a server's execution
+   - In the third parameter to ~start_link~ is a set of options 
+     #+begin_src elixir
+       GenServer.start_link(Sequence.Server, state, [debug: [:trace]])
+     #+end_src
+   - We could also include ~:statistic~  to the debug list 
+     #+begin_src elixir
+       {:ok,pid} = GenServer.start_link(Sequence.Server, 100, [debug: [:statistics]])
+
+       iex> :sys.statistics pid, :get
+       {:ok,
+        [
+          start_time: {{2017, 12, 23}, {14, 6, 7}},
+          current_time: {{2017, 12, 23}, {14, 6, 24}},
+          reductions: 36,
+          messages_in: 2,
+          messages_out: 0
+        ]}
+     #+end_src
+3. =sys= module is our interface to the world of system messages.
+   - The list associated with the debug parameter you give to GenServer is simply the names of functions to call in the sys module.
+   - We can turn things on and off after you have started a server. 
+     #+begin_src elixir
+       iex> :sys.trace pid, true
+       :ok
+       iex> GenServer.call(pid, :next_number) *DBG* <0.69.0> got call next_number from <0.25.0>
+       ,*DBG* <0.69.0> sent 105 to <0.25.0>, new state 106
+       105
+       iex> :sys.trace pid, false
+       :ok
+       iex> GenServer.call(pid, :next_number)
+       106
+     #+end_src
+     - ~pid~ is the result of ~GenServer.start_link~.
+   - Other useful function
+     - ~:sys.get_status pid~.
+       - We could customize the formatting of the status message GenServer provides.
+         #+begin_src elixir
+           def format_status(_reason, [ _pdict, state ]) do
+             [data: [{'State', "My current state is '#{inspect state}', and I'm happy"}]]
+           end
+         #+end_src
+
+4. GenServer Callbacks and corresponding caller. (p238, ch17)
+   - ~init(start_argument)~, <-- GenServer.start_link or GenServer.start 
+   - ~handle_call(request, from, state)~, <-- GenServer.call(pid, request)
+   - ~handle_cast(request, state)~, <-- GenServer.cast(pid, request)
+   - ~handle_info(info, state)~, message send by pass GenServer will be routed to this function.
+
+   Responses are common between call and cast:
+   #+begin_src elixir
+     {:noreply, new_state [, :hibernate | timeout]}
+     {:stop, reason, new_state}
+   #+end_src
+   
+   Only ~handle_call~ can use:
+   #+begin_src elixir
+     {:reply, response, new_state [, :hibernate | timeout]}
+     {:stop, reason, reply, new_state}
+   #+end_src
+   
+5. Naming a process 
+   - Local naming, use the ~name:~ option (unique for all OTP processes on our node.)
+     #+begin_src elixir
+       iex> { :ok, pid } = GenServer.start_link(Sequence.Server, 100, name: :seq)
+       {:ok,#PID<0.58.0>}
+       iex> GenServer.call(:seq, :next_number)
+       100
+     #+end_src
+
+
+* OTP: Supervisor -- ch18 in Elixir Programming
+A server module which uses GenServer is just a regular Elixir process. How to handle it if our server crashes?
+
+
