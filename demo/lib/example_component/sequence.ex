@@ -1,8 +1,8 @@
 # Our API module, is the public face of our component.
 defmodule Sequence do
   @server Sequence.Server
-  def start_link(current_number) do
-    GenServer.start_link(@server, current_number, name: @server)
+  def start_link(_) do
+    GenServer.start_link(@server, Sequence.Stash.get(), name: @server)
   end
 
   def next_number do

@@ -16,6 +16,10 @@ defmodule Sequence.Server do
     {:noreply, Impl.increment(current_number, delta)}
   end
 
+  def terminate(_reason, current_number) do
+    Sequence.Stash.update(current_number)
+  end
+  
   def format_status(_reason, [_pdict, state]) do
     [data: [{'State', "My current state is '#{inspect state}, and I'am happy"}]]
   end
