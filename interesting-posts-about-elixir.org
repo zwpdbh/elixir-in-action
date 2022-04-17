@@ -1,6 +1,9 @@
+#+SEQ_TODO: TODO DOING  | REVIEWING DONE PUBLISHED ABANDONED
 * TODO Three real-world examples of distributed Elixir 
 ** Part01: [[https://medium.com/@bigardone/three-real-world-examples-of-distributed-elixir-pt-1-dac70420b1a8][Building a simple cluster]]
 * [[https://hansonkd.medium.com/building-beautiful-binary-parsers-in-elixir-1bd7f865bf17][Visual Programming with Elixir: Learning to Write Binary Parsers]]
 * [[https://medium.com/coryodaniel/from-erverless-to-elixir-48752db4d7bc][From $erverless to Elixir]]
-* Let’s Build |> a Slack Clone with Elixir, Phoenix, and React
+* Let's Build |> a Slack Clone with Elixir, Phoenix, and React
 ** [[https://medium.com/@benhansen/lets-build-a-slack-clone-with-elixir-phoenix-and-react-part-1-project-setup-3252ae780a1][part 1]]
+* Production code upgrades in elixir (point 4.5)
+- ref: [[https://blog.appsignal.com/category/production-code-upgrades-in-elixir.html][production-code-upgrades-in-elixir]]

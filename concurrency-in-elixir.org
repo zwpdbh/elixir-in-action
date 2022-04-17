@@ -169,12 +169,17 @@
         Supervisor.start_link(__MODULE__, nil)
       end
 
+      @impl true 
       def init(_) do
         Supervisor.init([Todo.Cache], strategy: :one_for_one)
       end
     end
   #+end_src
   - ~use Supervisor~ also defines a ~child_spec/1~ function which allows us to run this Todo.System as a child for another supervisor.
+  - In this supervisor module 
+    - Like GenServer, ~start_link~ --> Supervisor.init.
+    - The first argument of Supervisor.init is a list of child_spec.
+    - One child_spec can be obtained by ~Supervisor.child_spec~ function.
 
   =Note=: A general guideline is to use the supervisor without a callback module only at the top of your supervision tree, generally in the Application.start/2 callback. We recommend using module-based supervisors for any other supervisor in your application, so they can run as a child of another supervisor in the tree.
 
@@ -362,3 +367,8 @@
 A server module which uses GenServer is just a regular Elixir process. How to handle it if our server crashes?
 
 
+
+
+
+* About Supervisor Module 
+- ref: [[https://blog.appsignal.com/2021/08/23/using-supervisors-to-organize-your-elixir-application.html][Using Supervisors to Organize Your Elixir Application]]
