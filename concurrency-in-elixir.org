@@ -371,8 +371,8 @@ A server module which uses GenServer is just a regular Elixir process. How to ha
 
 
 * About Supervisor Module 
-1) ref: [[https://blog.appsignal.com/2021/08/23/using-supervisors-to-organize-your-elixir-application.html][Using Supervisors to Organize Your Elixir Application]]
-2) How to add worker to a custom supervisor module at runtime 
+1. ref: [[https://blog.appsignal.com/2021/08/23/using-supervisors-to-organize-your-elixir-application.html][Using Supervisors to Organize Your Elixir Application]]
+2. How to add worker to a custom supervisor module at runtime 
    - Given 
      - Currently, our supervision tree looks like this 
        - OurNewApp.Supervisor 
@@ -389,7 +389,7 @@ A server module which uses GenServer is just a regular Elixir process. How to ha
      - Supervisor.start_child/2
      - Supervisor.delete_child/2
      - Supervisor.restart_child/2
-3) How to add a new subtree with its own children (without creating a special module for the subtree supervisor)
+3. How to add a new subtree with its own children (without creating a special module for the subtree supervisor)
    #+begin_src elixir
      children_specs = [10000, 20000, 30000] |> Enum.map(fn x ->
          Supervisor.child_spec({OurNewApp.Counter, x}, id: x)
@@ -418,5 +418,40 @@ A server module which uses GenServer is just a regular Elixir process. How to ha
      #+begin_src elixir
        Application.stop(:our_new_app)
      #+end_src
-     
+4. How to terminate a GenServer process with customization
+   1) Modify the state it holds to hold a marker which will be indicate if process has been ordered to terminate.
+   2) Through interface function, invoke GenServer.call and send message to indicate this process need to be terminated.
+   3) During handle_call for that message, set the termination marker.
+   4) User timer to send periodic info to self()
+   5) During handle_info, check if the termination mark is present and if the desired condition is reached.
+      - If so, {:stop, :normal, state}
+      - Otherwise, update state (and timer)
+        
+   Note: during init/1, we also need to set flag 
+   #+begin_src elixir
+     Process.flag(:trap_exit, true)
+   #+end_src
+   
+5. Beased on we could terminate a GenServer process, how to terminate a group of GenServer worker processes when we stop the application.
+   - To do this, we must implement the callbacks ~prep_stop/1~.
+   - For example 
+     #+begin_src elixir
+       @impl true
+       def prep_stop(st) do
+         stop_tasks =
+           Supervisor.which_children(OurNewApp.CounterSup)
+           |> Enum.map(fn {_, pid, _, _} ->
+             Task.async(fn ->
+               :ok = OurNewApp.Counter.stop_gracefully(pid)
+             end)
+           end)
 
+         Task.await_many(stop_tasks)
+
+         st
+       end
+     #+end_src
+   
+   
+     
+   
