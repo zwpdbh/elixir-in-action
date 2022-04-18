@@ -371,4 +371,52 @@ A server module which uses GenServer is just a regular Elixir process. How to ha
 
 
 * About Supervisor Module 
-- ref: [[https://blog.appsignal.com/2021/08/23/using-supervisors-to-organize-your-elixir-application.html][Using Supervisors to Organize Your Elixir Application]]
+1) ref: [[https://blog.appsignal.com/2021/08/23/using-supervisors-to-organize-your-elixir-application.html][Using Supervisors to Organize Your Elixir Application]]
+2) How to add worker to a custom supervisor module at runtime 
+   - Given 
+     - Currently, our supervision tree looks like this 
+       - OurNewApp.Supervisor 
+         - OurNewApp.CounterSup 
+           - {OurNewApp.Counter, 10000}
+           - {OurNewApp.Counter, 20000}
+     - WE want to add an exra OurNewApp.Counter under OurNewApp.CounterSup
+   - General steps 
+     #+begin_src elixir
+       new_child_spec = Supervisor.child_spec({OurNewApp.Counter, 30000}, id: 30000)
+       Supervisor.start_child(OurNewApp.CounterSup, new_child_spec)
+     #+end_src
+   - Notes:
+     - Supervisor.start_child/2
+     - Supervisor.delete_child/2
+     - Supervisor.restart_child/2
+3) How to add a new subtree with its own children (without creating a special module for the subtree supervisor)
+   #+begin_src elixir
+     children_specs = [10000, 20000, 30000] |> Enum.map(fn x ->
+         Supervisor.child_spec({OurNewApp.Counter, x}, id: x)
+       end)
+
+     hand_crafted_sup_spec = %{
+       id: :hand_crafted_sup,
+       start: {Supervisor, :start_link, [children_specs, [strategy: :one_for_one]]},
+       type: :supervisor,
+       restart: :permanent,
+       shutdown: 5000
+     }
+
+     Supervisor.start_child(OurNewApp.Supervisor, hand_crafted_sup_spec)
+   #+end_src
+   - Now, the supervision tree becomes 
+     - OurNewApp.Supervisor (the root of our supervision tree)
+       - OurNewApp.CounterSup 
+         - {OurNewApp.Counter, 10000}
+         - {OurNewApp.Counter, 20000}
+       - :hand_crafted_sup 
+         - {OurNewApp.Counter, 10000}
+         - {OurNewApp.Counter, 20000}
+         - {OurNewApp.Counter, 30000}
+   - We could stop our application by 
+     #+begin_src elixir
+       Application.stop(:our_new_app)
+     #+end_src
+     
+
