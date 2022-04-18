@@ -16,10 +16,6 @@ defmodule SonarSweep do
     current
   end
 
-  def find_increased_aux([], current) do
-    current
-  end
-
   # part two: https://adventofcode.com/2021/day/1#part2
   def find_increased02(records) do
     find_increased_aux02(records, 0)
@@ -28,7 +24,7 @@ defmodule SonarSweep do
   def find_increased_aux02([x1, x2, x3, x4 | tail], current) do
     part1 = x1 + x2 + x3
     part2 = x2 + x3 + x4
-    if part1 > part2 do
+    if part1 < part2 do
       find_increased_aux02([x2, x3, x4 | tail], current + 1)
     else
       find_increased_aux02([x2, x3, x4 | tail], current)
@@ -36,10 +32,6 @@ defmodule SonarSweep do
   end
 
   def find_increased_aux02([_, _, _ | tail], current) when tail == [] do
-    current + 1
-  end
-
-  def find_increased_aux02([x], current) when length(x) < 3 do
     current
   end
 end
