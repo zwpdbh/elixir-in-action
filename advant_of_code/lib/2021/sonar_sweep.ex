@@ -38,4 +38,8 @@ defmodule SonarSweep do
   def find_increased_aux02([_, _, _ | tail], current) when tail == [] do
     current + 1
   end
+
+  def find_increased_aux02([x], current) when length(x) < 3 do
+    current
+  end
 end
