@@ -9,9 +9,8 @@ defmodule OurNewApp.CounterSup do
   def init(start_numbers) do
     children =
     for start_number <- start_numbers do
-      Supervisor.child_spec({OurNewApp.Counter, start_number}, id: start_number)
+      Supervisor.child_spec({OurNewApp.Counter, start_number}, id: start_number, restart: :transient)
     end
     Supervisor.init(children, strategy: :one_for_one)
-    
   end
 end

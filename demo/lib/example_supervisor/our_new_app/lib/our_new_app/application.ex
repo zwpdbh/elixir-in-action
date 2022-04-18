@@ -18,4 +18,19 @@ defmodule OurNewApp.Application do
     opts = [strategy: :one_for_one, name: OurNewApp.Supervisor]
     Supervisor.start_link(children, opts)
   end
+
+  @impl true
+  def prep_stop(st) do
+    stop_tasks =
+      Supervisor.which_children(OurNewApp.CounterSup)
+      |> Enum.map(fn {_, pid, _, _} ->
+        Task.async(fn ->
+          :ok = OurNewApp.Counter.stop_gracefully(pid)
+        end)
+      end)
+
+    Task.await_many(stop_tasks)
+
+    st
+  end
 end
