@@ -1,33 +1,7 @@
-* From RESTful API to SDK (use [[https://github.com/elixir-azure/ex_microsoft_azure_storage][elixir-azure]] as example )
-** How ~list_containers~ works
-- Notes
-#+begin_src text
-  From list_containers 
-	
-  new_azure_storage_request() -- from container.ex 
+* How to gain access to Azure storage
 
-  storage = %Storage{} -- from request_builder.ex 	
-    - defined in storage.ex	
 
-		
-  # prepare request params	
-  %{
-    storage_context: storage,
-    method: :get ,
-    url: "/",
-    query: ??
-  }	
-		
-  # sign_and_call	
-  - Tesla
-    adapter(:ibrowse)	
-    Tesla.build_client()
-	
-  - What is "(&RestClient.request(connection, &1)"
-	
-#+end_src  
-
-* How to contribute to this project 
+* How to contribute to a GitHub project 
 - General steps 
   1) Create a personal fork of the project on Github.
   2) Clone the fork on your local machine. Your remote repo on Github is called ~origin~.
@@ -116,3 +90,18 @@
 
 
 
+
+
+
+* References related with using Elixir for Azure 
+- [[https://github.com/elixir-azure/ex_microsoft_azure_storage][ExMicrosoftAzureStorage]]
+  An early prototype of an SDK to interact with Microsoft Azure Storage.
+- [[https://github.com/chgeuer/ex_microsoft_arm_evaluator][Microsoft.ARM.Evaluator]]
+  Locally evaluating Azure ARM templates, see [[http://blog.geuer-pollmann.de/blog/2019/10/14/locally-evaluating-azure-arm-templates/][post about it]].
+- [[https://github.com/chgeuer/elixir-livebook-azure-demo][chgeuer/elixir-livebook-azure-demo]]
+  A small demo to show how to access Azure from Elixir.
+  
+  
+* References about useful Elixir application 
+- [[https://github.com/dashbitco/nimble_parsec][NimbleParsec]]
+  - A simple and fast library for text-based parser combinators.
