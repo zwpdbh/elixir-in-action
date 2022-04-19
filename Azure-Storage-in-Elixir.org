@@ -1,0 +1,118 @@
+* From RESTful API to SDK (use [[https://github.com/elixir-azure/ex_microsoft_azure_storage][elixir-azure]] as example )
+** How ~list_containers~ works
+- Notes
+#+begin_src text
+  From list_containers 
+	
+  new_azure_storage_request() -- from container.ex 
+
+  storage = %Storage{} -- from request_builder.ex 	
+    - defined in storage.ex	
+
+		
+  # prepare request params	
+  %{
+    storage_context: storage,
+    method: :get ,
+    url: "/",
+    query: ??
+  }	
+		
+  # sign_and_call	
+  - Tesla
+    adapter(:ibrowse)	
+    Tesla.build_client()
+	
+  - What is "(&RestClient.request(connection, &1)"
+	
+#+end_src  
+
+* How to contribute to this project 
+- General steps 
+  1) Create a personal fork of the project on Github.
+  2) Clone the fork on your local machine. Your remote repo on Github is called ~origin~.
+  3) Add the original repository as a remote called ~upstream~.
+  4) If you created your fork a while ago be sure to pull upstream changes into your local repository.
+  5) Create a new branch to work on! Branch from ~develop~ if it exists, else from ~master~.
+  6) Implement/fix your feature, comment your code.
+     - Follow the code style of the project, including indentation.
+     - If the project has tests run them!
+     - Write or adapt tests as needed.
+     - Add or change the documentation as needed.
+     - Squash your commits into a single commit with git's [[https://docs.github.com/en/get-started/using-git/about-git-rebase][interactive rebase]]. Create a new branch if necessary.
+  7) Push your branch to your fork on Github, the remote ~origin~.
+  8) From your fork open a pull request in the correct branch. Target the project's ~develop~ branch if there is one, else go for ~master~.
+  9) Once the pull request is approved and merged you can pull the changes from ~upstream~ to your local repo and delete your extra branch(es).
+     
+  Notice: Your commit message should describe what the commit, when applied, does to the code – not what you did to the code.
+
+
+* How to use [[https://github.com/zabirauf/ex_microsoftbot#elixir-microsoft-bot-framework-client][Elixir Microsoft Bot Framework Client]]
+
+
+* TODO How to build E2E test application like StorageAKS 
+** Components (with implementation order)
+1. Workflow module 
+   - A pure group of functions. 
+     - Each function receive a "params" map, and return a modifed "params" map.
+   - Interal state: it has no interal state, this module only have pure functions to make functions in this module composible.
+     
+2. WorkflowExecution module
+   - A module for managing a workflow's execution. It will implement ~GenServer~.
+   - Interal state: 
+     - A map contains a workflow execution's context.
+     - It will be passed as the first argument to each workflow during execution.
+   - Features of this module 
+     1) Life cycle management of a workfow
+        - when start, when finished
+     2) Check current workflow's status (how???)
+        - A workfow's log could reflect its status.
+        - When a step of workflow is executed, it could send mesage to a pid to update its status(the params map).
+          - DeploymentService use the concept of "Execution Pointers" to indicate each steps's status
+          - We also need to record similar information, such that if something goes wrong, we could clean up created resources.
+     3) Terminate a workflow 
+        - A workflow could become terminated if it is finished.
+        - Or, we could kill it.
+          
+   - So, the first argument of workflow should contains ???
+     #+begin_src elixir
+       %{}
+     #+end_src
+     
+3. WorkflowManager module (how we work with multiple workflow executions)
+   1) One workflow execution --- manage one workflow
+      - A workflow execution maintains the state of a scenario test.
+   2) A workflow manager --- manage multiple workflow executions (we run only one instance of this process)
+      - A workflow manager manage multiple workflow execution
+        - Do statistic collection
+        - For some of execution, need to *sync* their result into group.
+      - Given a workflow execution id, we create WorkflowExecution instance or fetch the existing one.
+      - WorkflowManager module will implement ~GenServer~
+        
+   (see page 183 about how Todo.Cache is implemented)
+
+   Concurrent behavior:
+   1. Multiple clients (possibly a large number of http requests) issue requests to the single WorkflowManager process.
+   2. Multiple clients communicate with multiple WorkflowExecution processes.
+   3. Each WorkflowExecution process are independent to each other.
+     
+4. Database (how to persisting data)
+   - Database module will use ~GenServer~.
+   - The persisting data is all the workflow executions' state.
+   - Database module, manage a pool of database workers, and forward database requests to them.
+   - DatabaseWorker module, perform read/write operations on the database.
+
+     
+     
+   
+
+   
+
+
+
+
+
+      
+
+
+
