@@ -363,11 +363,6 @@
      #+end_src
 
 
-* OTP: Supervisor -- ch18 in Elixir Programming
-A server module which uses GenServer is just a regular Elixir process. How to handle it if our server crashes?
-
-
-
 
 
 * About Supervisor Module 
