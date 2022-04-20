@@ -19,7 +19,27 @@
     - If it is user authentication only, the request can be made to: ~https://login.microsoftonline.com/common/~.
   - Note: The Azure AD service endpoint changes when it runs in national clouds. To change the endpoint, set an environment variable ~AadAuthorityUri~ to the required URI.
 
+** Calling Azure REST API using Service Principal
+1. Create service principal 
+   #+begin_src sh
+     D:\code\elixir-programming>az ad sp create-for-rbac --name zwpdbh
+     Found an existing application instance of "2470ca86-3843-4aa2-95b8-97d3a912ff69". We will patch it
+     In a future release, this command will NOT create a 'Contributor' role assignment by default. If needed, use the --role argument to explicitly create a role assignment.
+     Creating 'Contributor' role assignment under scope '/subscriptions/33922553-c28a-4d50-ac93-a5c682692168'
+     The output includes credentials that you must protect. Be sure that you do not include these credentials in your code or check the credentials into your source control. For more information, see https://aka.ms/azadsp-cli
+     'name' property in the output is deprecated and will be removed in the future. Use 'appId' instead.
 
+     {
+       "appId": "2470c...2ff69",
+       "displayName": "zwpdbh",
+       "name": "2470c...2ff69",
+       "password": "N8qq...jQV6KSd.",
+       "tenant": "72f988bf-86f1-41af-91ab-2d7cd011db47"
+     }
+   #+end_src
+   - We could check the created sp at 
+     - Home > Enterprise applications 
+       - All applications > filter "zwpdbh"
 * How to contribute to a GitHub project 
 - General steps 
   1) Create a personal fork of the project on Github.
@@ -39,9 +59,7 @@
      
   Notice: Your commit message should describe what the commit, when applied, does to the code – not what you did to the code.
 
-
 * How to use [[https://github.com/zabirauf/ex_microsoftbot#elixir-microsoft-bot-framework-client][Elixir Microsoft Bot Framework Client]]
-
 
 * TODO How to build E2E test application like StorageAKS 
 ** Components (with implementation order)
@@ -111,14 +129,16 @@
 
 
 
-
-* References related with using Elixir for Azure 
+* References about Azure 
 ** About Authentication and Authorization
 - About authentication with Azure Active Directory (Azure AD) for Azure Data Explorer access.
   - [[https://docs.microsoft.com/en-us/azure/data-explorer/kusto/management/access-control/how-to-authenticate-with-aad][How to authenticate with Azure Active Directory (Azure AD) for Azure Data Explorer access]]
   - [[https://docs.microsoft.com/en-us/azure/data-explorer/kusto/management/access-control/][Kusto Access Control Overview]]
 - Use OAuth 2.0 client credentials 
   - [[https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow#get-a-token][Get a token -- My current simple workflow use this approach to send request to DeploymentService to manage workflow instance]]
+- REST API for Azure 
+  - [[https://docs.microsoft.com/en-us/rest/api/azure/][Azure REST API reference]]
+  - [[https://mauridb.medium.com/calling-azure-rest-api-via-curl-eb10a06127][Calling Azure REST API via curl]]
   
 * References about useful Elixir application 
 ** General 
