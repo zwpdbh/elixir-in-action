@@ -1,4 +1,23 @@
 * How to gain access to Azure storage
+** Authentication using Azure AD
+- When authenticating using Azure AD, the Authorization header has the format
+  #+begin_src text
+    Authorization: bearer TOKEN
+  #+end_src
+  - Where ~TOKEN~ is the access token that the caller acquires by communicating with Azure AD service.
+- General steps 
+  1. Step one, the client 
+     - Communicates with the Azure AD service.
+     - Authenticates to the Azure AD.
+     - Requests an access token issued specifically for the particular Azure Data Explorer endpoint the client intends to access.
+  2. In the second step, the client issues requests to Azure Data Explorer, providing the access token acquired in the first step as a proof of identity to Azure Data Explorer.
+     
+** How to get access token from Azure AD service 
+- The Azure AD service endpoint is https://login.microsoftonline.com/TENANT/
+  - Where ~TENANT~ is the Azure AD tenant ID or name. 
+    - If the services that are created under the Microsoft tenant, then use ~https://login.microsoftonline.com/microsoft.com/~.
+    - If it is user authentication only, the request can be made to: ~https://login.microsoftonline.com/common/~.
+  - Note: The Azure AD service endpoint changes when it runs in national clouds. To change the endpoint, set an environment variable ~AadAuthorityUri~ to the required URI.
 
 
 * How to contribute to a GitHub project 
@@ -100,7 +119,9 @@
   Locally evaluating Azure ARM templates, see [[http://blog.geuer-pollmann.de/blog/2019/10/14/locally-evaluating-azure-arm-templates/][post about it]].
 - [[https://github.com/chgeuer/elixir-livebook-azure-demo][chgeuer/elixir-livebook-azure-demo]]
   A small demo to show how to access Azure from Elixir.
-  
+- About authentication with Azure Active Directory (Azure AD) for Azure Data Explorer access.
+  - [[https://docs.microsoft.com/en-us/azure/data-explorer/kusto/management/access-control/how-to-authenticate-with-aad][How to authenticate with Azure Active Directory (Azure AD) for Azure Data Explorer access]]
+  - [[https://docs.microsoft.com/en-us/azure/data-explorer/kusto/management/access-control/][Kusto Access Control Overview]]
   
 * References about useful Elixir application 
 - [[https://github.com/dashbitco/nimble_parsec][NimbleParsec]]
