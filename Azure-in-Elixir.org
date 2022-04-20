@@ -113,16 +113,23 @@
 
 
 * References related with using Elixir for Azure 
+** About Authentication and Authorization
+- About authentication with Azure Active Directory (Azure AD) for Azure Data Explorer access.
+  - [[https://docs.microsoft.com/en-us/azure/data-explorer/kusto/management/access-control/how-to-authenticate-with-aad][How to authenticate with Azure Active Directory (Azure AD) for Azure Data Explorer access]]
+  - [[https://docs.microsoft.com/en-us/azure/data-explorer/kusto/management/access-control/][Kusto Access Control Overview]]
+- Use OAuth 2.0 client credentials 
+  - [[https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow#get-a-token][Get a token -- My current simple workflow use this approach to send request to DeploymentService to manage workflow instance]]
+  
+* References about useful Elixir application 
+** General 
+- [[https://github.com/dashbitco/nimble_parsec][NimbleParsec]]
+  - A simple and fast library for text-based parser combinators.
+** About Azure Management 
+*** Made by Dr Christian Geuer-Pollmann
 - [[https://github.com/elixir-azure/ex_microsoft_azure_storage][ExMicrosoftAzureStorage]]
-  An early prototype of an SDK to interact with Microsoft Azure Storage.
+- [[https://github.com/zwpdbh/ex_microsoft_azure_utils][ExMicrosoftAzureManagementSamples]]
+- [[https://github.com/zwpdbh/ex_microsoft_azure_management][ExMicrosoftAzureManagementSamples]]
 - [[https://github.com/chgeuer/ex_microsoft_arm_evaluator][Microsoft.ARM.Evaluator]]
   Locally evaluating Azure ARM templates, see [[http://blog.geuer-pollmann.de/blog/2019/10/14/locally-evaluating-azure-arm-templates/][post about it]].
 - [[https://github.com/chgeuer/elixir-livebook-azure-demo][chgeuer/elixir-livebook-azure-demo]]
   A small demo to show how to access Azure from Elixir.
-- About authentication with Azure Active Directory (Azure AD) for Azure Data Explorer access.
-  - [[https://docs.microsoft.com/en-us/azure/data-explorer/kusto/management/access-control/how-to-authenticate-with-aad][How to authenticate with Azure Active Directory (Azure AD) for Azure Data Explorer access]]
-  - [[https://docs.microsoft.com/en-us/azure/data-explorer/kusto/management/access-control/][Kusto Access Control Overview]]
-  
-* References about useful Elixir application 
-- [[https://github.com/dashbitco/nimble_parsec][NimbleParsec]]
-  - A simple and fast library for text-based parser combinators.
