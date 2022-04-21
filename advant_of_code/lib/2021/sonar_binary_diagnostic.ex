@@ -26,15 +26,39 @@ defmodule SonarBinaryDiagnostic do
   def power_consumption(binary_numbers) do
     compute_gamma_rate(
       binary_numbers,
-      %{0 => [], 1 => [],  2 =>[], 3 => [], 4 =>[], 5 => []}
+      generate_map_of_list(6)
     )
   end
 
-  def compute_gamma_rate([x | tail], acc) do
-    x
-    |> String.graphemes()
-    |> Enum.with_index
+  # produce %{0 => [], 1 => [], ..., n-1 => []}
+  # TODO:: how to simply this
+  def generate_map_of_list(n) do
+    0..n-1
+    |> Enum.to_list
+    |> generate_map_of_list_aux(%{})
+  end
 
+  defp generate_map_of_list_aux([h|tail], m) do
+    generate_map_of_list_aux(tail, Map.put_new(m, h, []))
+  end
+
+  defp generate_map_of_list_aux([], m) do
+    m
+  end
+
+
+  def compute_gamma_rate([number_str | tail], acc) do
+    digits =
+      number_str
+      |> String.graphemes()
+      |> Enum.with_index
+
+    # this part has problem
+    for {v, i} <- digits do
+      Map.get_and_update(acc, i, fn current_value -> {current_value, [v | current_value]} end)
+    end
+    IO.inspect digits
+    
     compute_gamma_rate(tail, acc)
   end
 
