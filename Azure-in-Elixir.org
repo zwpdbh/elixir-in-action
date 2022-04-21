@@ -40,6 +40,23 @@
    - We could check the created sp at 
      - Home > Enterprise applications 
        - All applications > filter "zwpdbh"
+** What is the Certificates and secrets of a registered application 
+- Where to check 
+  - Azure Active Directory
+    - App registrations
+      - Click =+= new registration, follow instruction.
+        - After creation, in the Manage tab, see "Certificates & secrets". There will be 3 sub tabs.
+          - - What's the differences between "Client secrets" and "Certificates" =?=
+- Check the "Client secrets"
+  - We could click "+" to create client secret. 
+    - Secret ID: 568855e2-5a16-44f5-9e5f-9e9d299c2afc
+    - Value: 2y~8Q~blSah_XVUIGOzQ9IAzpyCZ1PicJCiBtbUc 
+      - =Note=: Client secret values cannot be viewed, except for immediately after creation. Be sure to save the secret when created before leaving the page.
+      - Right now, in my daily workflow process script. We use this value + application(client) id to request access token.
+      
+- Is this related with "Create service principal"
+  - What is the password from the result of "az ad sp create-for-rbac --name zwpdbh"
+
 * How to contribute to a GitHub project 
 - General steps 
   1) Create a personal fork of the project on Github.
