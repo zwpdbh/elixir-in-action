@@ -56,6 +56,16 @@
       
 - Is this related with "Create service principal"
   - What is the password from the result of "az ad sp create-for-rbac --name zwpdbh"
+    
+** Understand my current workflow script authentication
+Currently, I use a simple script to utilize RESTful API of DeploymentService. I set the following parameters:
+- From "Client secret" from [[*What is the Certificates and secrets of a registered application][What is the Certificates and secrets of a registered application]]
+  - secret, which is the client secret' value 
+  - client_id, which is also the application id
+- Unknown 
+  - what is this "3b4ae08b-9919-4749-bb5b-7ed4ef15964d" in the scope
+  - what is the "72f988bf-86f1-41af-91ab-2d7cd011db47" for tenant 
+
 
 * How to contribute to a GitHub project 
 - General steps 
