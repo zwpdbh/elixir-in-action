@@ -1,5 +1,5 @@
 * A simple ServerProcess (ch06 from Elixir in Action)
-** The Generic server process 
+** How to understand OTP server
 1. A *server process* is a beam process that use recurive call (loop) to handle different messages.
    - Instead of directly handle different message in that server process, we provide the server process with a *callback module*.
      
@@ -351,6 +351,34 @@
           {MyTask, arg}
         ], strategy: :one_for_one)
       #+end_src
+** Agents 
+- Agents are a simple abstraction around state.
+- The Agent module provides a basic server implementation that allows state to be retrieved and updated via a simple API.  
+  
+** Tasks vs Spawn process 
+What is the point of task if we could spawn and receive message so easily.
+#+begin_src elixir
+  # using spawn 
+  current = self()
+  child = spawn(fn -> send(current, {self(), 1 + 2}) end)
+
+  receive do
+    value -> value 
+  end
+
+  # using task
+  task = Task.async(fn -> {self(), 1 + 2} end)
+  Task.await(task)
+#+end_src
+- There is less in the primary functionality of starting another process, but much more in the surrounding context.
+- Spawned proccess neither implement common OTP functionality nor are they supervisied.
+  
+** Task, or Agent, or GenServer 
+- Use the simplest approach that works.
+- Wrapping your agents and tasks in modules. Such that, you can always switch from them to the full-blown GenServer without affecting the rest of the code.
+- Some key points of GenServer.
+  - A GenServer process is a general purpose server process which maintains some state.
+  - When we start a GenServer process, we start it on a different process from the current one.
 * How to save a GenServer's process 
 For example, we have multple GenServer process(Sequence.Server) which may crash and we want to save a GenServer process's state and recover it later from that process. How to do this?
 - The answer is obvious: whenever we need to refer state in OTP, we need to think about GenServer process. So, we just save state into another GenServer process, say Sequence.Stash
