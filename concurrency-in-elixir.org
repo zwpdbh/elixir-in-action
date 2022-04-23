@@ -175,11 +175,6 @@
       end
     end
   #+end_src
-  - ~use Supervisor~ also defines a ~child_spec/1~ function which allows us to run this Todo.System as a child for another supervisor.
-  - In this supervisor module 
-    - Like GenServer, ~start_link~ --> Supervisor.init.
-    - The first argument of Supervisor.init is a list of child_spec.
-    - One child_spec can be obtained by ~Supervisor.child_spec~ function.
 
   =Note=: A general guideline is to use the supervisor without a callback module only at the top of your supervision tree, generally in the Application.start/2 callback. We recommend using module-based supervisors for any other supervisor in your application, so they can run as a child of another supervisor in the tree.
 
@@ -204,7 +199,7 @@
 ** Current questions
 - Explain ~start_link~, ~child_spec~, 
 - Why use ETS?
-  - Notice that before our changes KV.Registry.lookup/2 sent requests to the server, but now it reads directly from the ETS table, which is shared across all processes. That閳ユ獨 the main idea behind the cache mechanism we are implementing.
+  - Notice that before our changes KV.Registry.lookup/2 sent requests to the server, but now it reads directly from the ETS table, which is shared across all processes. That's also the main idea behind the cache mechanism we are implementing.
 - Differences between task, agents, generic servers, and supervisors.
   - Common
   - Different 
@@ -295,8 +290,73 @@
        100
      #+end_src
 
+* Task and Agents -- ch21 in Programming Elixir
+** Tasks 
+1. Different ways to execute Tasks 
+   Given the existing module. 
+   #+begin_src elixir
+     defmodule Fib do
+       def of(0), do: 0
+       def of(1), do: 1
+       def of(n), do: Fib.of(n-1) + Fib.of(n-2)
+     end 
+   #+end_src
+   1) Execute Tasks from annonymous function 
+      #+begin_src elixir
+        IO.puts "Start the task"
+        worker = Task.async(fn -> Fib.of(20) end)
+        IO.puts "Do something else"
+        result = Task.await(worker)
+      #+end_src
+   2) Execute Tasks directly by specify module, function and arguments 
+      #+begin_src elixir
+        worker = Task.async(Fib, :of, [20])
+        result = Task.await(worker)
+        IO.puts "The result is #{result}"
+      #+end_src
+      
+2. How to suppervise Tasks 
+   Because Tasks are implemented as OTP servers, they can be added to application's suppervision tree.
+   1) Use Task.Supervisor 
+      #+begin_src elixir
+        # 1. Add the task supervisor to the supervision tree
+        Supervisor.start_link([
+          {Task.Supervisor, name: MyApp.TaskSupervisor}
+        ], strategy: :one_for_one)
 
+        # 2. Use async/await by passing the name of the supervisor
+        Task.Supervisor.async(MyApp.TaskSupervisor, fn ->
+          # Do something
+        end)
+        |> Task.await()
+      #+end_src
 
+   2) By calling ~Task.start_link~ instead of ~Task.asyn~. (For fire-and-forget tasks).
+   3) Wrap Task in its own module similar to how we would do with a GenServer. (For fire-and-forget tasks).
+      #+begin_src elixir
+        defmodule MyTask do
+          use Task
+
+          def start_link(arg) do
+            Task.start_link(__MODULE__, :run, [arg])
+          end
+
+          def run(arg) do
+            # ...
+          end
+        end
+
+        # Then passing it to the supervisor
+        Supervisor.start_link([
+          {MyTask, arg}
+        ], strategy: :one_for_one)
+      #+end_src
+* How to save a GenServer's process 
+For example, we have multple GenServer process(Sequence.Server) which may crash and we want to save a GenServer process's state and recover it later from that process. How to do this?
+- The answer is obvious: whenever we need to refer state in OTP, we need to think about GenServer process. So, we just save state into another GenServer process, say Sequence.Stash
+- Two things to be done: 
+  1) Update the Sequence.Server's call back ~terminate/2~ to save our state into Sequence.Stash.
+  2) Update the Sequence.Server's interface module such that when it is started, use the state from Sequence.Stash.
 
 * About Supervisor Module 
 1. ref: [[https://blog.appsignal.com/2021/08/23/using-supervisors-to-organize-your-elixir-application.html][Using Supervisors to Organize Your Elixir Application]]
@@ -347,11 +407,11 @@
        Application.stop(:our_new_app)
      #+end_src
 4. How to terminate a GenServer process with customization
-   1) Modify the state it holds to hold a marker which will be indicate if process has been ordered to terminate.
+   1) Modify the state it holds to hold a marker which is used to indicate if the process has been ordered to terminate.
    2) Through interface function, invoke GenServer.call and send message to indicate this process need to be terminated.
    3) During handle_call for that message, set the termination marker.
    4) User timer to send periodic info to self()
-   5) During handle_info, check if the termination mark is present and if the desired condition is reached.
+   5) During handle_info, check if the termination mark is present and whether the desired condition is reached.
       - If so, {:stop, :normal, state}
       - Otherwise, update state (and timer)
         

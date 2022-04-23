@@ -1,3 +1,4 @@
+# From Elixir programming booK: Chapter 15. Working with Multiple Processes • 212
 defmodule FibSolver do
   def fib(scheduler) do
     send(scheduler, {:ready, self()})

@@ -1,3 +1,4 @@
+# From Elixir Programming, Chapter 16. Nodes—The Key to Distributing Services • 224
 # (This code has no error handling and no means of terminating the process. I
 # just wanted to illustrate passing PIDs and messages between nodes.)
 defmodule Ticker do
@@ -11,7 +12,7 @@ defmodule Ticker do
     :global.register_name(@name, pid)
   end
 
-  # 2).providing the external interface to that process.    
+  # 2).providing an external interface for our spawned proces
   def register(client_pid) do
     # Instead letting client to directly send message to ticker to register, we use this interface function to
     # send message to ourself to decouple the client from the server.

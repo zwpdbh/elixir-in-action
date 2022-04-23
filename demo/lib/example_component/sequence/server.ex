@@ -16,6 +16,7 @@ defmodule Sequence.Server do
     {:noreply, Impl.increment(current_number, delta)}
   end
 
+  # When we are terminating, we could store the current state into another GenServer process.
   def terminate(_reason, current_number) do
     Sequence.Stash.update(current_number)
   end
