@@ -10,10 +10,10 @@
 
 * [[https://blog.appsignal.com/2020/03/24/how-to-use-grpc-in-elixir.html][How to Use gRPC in Elixir]]
 * [[https://code.tubitv.com/elixir-grpc-the-road-to-production-5d7daad4945b][Elixir + gRPC: the road to production]]
-* [[https://medium.com/mobileforgood/3-ways-were-using-elixir-to-solve-real-problems-bd62180b2bdc][3 Ways We’re Using Elixir to Solve Real Problems]]
+* [[https://medium.com/mobileforgood/3-ways-were-using-elixir-to-solve-real-problems-bd62180b2bdc][3 Ways We're Using Elixir to Solve Real Problems]]
 
 * https://adventofcode.com/
 - zwpdbh, ZWgghh3344
   
 * [[https://blog.appsignal.com/elixir-alchemy][high-quality Elixir articles]]
-** [[https://blog.appsignal.com/2019/06/18/elixir-alchemy-building-go-with-phoenix-live-view.html][Building and Playing the Go Game with Phoenix LiveView]]
+** DOING [[https://blog.appsignal.com/2019/06/18/elixir-alchemy-building-go-with-phoenix-live-view.html][Building and Playing the Go Game with Phoenix LiveView]]
