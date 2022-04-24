@@ -12,8 +12,9 @@ defmodule Scraper.Application do
       # {Scraper.Worker, arg}
       PageProducer,
       # PageConsumer
-      Supervisor.child_spec(PageConsumer, id: :consumer_a),
-      Supervisor.child_spec(PageConsumer, id: :consumer_b)
+      # Supervisor.child_spec(PageConsumer, id: :consumer_a),
+      # Supervisor.child_spec(PageConsumer, id: :consumer_b)
+      PageConsumerSupervisor,
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
