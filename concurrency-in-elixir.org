@@ -386,6 +386,40 @@ For example, we have multple GenServer process(Sequence.Server) which may crash 
   1) Update the Sequence.Server's call back ~terminate/2~ to save our state into Sequence.Stash.
   2) Update the Sequence.Server's interface module such that when it is started, use the state from Sequence.Stash.
 
+* About Process Naming 
+** Three types of accepted values when naming a process
+1) an atom
+   - This includes module names.
+2) a {:global, term} tuple, like {:global, :job_runner}
+   - This registers the process globally. Useful for distributed applications.
+3) a {:via, module, term} tuple
+   - where module is an Elixir module that would take care of the registration process, using the value term.
+     
+** The problem of using atoms to name a process. 
+- Atoms are note garbage collected by the Erlang VM, and there are soft limits.
+  
+** The Registry
+- It allows us to use strings, rather than atoms, which don't have the same limitation.
+- Each Registry works as a process which we have to include in our application supervision tree.
+- The usage of Registry (see: [[https://hexdocs.pm/elixir/1.13/Registry.html][Registry -- Hex docs]])
+  1) Using in ~:via~, it can be used to register and access named process. 
+     - In this case, we specify the key as ":unique".
+  2) Using as a dispatcher and PubSub
+     - In this case, we specify the keys as ":duplicate"
+     - Use Registry.dispatch/3 to invoke callbacks 
+       
+** How to use Registry 
+- Example01
+  #+begin_src elixir
+    # First, in application when specify children of supervision tree
+    children = [
+      {Registry, keys: unique, name: Jobber.JobRegistry}
+      ...
+    ]
+
+    # Then, in GenServer' start_link
+    GenServer.start_link(__MODULE__, args, name: {:via, Registry, {Jobber.JobRegistry, key, value}})
+  #+end_src
 * About Supervisor Module 
 1. ref: [[https://blog.appsignal.com/2021/08/23/using-supervisors-to-organize-your-elixir-application.html][Using Supervisors to Organize Your Elixir Application]]
 2. How to add worker to a custom supervisor module at runtime 
