@@ -14,6 +14,8 @@ defmodule Scraper.Application do
       # PageConsumer
       # Supervisor.child_spec(PageConsumer, id: :consumer_a),
       # Supervisor.child_spec(PageConsumer, id: :consumer_b)
+
+      OnlinePageProducerConsumer,
       PageConsumerSupervisor,
     ]
 
