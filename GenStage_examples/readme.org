@@ -1,0 +1,2 @@
+Concurrent Data Processing in Elixir_ Fast, Resilient Applications with OTP, GenStage, Flow, and Broadway-Pragmatic Bookshelf (2021)
+For chapter 3 data processing pipeline with GenStage.

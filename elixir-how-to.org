@@ -778,10 +778,10 @@ From maps to structs: Structs are extensions built on top of maps that provide c
 1) ~alias~ is used to give shortcut names for a model.
 2) ~import~: Aliases are great for shortening module names but what if we use functions from given module extensively and want to skip using module name part? 
    ~import~ imports all public functions and macros from given module.
-3) ~require~ is different from either ~import~ or ~alias~. 
+3) ~require~ is like import + alias while different from either ~import~ or ~alias~. 
    - It is used like ~alias~, but different from it that it will compile module first.
-   - So, if a module contains a macro, and we ant to use at SomeModule.SomeMacro, ~require~ will work but not ~alias~.
-4) ~use~ allow us to inject any code in the current module. 
+   - So, if a module contains a macro, and we want to use as SomeModule.SomeMacro, ~require~ will work but not ~alias~.
+4) ~use~ allow us to *inject* any code in the current module. 
    
 * Elixir with Phoenix notes 
 ** 02-24 
