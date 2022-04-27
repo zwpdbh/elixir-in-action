@@ -501,7 +501,31 @@ For example, we have multple GenServer process(Sequence.Server) which may crash 
          st
        end
      #+end_src
+6. Some note
+   - ~Supervisor.child_spec/2~
+   - ~Supervisor.start_link~
+   - ~Supervisor.init~ (used in custom supervisor)
+   - ~start_link~ (usered in custom supervisor and custom GenServer module)
    
    
      
    
+
+* About GenStage 
+** Why and when we use GenStage 
+- You only add stages acoording to the runtime needs, typically when we need to provide back-pressure or leverage concurrency.
+- Rule of thumb 
+  - Always start with plain functions.
+  - When you recognize the need for using back-pressure, create a 2-stage data pipeline first.
+  - Gradually extend pipeline when spot an opportunity for improvement.
+    
+** Concepts to understand
+- What is back-pressure mechanism.
+** Different dispatcher 
+1. one-to-one, GenStage.DemandDispatcher
+2. one-to-many, GenStage.BroadcastDispatcher
+   - Let each consumer how to do the futher processing.
+3. one-to-many, GenStage.PartitionDispatcher
+   - Let producer examines each event, and assigns it to a partition (like bucket).
+
+** Understand the events and state in GenStage module      

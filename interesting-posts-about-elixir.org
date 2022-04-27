@@ -17,3 +17,6 @@
   
 * [[https://blog.appsignal.com/elixir-alchemy][high-quality Elixir articles]]
 ** DOING [[https://blog.appsignal.com/2019/06/18/elixir-alchemy-building-go-with-phoenix-live-view.html][Building and Playing the Go Game with Phoenix LiveView]]
+
+* About GenStage 
+- [[https://medium.com/@andreichernykh/elixir-a-few-things-about-genstage-id-wish-to-knew-some-time-ago-b826ca7d48ba][Elixir: a few things about GenStage I wish I knew some time ago]]

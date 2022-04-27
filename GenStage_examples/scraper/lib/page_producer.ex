@@ -1,3 +1,5 @@
+# pages = 1..17 |> Enum.to_list
+# PageProducer.scrape_pages(pages)
 defmodule PageProducer do
   use GenStage
 
