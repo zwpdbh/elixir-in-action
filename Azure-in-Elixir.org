@@ -1,4 +1,10 @@
-* How to gain access to Azure storage
+* How to do authentication and authorization for Azure Storage
+** Notes about access Azure 
+- service principal
+  - It's always recommended to use service principals with automated tools rather than allowing them to log in with a user identity.
+  - See: [[https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal][Use the portal to create an Azure AD application and service principal that can access resources]]
+- managed identities
+- Azure AD authentication
 ** Authentication using Azure AD
 - When authenticating using Azure AD, the Authorization header has the format
   #+begin_src text
@@ -37,9 +43,11 @@
        "tenant": "72f988bf-86f1-41af-91ab-2d7cd011db47"
      }
    #+end_src
-   - We could check the created sp at 
-     - Home > Enterprise applications 
-       - All applications > filter "zwpdbh"
+   - We could check the created service principal at 
+     - Azure Active Directory
+       - App registrations
+         - Check tab: Owned application -- zwpdbh
+           - Overview
          
 ** What is the certificates and secrets of a registered application 
 - Where to check 
