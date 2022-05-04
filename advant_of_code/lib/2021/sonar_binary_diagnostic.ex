@@ -186,7 +186,9 @@ defmodule SonarBinaryDiagnostic do
       "0" -> count_common_from_index(tail, index, %{"0" => m + 1, "1" => n})
       "1" -> count_common_from_index(tail, index, %{"0" => m, "1" => n + 1})
       # consider the edge case !!        
-      nil -> %{"0" => m, "1" => n} 
+      nil ->
+          # IO.inspect({head, index, tail}) => {"", 0, []}, probably caused by input from file
+          %{"0" => m, "1" => n} 
     end
   end
 
