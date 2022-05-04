@@ -15,8 +15,7 @@ defmodule SonarPilot02 do
         "forward" -> GenServer.cast(@me, {:forward, value})
       end
     else
-      error ->
-        IO.inspect(error)
+      error -> IO.puts("invalid input: #{error}, ignore it...")
     end
   end
 

@@ -18,7 +18,7 @@ defmodule SonarPilot do
         _ -> IO.puts("ill commands")
       end
     else
-      error -> IO.inspect(error)
+      error -> IO.puts("invalid input: #{error}, ignore it...")
     end
   end
 
