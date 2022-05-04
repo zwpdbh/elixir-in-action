@@ -185,6 +185,8 @@ defmodule SonarBinaryDiagnostic do
     case String.at(head, index) do
       "0" -> count_common_from_index(tail, index, %{"0" => m + 1, "1" => n})
       "1" -> count_common_from_index(tail, index, %{"0" => m, "1" => n + 1})
+      # consider the edge case !!        
+      nil -> %{"0" => m, "1" => n} 
     end
   end
 

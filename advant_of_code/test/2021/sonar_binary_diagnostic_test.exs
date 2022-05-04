@@ -112,8 +112,8 @@ defmodule SonarBinaryDiagnosticTest do
       assert 230 == SonarBinaryDiagnostic.compute_life_support(records)
     end
 
-    # test "life rate with large input", %{input02: records} do
-    #   IO.inspect SonarBinaryDiagnostic.compute_life_support(records)
-    # end
+    test "life rate with large input", %{input02: large_input} do
+       assert 4481199 == SonarBinaryDiagnostic.compute_life_support(large_input)
+    end
   end
 end
