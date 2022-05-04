@@ -102,5 +102,18 @@ defmodule SonarBinaryDiagnosticTest do
       size = String.length(Enum.at(records, 0))
       assert 23 == SonarBinaryDiagnostic.compute_oxygen_aux(records, 0, size)
     end
+
+    test "co2 baseline", %{input01: records} do
+      size = String.length(Enum.at(records, 0))
+      assert 10 == SonarBinaryDiagnostic.compute_co2_aux(records, 0, size)
+    end
+
+    test "life rate baseline", %{input01: records} do
+      assert 230 == SonarBinaryDiagnostic.compute_life_support(records)
+    end
+
+    # test "life rate with large input", %{input02: records} do
+    #   IO.inspect SonarBinaryDiagnostic.compute_life_support(records)
+    # end
   end
 end

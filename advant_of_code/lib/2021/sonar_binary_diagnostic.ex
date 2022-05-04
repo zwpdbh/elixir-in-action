@@ -127,29 +127,55 @@ defmodule SonarBinaryDiagnostic do
     end
   end
 
+  # For part two:
   def compute_life_support(records) do
     size = String.length(Enum.at(records, 0))
-    compute_oxygen_aux(records, 0, size)
+    compute_oxygen_aux(records, 0, size) * compute_co2_aux(records, 0, size)
   end
 
-  def compute_oxygen_aux(records, index, size) when index < size do
+  def compute_co2_aux(records, index, size) when index < size  and length(records) != 1 do
+    least_common_bit = least_common_one(records, index)
+
+    filtered_ones =
+      records
+      |> Enum.filter(fn x -> String.at(x, index) == least_common_bit end)
+
+    compute_co2_aux(filtered_ones, index + 1, size)
+  end
+
+  def compute_co2_aux([only_one], _, _) do
+    only_one
+    |> String.to_integer(2)
+  end
+
+  def compute_oxygen_aux(records, index, size) when index < size and length(records) != 1 do
     most_common_bit = most_common_one(records, index)
 
     filtered_ones =
       records
       |> Enum.filter(fn x -> String.at(x, index) == most_common_bit end)
+
     compute_oxygen_aux(filtered_ones, index + 1, size)
   end
 
   def compute_oxygen_aux([only_one], _, _) do
     only_one
     |> String.to_integer(2)
-  end  
+  end
 
   def most_common_one(records, index) do
     %{"0" => x, "1" => y} = count_common_from_index(records, index, %{"0" => 0, "1" => 0})
 
     case x > y do
+      true -> "0"
+      false -> "1"
+    end
+  end
+
+  def least_common_one(records, index) do
+    %{"0" => x, "1" => y} = count_common_from_index(records, index, %{"0" => 0, "1" => 0})
+
+    case x <= y do
       true -> "0"
       false -> "1"
     end
