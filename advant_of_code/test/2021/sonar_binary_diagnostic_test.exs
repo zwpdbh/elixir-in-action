@@ -96,4 +96,11 @@ defmodule SonarBinaryDiagnosticTest do
       assert ["0", "1", "0", "0", "1"] == result
     end
   end
+
+  describe "part two" do
+    test "oxygen baseline", %{input01: records} do
+      size = String.length(Enum.at(records, 0))
+      assert 23 == SonarBinaryDiagnostic.compute_oxygen_aux(records, 0, size)
+    end
+  end
 end

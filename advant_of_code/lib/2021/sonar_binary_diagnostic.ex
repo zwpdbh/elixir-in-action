@@ -1,6 +1,6 @@
 defmodule SonarBinaryDiagnostic do
   # By default, 8 bits (i.e. 1 byte) is used to store each number in a bitstring, but you can manually specify the number of bits via a ::n modifier to denote the size in n bits, or you can use the more verbose declaration ::size(n)
-  
+
   # For example:  <<n::size(4)>> = <<0::1, 0::1, 1::1, 1::1>> => n = 3
   # the decimal number 3 when represented with 4 bits in base 2 would be 0011,
   # which is equivalent to the values 0, 0, 1, 1, each stored using 1 bit
@@ -50,7 +50,7 @@ defmodule SonarBinaryDiagnostic do
     n = String.length(Enum.at(inputs, 0))
 
     acc =
-      0..(n-1)
+      0..(n - 1)
       |> Enum.to_list()
       |> init_gamma(acc)
 
@@ -125,5 +125,44 @@ defmodule SonarBinaryDiagnostic do
       true -> "0"
       false -> "1"
     end
+  end
+
+  def compute_life_support(records) do
+    size = String.length(Enum.at(records, 0))
+    compute_oxygen_aux(records, 0, size)
+  end
+
+  def compute_oxygen_aux(records, index, size) when index < size do
+    most_common_bit = most_common_one(records, index)
+
+    filtered_ones =
+      records
+      |> Enum.filter(fn x -> String.at(x, index) == most_common_bit end)
+    compute_oxygen_aux(filtered_ones, index + 1, size)
+  end
+
+  def compute_oxygen_aux([only_one], _, _) do
+    only_one
+    |> String.to_integer(2)
+  end  
+
+  def most_common_one(records, index) do
+    %{"0" => x, "1" => y} = count_common_from_index(records, index, %{"0" => 0, "1" => 0})
+
+    case x > y do
+      true -> "0"
+      false -> "1"
+    end
+  end
+
+  def count_common_from_index([head | tail], index, %{"0" => m, "1" => n}) do
+    case String.at(head, index) do
+      "0" -> count_common_from_index(tail, index, %{"0" => m + 1, "1" => n})
+      "1" -> count_common_from_index(tail, index, %{"0" => m, "1" => n + 1})
+    end
+  end
+
+  def count_common_from_index([], _, acc) do
+    acc
   end
 end
