@@ -1,4 +1,9 @@
 defmodule SonarBinaryDiagnostic do
+  # By default, 8 bits (i.e. 1 byte) is used to store each number in a bitstring, but you can manually specify the number of bits via a ::n modifier to denote the size in n bits, or you can use the more verbose declaration ::size(n)
+  
+  # For example:  <<n::size(4)>> = <<0::1, 0::1, 1::1, 1::1>> => n = 3
+  # the decimal number 3 when represented with 4 bits in base 2 would be 0011,
+  # which is equivalent to the values 0, 0, 1, 1, each stored using 1 bit
   def get_number_from_bits(bits, m) when is_bitstring(bits) do
     <<n::size(m)>> = bits
     n
