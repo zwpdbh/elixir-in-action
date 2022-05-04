@@ -2,6 +2,9 @@ defmodule SonarBinaryDiagnosticTest do
   use ExUnit.Case, async: true
 
   setup do
+    large_input = File.read!("./test/2021/sonar_binary_diagnostic_input.txt")
+    |> String.split("\n")
+    
     {:ok,
      input01: [
        "00100",
@@ -16,13 +19,18 @@ defmodule SonarBinaryDiagnosticTest do
        "11001",
        "00010",
        "01010"
-     ]}
+     ],
+     input02: large_input}
   end
 
   describe "part one" do
     test "baseline", %{input01: binary_records} do
        assert 198 == SonarBinaryDiagnostic.power_consumption(binary_records)
     end
+
+    # test "large_input", %{input02: binary_records} do
+    #   IO.inspect SonarBinaryDiagnostic.power_consumption(binary_records)
+    # end
 
 
     test "init_gamma" do

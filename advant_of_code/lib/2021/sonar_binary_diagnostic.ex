@@ -1,10 +1,10 @@
 defmodule SonarBinaryDiagnostic do
-  def get_number_from_bits(bits) when is_bitstring(bits) do
-    <<n::size(5)>> = bits
+  def get_number_from_bits(bits, m) when is_bitstring(bits) do
+    <<n::size(m)>> = bits
     n
   end
 
-  #  convert_string_to_6_digits("10110") => <<12::size(6)>>
+  # How to convert a string of 1 and 0 to its 
   def extract_bits_from_binary_str(num_str) when byte_size(num_str) == 5 do
     [x0, x1, x2, x3, x4] =
       String.graphemes(num_str)
@@ -17,10 +17,10 @@ defmodule SonarBinaryDiagnostic do
   end
 
   # get_decimal_from_string("10110") => 22
-  def get_decimal_from_string(num_str) when byte_size(num_str) == 5 do
+  def get_decimal_from_string(num_str) do
     num_str
     |> extract_bits_from_binary_str
-    |> get_number_from_bits
+    |> get_number_from_bits(String.length(num_str))
   end
 
   def init_gamma([h | tail], acc) do
@@ -34,9 +34,10 @@ defmodule SonarBinaryDiagnostic do
 
   def power_consumption(inputs) do
     acc = %{}
+    n = String.length(Enum.at(inputs, 0))
 
     acc =
-      0..4
+      0..(n-1)
       |> Enum.to_list()
       |> init_gamma(acc)
 
