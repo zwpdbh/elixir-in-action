@@ -22,6 +22,14 @@ defmodule SonarBinaryDiagnostic do
   end
 
   # get_decimal_from_string("10110") => 22
+  # num_string is the binary string contains only "1" and "0"
+  # use the following pair of functions to convert between binary string to integer back and forth.
+  # iex(40)> Integer.to_string(22, 2)
+  # Integer.to_string(22, 2)
+  # "10110"
+  # iex(41)> String.to_integer("10110", 2)
+  # String.to_integer("10110", 2)
+  # 22
   def get_decimal_from_string(num_str) do
     num_str
     |> extract_bits_from_binary_str
@@ -54,7 +62,8 @@ defmodule SonarBinaryDiagnostic do
         {gamma_bits <> m, epsilon_bits <> n}
       end)
 
-    get_decimal_from_string(gamma_str) * get_decimal_from_string(epsilon_str)
+    String.to_integer(gamma_str, 2) * String.to_integer(epsilon_str, 2)
+    # get_decimal_from_string(gamma_str) * get_decimal_from_string(epsilon_str)
   end
 
   def compute_aux([number_str | tail], acc) do

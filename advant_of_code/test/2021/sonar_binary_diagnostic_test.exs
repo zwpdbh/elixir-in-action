@@ -28,9 +28,9 @@ defmodule SonarBinaryDiagnosticTest do
        assert 198 == SonarBinaryDiagnostic.power_consumption(binary_records)
     end
 
-    # test "large_input", %{input02: binary_records} do
-    #   IO.inspect SonarBinaryDiagnostic.power_consumption(binary_records)
-    # end
+    test "large_input", %{input02: binary_records} do
+      assert 3320834 == SonarBinaryDiagnostic.power_consumption(binary_records)
+    end
 
 
     test "init_gamma" do
