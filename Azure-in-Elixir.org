@@ -75,6 +75,84 @@ Currently, I use a simple script to utilize RESTful API of DeploymentService(see
   - It is used across multiple subscriptions.
 - Unknown parameters
   - scope: ~https://microsoft.onmicrosoft.com/3b4ae08b-9919-4749-bb5b-7ed4ef15964d/.default~ (what is this 3b4ae08b-9919-4749-bb5b-7ed4ef15964d)
+    - This url is from Application "ScenarioFramework" --> Overview --> Application ID URI
+      - By clicking it, it is defined from "Expose an API".
+
+** General steps to access Azure resources by role assignment using service principal
+1. Create a service principal by registering an application
+   1) Sign in Azure portal
+   2) Select Azure Active Directory
+   3) Select App registrations.
+   4) Select New registration
+      
+   After we setup service principal we need to record down the following information 
+   - Directory(tenant) ID: 72f988bf-86f1-41af-91ab-2d7cd011db47
+   - Application (client) ID: 2470ca86-3843-4aa2-95b8-97d3a912ff69
+
+2. Assign a role to the application 
+   1) Select the level of scope you wish to assign the application. 
+      - Here, level means subscription, resource group or specific resource. For example, we select the subscription: "XTest Test Cluster STG Tenant Load Generators 8".
+   2) Select Access control (IAM)
+   3) Check access tab --> Grant access to this resource --> Add role assignment
+   4) Select the role by highlighting it
+      - Here, I select "Contributor", click next
+   5) Select members
+      - Assign access to: User, group, or service principal.
+      - Click "+ Select members"
+      - Enter "zwpdbh" which is the application we registered in step 1.
+   6) Review and assign
+
+3. When programmatically signing in, pass the tenant ID and the application ID with your authentication request. You also need a certificate or an authentication key. We recommend using a certificate, but you can also create an application secret.
+   - *Option 1*: Upload a certificate
+     1) From powershell or VisualStudio terminal execute the following commands 
+        #+begin_src powershell
+          makecert -sky exchange -r -n "CN=zwpdbhREST" -pe -a sha1 -len 2048 -ss My "zwpdbhREST.cer"
+        #+end_src
+        - This will create a "zwpdbhREST.cer".
+        - This also creates the certificate in the local machine under (type "Manage user certificate" from Windows Start)
+          - Certificates - Current User
+            - Personal
+              - Certificates 
+                - zwpdbhREST
+
+     2) Export the certificate from certificat store as a ".cer" file (the same as "zwpdbhREST.cer")
+        - Right click on the "zwpdbhREST"
+          - All Tasks
+            - Export
+              - Select, "No, do not export the private key"
+                - Select, "Base-64 encoded X.509 (.CER)"
+                  - Type the certificate name to export. Here, I save it as "zwpdbhREST.cer".
+
+     3) After we have exported the certificate. We need to upload it to the Azure subscription.
+        - Login Azure and select the subscription we want to use, "XTest Test Cluster STG Tenant Load Generators 8 (33922553-c28a-4d50-ac93-a5c682692168)".
+        - Settings
+          - Management certificates
+            - Click upload -- select our "zwpdbhREST.cer"
+
+     What have doen:
+     - Established a trust between Azure and the subscription agent via certificate authentication.
+     - Subscription agent is the tool which programmatically carries our the tasks of a subscription owner.
+     - Now, any subscription agent with the certificate can perform the subscription ownership tasks (using Azure Management API) thus aunenticating using the certificate.
+       
+     How to use this certificate? 
+     - Identify this certificate from "LocalMachine", "CurrentUser", "My", X509 certificate with thumbprint.
+     - The "thumbprint" could be checked by:
+       - Double click the "zwpdbhREST" certificate
+         - Check Details
+           - Thumbprint
+       - We could also check its thumbprint from the uploaded certificate in "Thumbprint" column from the "Management certificates" in Azure subscription.
+   - *Option 2*: Create a new application secret
+     In registered application: check the "Client secrets"
+     - We could click "+" to create client secret. 
+       - Secret ID: 5688...2afc
+       - Value: 2y~8Q~blSah_XVUIGOzQ9IAzpyCZ1PicJCiBtbUc 
+         - *Notice*: Client secret values cannot be viewed, except for immediately after creation. Be sure to save the secret when created before leaving the page.
+         - Right now, in my daily workflow process script. We use this value + application(client) id to request access token.
+           
+           
+** References 
+- [[https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal][Use the portal to create an Azure AD application and service principal that can access resources]]
+
 
 * How to contribute to a GitHub project 
 - General steps 
