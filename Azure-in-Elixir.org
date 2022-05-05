@@ -1,71 +1,19 @@
 * How to do authentication and authorization for Azure Storage
+** References 
+- [[https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal][Use the portal to create an Azure AD application and service principal that can access resources]]
+- [[https://docs.microsoft.com/en-us/azure/active-directory/develop/authentication-flows-app-scenarios#scenarios-and-supported-authentication-flows][Authentication flows and application scenarios]]
+  - It summaries different scenarios to guide which grant flow match which scenario.
+  - In our case, we need grant flow without user interaction. In these scenarios, applications acquire tokens on behalf of themselves with no user. It is Client Credentials flow.
+- [[https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow][Microsoft identity platform and the OAuth 2.0 client credentials flow]]
+- [[https://docs.microsoft.com/en-us/rest/api/azure/][Azure REST API reference]]
+
 ** Notes about access Azure 
 - service principal
   - It's always recommended to use service principals with automated tools rather than allowing them to log in with a user identity.
   - See: [[https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal][Use the portal to create an Azure AD application and service principal that can access resources]]
 - managed identities
 - Azure AD authentication
-** Authentication using Azure AD
-- When authenticating using Azure AD, the Authorization header has the format
-  #+begin_src text
-    Authorization: bearer TOKEN
-  #+end_src
-  - Where ~TOKEN~ is the access token that the caller acquires by communicating with Azure AD service.
-- General steps 
-  1. Step one, the client 
-     - Communicates with the Azure AD service.
-     - Authenticates to the Azure AD.
-     - Requests an access token issued specifically for the particular Azure Data Explorer endpoint the client intends to access.
-  2. In the second step, the client issues requests to Azure Data Explorer, providing the access token acquired in the first step as a proof of identity to Azure Data Explorer.
-     
-** How to get access token from Azure AD service 
-- The Azure AD service endpoint is https://login.microsoftonline.com/TENANT/
-  - Where ~TENANT~ is the Azure AD tenant ID or name. 
-    - If the services that are created under the Microsoft tenant, then use ~https://login.microsoftonline.com/microsoft.com/~.
-    - If it is user authentication only, the request can be made to: ~https://login.microsoftonline.com/common/~.
-  - Note: The Azure AD service endpoint changes when it runs in national clouds. To change the endpoint, set an environment variable ~AadAuthorityUri~ to the required URI.
 
-** Calling Azure REST API using Service Principal
-1. Create service principal 
-   #+begin_src sh
-     D:\code\elixir-programming>az ad sp create-for-rbac --name zwpdbh
-     Found an existing application instance of "2470ca86-3843-4aa2-95b8-97d3a912ff69". We will patch it
-     In a future release, this command will NOT create a 'Contributor' role assignment by default. If needed, use the --role argument to explicitly create a role assignment.
-     Creating 'Contributor' role assignment under scope '/subscriptions/33922553-c28a-4d50-ac93-a5c682692168'
-     The output includes credentials that you must protect. Be sure that you do not include these credentials in your code or check the credentials into your source control. For more information, see https://aka.ms/azadsp-cli
-     'name' property in the output is deprecated and will be removed in the future. Use 'appId' instead.
-
-     {
-       "appId": "2470c...2ff69",
-       "displayName": "zwpdbh",
-       "name": "2470c...2ff69",
-       "password": "N8qq...jQV6KSd.",
-       "tenant": "72f988bf-86f1-41af-91ab-2d7cd011db47"
-     }
-   #+end_src
-   - We could check the created service principal at 
-     - Azure Active Directory
-       - App registrations
-         - Check tab: Owned application -- zwpdbh
-           - Overview
-         
-** What is the certificates and secrets of a registered application 
-- Where to check 
-  - Azure Active Directory
-    - App registrations
-      - Click =+= new registration, follow instruction.
-        - After creation, in the Manage tab, see "Certificates & secrets". There will be 3 sub tabs.
-          - - What's the differences between "Client secrets" and "Certificates" =?=
-            
-- Check the "Client secrets"
-  - We could click "+" to create client secret. 
-    - Secret ID: 568855e2-5a16-44f5-9e5f-9e9d299c2afc
-    - Value: 2y~8Q~blSah_XVUIGOzQ9IAzpyCZ1PicJCiBtbUc 
-      - =Note=: Client secret values cannot be viewed, except for immediately after creation. Be sure to save the secret when created before leaving the page.
-      - Right now, in my daily workflow process script. We use this value + application(client) id to request access token.
-      
-- Is this related with "Create service principal"
-  - What is the password from the result of "az ad sp create-for-rbac --name zwpdbh"
     
 ** Understand my current workflow script parameters used for auth
 Currently, I use a simple script to utilize RESTful API of DeploymentService(see ST.RestAPI). I set the following parameters:
@@ -148,11 +96,20 @@ Currently, I use a simple script to utilize RESTful API of DeploymentService(see
        - Value: 2y~8Q~blSah_XVUIGOzQ9IAzpyCZ1PicJCiBtbUc 
          - *Notice*: Client secret values cannot be viewed, except for immediately after creation. Be sure to save the secret when created before leaving the page.
          - Right now, in my daily workflow process script. We use this value + application(client) id to request access token.
+4. Use client credentials flow with [[https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow#first-case-access-token-request-with-a-shared-secret][client secret]]
+   - Prerequisites
+     - Where to find the Resource Id which is used in the ~scope~ parameter. 
+       The value passed for the scope parameter in this request should be the resource identifier (application ID URI) of the resource you want, affixed with the .default suffix. For the Microsoft Graph example, the value is https://graph.microsoft.com/.default.
+     - How to get Azure Resource Id 
+       - Login to Azure Portal
+       - Go to the resource that needs to be disassociated from Composite Application
+       - Navigate to the Properties page of the the resource
+       - Find the Resource Id
+     - So, if I want to delete a resource group, how to find its resource id?
+       
+   
            
            
-** References 
-- [[https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal][Use the portal to create an Azure AD application and service principal that can access resources]]
-
 
 * How to contribute to a GitHub project 
 - General steps 
