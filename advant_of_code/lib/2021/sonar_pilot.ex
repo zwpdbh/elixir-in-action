@@ -10,7 +10,7 @@ defmodule SonarPilot do
   def move(command) when is_binary(command) do
     # parse command to message
     with [m, n] <- String.split(command, " "),
-         {num, ""} <- Integer.parse(n) do
+         {num, _} <- Integer.parse(n) do
       case m do
         "forward" -> GenServer.cast(@me, {:forward, num})
         "down" -> GenServer.cast(@me, {:down, num})
@@ -18,7 +18,7 @@ defmodule SonarPilot do
         _ -> IO.puts("ill commands")
       end
     else
-      error -> IO.puts("invalid input: #{error}, ignore it...")
+      error -> IO.inspect error
     end
   end
 

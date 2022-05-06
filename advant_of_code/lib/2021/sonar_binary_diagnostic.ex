@@ -69,6 +69,7 @@ defmodule SonarBinaryDiagnostic do
   def compute_aux([number_str | tail], acc) do
     digits =
       number_str
+      |> String.trim
       |> String.graphemes()
       |> Enum.with_index()
 
@@ -145,6 +146,7 @@ defmodule SonarBinaryDiagnostic do
 
   def compute_co2_aux([only_one], _, _) do
     only_one
+    |> String.trim    
     |> String.to_integer(2)
   end
 
@@ -160,6 +162,7 @@ defmodule SonarBinaryDiagnostic do
 
   def compute_oxygen_aux([only_one], _, _) do
     only_one
+    |> String.trim
     |> String.to_integer(2)
   end
 
