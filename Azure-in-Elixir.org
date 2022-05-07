@@ -202,15 +202,22 @@ Currently, I use a simple script to utilize RESTful API of DeploymentService(see
 
 * References about Azure 
 ** About Authentication and Authorization
-- About authentication with Azure Active Directory (Azure AD) for Azure Data Explorer access.
-  - [[https://docs.microsoft.com/en-us/azure/data-explorer/kusto/management/access-control/how-to-authenticate-with-aad][How to authenticate with Azure Active Directory (Azure AD) for Azure Data Explorer access]]
-  - [[https://docs.microsoft.com/en-us/azure/data-explorer/kusto/management/access-control/][Kusto Access Control Overview]]
-- Use OAuth 2.0 client credentials 
-  - [[https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow#get-a-token][Get a token -- My current simple workflow use this approach to send request to DeploymentService to manage workflow instance]]
-- REST API for Azure 
-  - [[https://docs.microsoft.com/en-us/rest/api/azure/][Azure REST API reference]]
-  - [[https://mauridb.medium.com/calling-azure-rest-api-via-curl-eb10a06127][Calling Azure REST API via curl]]
+1. About authentication with Azure Active Directory (Azure AD) for Azure Data Explorer access.
+   - [[https://docs.microsoft.com/en-us/azure/data-explorer/kusto/management/access-control/how-to-authenticate-with-aad][How to authenticate with Azure Active Directory (Azure AD) for Azure Data Explorer access]]
+   - [[https://docs.microsoft.com/en-us/azure/data-explorer/kusto/management/access-control/][Kusto Access Control Overview]]
+2. Use OAuth 2.0 client credentials 
+   - [[https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow#get-a-token][Get a token -- My current simple workflow use this approach to send request to DeploymentService to manage workflow instance]]
+3. REST API for Azure 
+   - [[https://docs.microsoft.com/en-us/rest/api/azure/][Azure REST API reference]]
+   - [[https://mauridb.medium.com/calling-azure-rest-api-via-curl-eb10a06127][Calling Azure REST API via curl]]
+4. Concepts from Microsoft identity platform 
+   - [[https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent][Permissions and consent in the Microsoft identity platform]]
+   - [[https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps][Add app roles to your application and receive them in the token]]
+   - [[https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-configure-app-expose-web-apis][Quickstart: Configure an application to expose a web API]]
+    
   
+** Different components
+- [[https://docs.microsoft.com/en-us/rest/api/resources/resource-groups][Resource Management -- Resource Groups]]
 * References about useful Elixir application 
 ** General 
 - [[https://github.com/dashbitco/nimble_parsec][NimbleParsec]]
