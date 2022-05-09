@@ -206,16 +206,17 @@ Currently, I use a simple script to utilize RESTful API of DeploymentService(see
    - [[https://docs.microsoft.com/en-us/azure/data-explorer/kusto/management/access-control/how-to-authenticate-with-aad][How to authenticate with Azure Active Directory (Azure AD) for Azure Data Explorer access]]
    - [[https://docs.microsoft.com/en-us/azure/data-explorer/kusto/management/access-control/][Kusto Access Control Overview]]
 2. Use OAuth 2.0 client credentials 
-   - [[https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow#get-a-token][Get a token -- My current simple workflow use this approach to send request to DeploymentService to manage workflow instance]]
+   - [[https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow][Microsoft identity platform and the OAuth 2.0 client credentials flow]]
+     - My current DeploymentService management script use client credentials to acquire permissions from "ScenarioFramework" by its "Application ID URI".
 3. Concepts from Microsoft identity platform 
    - [[https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent][Permissions and consent in the Microsoft identity platform]]
    - [[https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps][Add app roles to your application and receive them in the token]]
    - [[https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-configure-app-expose-web-apis][Quickstart: Configure an application to expose a web API]]
     
 ** RESTful API for Azure   
-- [[https://docs.microsoft.com/en-us/rest/api/azure/][Azure REST API reference]]
-- [[https://mauridb.medium.com/calling-azure-rest-api-via-curl-eb10a06127][Calling Azure REST API via curl]]
-** Different components
+- [[https://docs.microsoft.com/en-us/rest/api/azure/][How to call Azure REST APIs with Postman]]
+  
+** Different service components
 - [[https://docs.microsoft.com/en-us/rest/api/resources/resource-groups][Resource Management -- Resource Groups]]
 
 
