@@ -226,10 +226,11 @@ Currently, I use a simple script to utilize RESTful API of DeploymentService(see
   - A simple and fast library for text-based parser combinators.
 ** About Azure Management 
 *** Made by Dr Christian Geuer-Pollmann
-- [[https://github.com/elixir-azure/ex_microsoft_azure_storage][ExMicrosoftAzureStorage]]
-- [[https://github.com/zwpdbh/ex_microsoft_azure_utils][ExMicrosoftAzureManagementSamples]]
-- [[https://github.com/zwpdbh/ex_microsoft_azure_management][ExMicrosoftAzureManagementSamples]]
-- [[https://github.com/chgeuer/ex_microsoft_arm_evaluator][Microsoft.ARM.Evaluator]]
-  Locally evaluating Azure ARM templates, see [[http://blog.geuer-pollmann.de/blog/2019/10/14/locally-evaluating-azure-arm-templates/][post about it]].
-- [[https://github.com/chgeuer/elixir-livebook-azure-demo][chgeuer/elixir-livebook-azure-demo]]
-  A small demo to show how to access Azure from Elixir.
+1. [[https://github.com/zwpdbh/ex_microsoft_azure_utils][ExMicrosoftAzureManagementSamples]]
+   - It shows how to use different authentication flow to gain access to Azure.
+2. [[https://github.com/elixir-azure/ex_microsoft_azure_storage][ExMicrosoftAzureStorage]]
+   - An early prototype of an SDK to interact with Microsoft Azure Storage.
+3. [[https://github.com/chgeuer/ex_microsoft_arm_evaluator][Microsoft.ARM.Evaluator]]
+   Locally evaluating Azure ARM templates, see [[http://blog.geuer-pollmann.de/blog/2019/10/14/locally-evaluating-azure-arm-templates/][post about it]].
+4. [[https://github.com/chgeuer/elixir-livebook-azure-demo][chgeuer/elixir-livebook-azure-demo]]
+   A small demo to show how to access Azure from Elixir.
