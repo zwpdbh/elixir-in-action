@@ -17,14 +17,17 @@
     
 ** Understand my current workflow script parameters used for auth
 Currently, I use a simple script to utilize RESTful API of DeploymentService(see ST.RestAPI). I set the following parameters:
-- secret, which is the client secret' value 
-- client_id, which is also the application id
-- tenant "72f988bf-86f1-41af-91ab-2d7cd011db47", could be checked from Tenant properties --> Tenant ID.
-  - It is used across multiple subscriptions.
-- Unknown parameters
-  - scope: ~https://microsoft.onmicrosoft.com/3b4ae08b-9919-4749-bb5b-7ed4ef15964d/.default~ (what is this 3b4ae08b-9919-4749-bb5b-7ed4ef15964d)
-    - This url is from Application "ScenarioFramework" --> Overview --> Application ID URI
-      - By clicking it, it is defined from "Expose an API".
+1) secret, which is the client secret' value 
+2) client_id, which is also the application id
+3) tenant "72f988bf-86f1-41af-91ab-2d7cd011db47", could be checked from Tenant properties --> Tenant ID.
+   - It is used across multiple subscriptions.
+4) scope: ~https://microsoft.onmicrosoft.com/3b4ae08b-9919-4749-bb5b-7ed4ef15964d/.default~ (what is this 3b4ae08b-9919-4749-bb5b-7ed4ef15964d)
+   - This url is from Application "ScenarioFramework" --> Overview --> Application ID URI
+     - By clicking it, it is defined from "Expose an API".
+5) api_endpoint: "https://xscndeploymentservice.westus2.cloudapp.azure.com/api"
+   - From service fabric cluster's endpoint: "xscndeploymentservice.westus2.cloudapp.azure.com:19000".
+   - The API part could be checked from its swagger definition: "https://xscndeploymentservice.westus2.cloudapp.azure.com/swagger/index.html".
+
 
 ** General steps to access Azure resources by role assignment using service principal
 1. Create a service principal by registering an application
@@ -110,6 +113,27 @@ Currently, I use a simple script to utilize RESTful API of DeploymentService(see
    
            
            
+** About Azure Role vs App Role vs Expose an API with scopes vs API permissions
+1. Azure role
+   - ref: [[https://docs.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=current][Assign Azure roles using the Azure portal]]
+   - It is convonient to use it to allow registered appliation (service principal) to do operations on Azure.
+2. App roles 
+   - ref: [[https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps][Add app roles to your application and receive them in the token]]
+   - It is for RBAC, for custom app roles.
+     - So, after creating roles, how to define/add permissions to that role.
+   - Currently, not used.
+3. Expose an API with scopes
+   - permissions-based access
+   - For "ScenarioFramework"
+     - It defines "https://microsoft.onmicrosoft.com/3b4ae08b-9919-4749-bb5b-7ed4ef15964d/user_impersonation" with scope: user_impersonation.
+     - It also defines a client id: a899750a-443d-47ae-9ad2-16bd44c460ba for authorized scopes.
+4. API permissions
+   - ref: [[https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-configure-app-expose-web-apis][Quickstart: Configure an application to expose a web API]] + [[https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-configure-app-access-web-apis][Quickstart: Configure a client application to access a web API]]   
+   - Not sure about it.
+     
+Problems      
+- How RBAC is compared with "Expose an API with scopes"?
+- How to add permissions for a custom role?
 
 * How to contribute to a GitHub project 
 - General steps 
@@ -132,7 +156,7 @@ Currently, I use a simple script to utilize RESTful API of DeploymentService(see
 
 * How to use [[https://github.com/zabirauf/ex_microsoftbot#elixir-microsoft-bot-framework-client][Elixir Microsoft Bot Framework Client]]
 
-* TODO How to build E2E test application like StorageAKS 
+* How to build E2E test application like StorageAKS 
 ** Components (with implementation order)
 1. Workflow module 
    - A pure group of functions. 
@@ -218,7 +242,6 @@ Currently, I use a simple script to utilize RESTful API of DeploymentService(see
   
 ** Different service components
 - [[https://docs.microsoft.com/en-us/rest/api/resources/resource-groups][Resource Management -- Resource Groups]]
-
 
 * References about useful Elixir application 
 ** General 

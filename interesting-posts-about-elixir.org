@@ -20,3 +20,5 @@
 
 * About GenStage 
 - [[https://medium.com/@andreichernykh/elixir-a-few-things-about-genstage-id-wish-to-knew-some-time-ago-b826ca7d48ba][Elixir: a few things about GenStage I wish I knew some time ago]]
+
+* [[https://medium.com/everydayhero-engineering/create-an-elixir-phoenix-api-part-2-generate-an-api-swagger-specification-a931536f4c8d][Create an Elixir Phoenix API — Part 2— Generate an API Swagger Specification]]
