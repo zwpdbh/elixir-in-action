@@ -123,10 +123,12 @@ Currently, I use a simple script to utilize RESTful API of DeploymentService(see
      - So, after creating roles, how to define/add permissions to that role.
    - Currently, not used.
 3. Expose an API with scopes
+   - ref: [[https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-configure-app-expose-web-apis][Quickstart: Configure an application to expose a web API]]
    - permissions-based access
    - For "ScenarioFramework"
      - It defines "https://microsoft.onmicrosoft.com/3b4ae08b-9919-4749-bb5b-7ed4ef15964d/user_impersonation" with scope: user_impersonation.
-     - It also defines a client id: a899750a-443d-47ae-9ad2-16bd44c460ba for authorized scopes.
+     - It is also exposed to client app with id: a899750a-443d-47ae-9ad2-16bd44c460ba.
+       - The authorized scopes is the scope it defines.
 4. API permissions
    - ref: [[https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-configure-app-expose-web-apis][Quickstart: Configure an application to expose a web API]] + [[https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-configure-app-access-web-apis][Quickstart: Configure a client application to access a web API]]   
    - Not sure about it.
