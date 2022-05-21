@@ -798,6 +798,7 @@ From maps to structs: Structs are extensions built on top of maps that provide c
 
       BingoGrid.init([[1,2,3], [4,5,6]])
     #+end_src
+    - Notice, we need to use Enum.reduce to change some value. Assign variable inside Enum.each will not work.
 
     #+RESULTS:
     : {:ok,
