@@ -767,9 +767,49 @@ From maps to structs: Structs are extensions built on top of maps that provide c
     [get: 2, handle_call: 2, handle_cast: 2, init: 0, put: 3, start: 0]
   #+end_src
 
-* How to represent a two dimensional board game?
+* How to represent a grid
 - ref: [[https://blog.danielberkompas.com/2016/04/23/multidimensional-arrays-in-elixir/][Multidimensional Arrays in Elixir]]
 - ref: [[https://elixirforum.com/t/how-to-make-proper-two-dimensional-data-structures-in-elixir/872/16][https://elixirforum.com/t/how-to-make-proper-two-dimensional-data-structures-in-elixir/872/16]]
+- My solution01 
+  - Represent grid as a map 
+    - key is the {x, y} coordinate
+    - value is the stored information
+  - Init grid from list of list numbers, here each {x, y} stores {value, visited?}
+    #+begin_src elixir
+      defmodule BingoGrid do
+        # each grid_inputs is a row of the grid, so grid_inputs is a list of list number
+        def init(grid_inputs) do
+          # how to represent the grid
+          grid = grid_inputs
+          |> Enum.with_index
+          |> Enum.reduce(%{}, fn x, acc -> add_row_elements_to_map(x, acc) end)
+
+          {:ok, grid}
+        end
+
+        defp add_row_elements_to_map({row_nums, r}, grid) do
+          row_nums
+          |> Enum.with_index
+          |> Enum.reduce(grid, fn {num, c}, acc ->
+            Map.put_new(acc, {r, c}, {num, false})
+          end)
+        end
+      end
+
+      BingoGrid.init([[1,2,3], [4,5,6]])
+    #+end_src
+
+    #+RESULTS:
+    : {:ok,
+    :  %{
+    :    {0, 0} => {1, false},
+    :    {0, 1} => {2, false},
+    :    {0, 2} => {3, false},
+    :    {1, 0} => {4, false},
+    :    {1, 1} => {5, false},
+    :    {1, 2} => {6, false}
+    :  }}
+
 * Dynamic dispatch 
 - Ref: [[https://dnlserrano.dev/2019/12/21/behaviours-and-dynamic-dispatch.html][Behaviours and Dynamic dispatch]]
   - It shows how to use Behaviours to transform a dynamic dispatch on function to dynamic dispath on module.
