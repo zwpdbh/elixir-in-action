@@ -131,12 +131,26 @@ defmodule BingoGridTest do
       assert 4512 == Bingo.play(boards_input, drawn_input)
     end
 
+    test "bingo game with small input for part two", %{
+      small_boards_input: boards_input,
+      small_drawn_input: drawn_input
+    } do
+      assert 1924 == Bingo.play_last(boards_input, drawn_input)
+    end
+
 
     test "bingo game with big input", %{
       big_boards_input: board_input,
       big_drawn_input: drawn_input
     } do
       assert 8580 ==  Bingo.play(board_input, drawn_input)
+    end
+
+    test "bingo game with big input for part two", %{
+      big_boards_input: board_input,
+      big_drawn_input: drawn_input
+    } do
+      assert 9576 ==  Bingo.play_last(board_input, drawn_input)
     end
   end
 end
