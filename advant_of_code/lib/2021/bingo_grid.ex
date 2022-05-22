@@ -16,8 +16,8 @@ defmodule BingoGrid do
     {:ok, grid}
   end
 
-  def draw(pid, n) do
-    case GenServer.call(pid, {:draw, n}) do
+  def drawn(pid, n) do
+    case GenServer.call(pid, {:drawn, n}) do
       {:ok, key} -> win?(pid, key)
       _ -> false
     end
@@ -45,7 +45,7 @@ defmodule BingoGrid do
     {:reply, score, grid}
   end
 
-  def handle_call({:draw, n}, _from, grid) do
+  def handle_call({:drawn, n}, _from, grid) do
     matched =
       grid
       |> Enum.filter(fn {_, {num, _}} -> num == n end)
