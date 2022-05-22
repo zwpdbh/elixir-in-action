@@ -20,7 +20,7 @@ defmodule BingoGridTest do
       |> Enum.filter(fn x -> length(x) == 5 end)
 
     big_boards_input =
-      File.read!("./test/2021/bingo_big_boards_input.txt")
+      File.read!("./test/2021/bingo_big_board_input.txt")
       |> String.split("\n")
       |> Enum.map(fn x ->
         x
@@ -67,7 +67,10 @@ defmodule BingoGridTest do
      ],
      drawn_input: [7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 24],
      small_boards_input: small_boards_input,
-     small_drawn_input: small_drawn_input}
+     small_drawn_input: small_drawn_input,
+     big_boards_input: big_boards_input,
+     big_drawn_input: big_drawn_input,
+    }
   end
 
   describe "baseline" do
@@ -138,6 +141,14 @@ defmodule BingoGridTest do
       small_drawn_input: drawn_input
     } do
       assert 4512 == Bingo.play(boards_input, drawn_input)
+    end
+
+
+    test "bingo game with big input", %{
+      big_boards_input: board_input,
+      big_drawn_input: drawn_input
+    } do
+      assert 8580 ==  Bingo.play(board_input, drawn_input)
     end
   end
 end
