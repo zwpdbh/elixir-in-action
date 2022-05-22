@@ -13,7 +13,9 @@ defmodule BingoGrid do
       |> Enum.with_index()
       |> Enum.reduce(%{}, fn x, acc -> add_row_elements_to_map(x, acc) end)
 
-    {:ok, grid}
+    score = -1
+    drawn_number = -1
+    {:ok, grid, score, drawn_number}
   end
 
   def drawn(pid, n) do
@@ -33,33 +35,38 @@ defmodule BingoGrid do
   end
 
   def handle_call({:score, drawn_num}, _from, grid) do
-    total_unmatched_ones = grid
-    |> Enum.reduce(0, fn {_, {v, matched?}}, acc ->
-      case matched? do
-        true -> acc
-        false -> acc + v
-      end
-    end)
-
-    score = drawn_num * total_unmatched_ones
+    
     {:reply, score, grid}
   end
 
-  def handle_call({:drawn, n}, _from, grid) do
-    matched =
-      grid
-      |> Enum.filter(fn {_, {num, _}} -> num == n end)
+  # update drawn number and update score if it is win 
+  def handle_call({:drawn, n}, _from, {grid, score, drawn_number}) do
+    # matched is the record matched in the map: {x, y} => {drawn_number, visited?}
+    case score != -1 do
+      true ->
+        {:reply, {grid, score, drawn_number}}
 
-    case matched do
-      [{key, {n, _}}] ->
-        {_, new_grid} =  Map.get_and_update(grid, key, fn current_value -> {current_value, {n, true}} end)
-        {:reply, {:ok, key}, new_grid}
-      _ ->
-        {:reply, {:miss, n}, grid}
+      false ->
+        matched =
+          grid
+          |> Enum.filter(fn {_, {num, _}} -> num == n end)
+
+        case matched do
+          [{{r, c}, {n, _}}] ->
+            {_, new_grid} =
+              Map.get_and_update(grid, {r, c}, fn _ -> {_, {n, true}} end)
+
+            case win?({r, c}, new_grid) do
+              {true, new_score} -> {:reply, {new_grid,new_score, n}}
+              {false, -1} -> {:reply, {new_grid, -1, n}}
+            end
+          _ ->
+            {:reply, {grid, score, drawn_number}
+       end
     end
   end
 
-  def handle_call({:win?, {r, c}}, _from, grid) do
+  def win?({r, c},  grid) do
     row_visited =
       grid
       |> Enum.filter(fn {{row, _}, {_, visited?}} ->
@@ -73,9 +80,18 @@ defmodule BingoGrid do
       end)
 
     if length(row_visited) == 5 or length(col_visited) == 5 do
-      {:reply, true, grid}
+      total_unmatched_ones =
+        grid
+        |> Enum.reduce(0, fn {_, {v, matched?}}, acc ->
+        case matched? do
+          true -> acc
+          false -> acc + v
+        end
+      end)
+
+      {true, total_unmatched_ones * Map.get({r, c})}
     else
-      {:reply, false, grid}
+      {false, -1}
     end
   end
 
