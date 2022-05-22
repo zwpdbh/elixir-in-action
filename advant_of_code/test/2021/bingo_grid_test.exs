@@ -1,5 +1,4 @@
 defmodule BingoGridTest do
-  import BingoGrid
   use ExUnit.Case, async: true
 
   setup do
@@ -78,25 +77,14 @@ defmodule BingoGridTest do
       {:ok, pid} = BingoGrid.start_link(grid_input)
 
       drawn_input
-      |> Enum.each(fn x ->
-        if drawn(pid, x) do
-          assert x == 24
-        else
-          assert x != 24
-        end
-      end)
+      |> Enum.each(fn x -> BingoGrid.drawn(pid, x) end)
+
+      {score, drawn_number } = BingoGrid.score(pid)
+
+      assert score == 4512
+      assert drawn_number == 24
     end
 
-    test "baseline score", %{grid_input: grid_input, drawn_input: drawn_input} do
-      {:ok, pid} = BingoGrid.start_link(grid_input)
-
-      drawn_input
-      |> Enum.each(fn x ->
-        if drawn(pid, x) do
-          assert 4512 == score(pid, x)
-        end
-      end)
-    end
 
     test "grid generation from input", %{small_boards_input: inputs} do
       boards = Bingo.generate_boards_from_input(inputs)

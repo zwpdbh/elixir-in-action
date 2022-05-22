@@ -15,58 +15,43 @@ defmodule BingoGrid do
 
     score = -1
     drawn_number = -1
-    {:ok, grid, score, drawn_number}
+    {:ok, {grid, score, drawn_number, false}}
   end
 
   def drawn(pid, n) do
-    case GenServer.call(pid, {:drawn, n}) do
-      {:ok, key} -> win?(pid, key)
-      _ -> false
-    end
+    GenServer.call(pid, {:drawn, n})
   end
 
-  # key is the {x, y} position on grid
-  def win?(pid, key) do
-    GenServer.call(pid, {:win?, key})
+  def score(pid) do
+    GenServer.call(pid, {:score})
   end
 
-  def score(pid, drawn_num) do
-    GenServer.call(pid, {:score, drawn_num})
-  end
-
-  def handle_call({:score, drawn_num}, _from, grid) do
-    
-    {:reply, score, grid}
+  def handle_call({:score}, _from, {grid, score, drawn_number, finished?}) do
+    {:reply, {score, drawn_number}, {grid, score, drawn_number, finished?}}
   end
 
   # update drawn number and update score if it is win 
-  def handle_call({:drawn, n}, _from, {grid, score, drawn_number}) do
-    # matched is the record matched in the map: {x, y} => {drawn_number, visited?}
-    case score != -1 do
-      true ->
-        {:reply, {grid, score, drawn_number}}
+  def handle_call({:drawn, n}, _from, {grid, score, drawn_number, false}) do
+    with matched <- Enum.filter(grid, fn {_, {num, _}} -> num == n end),
+         [{{r, c}, {n, _}}] <- matched,
+         {_, new_grid} <- Map.get_and_update(grid, {r, c}, fn current_value -> {current_value, {n, true}} end)
+      do
+      {finished, new_score} =  win?({r, c}, new_grid)
+      case finished do
+        true -> {:reply, true, {new_grid, new_score, n, true}}
+        false -> {:reply, false, {new_grid, score, drawn_number, false}}
+      end
 
-      false ->
-        matched =
-          grid
-          |> Enum.filter(fn {_, {num, _}} -> num == n end)
-
-        case matched do
-          [{{r, c}, {n, _}}] ->
-            {_, new_grid} =
-              Map.get_and_update(grid, {r, c}, fn _ -> {_, {n, true}} end)
-
-            case win?({r, c}, new_grid) do
-              {true, new_score} -> {:reply, {new_grid,new_score, n}}
-              {false, -1} -> {:reply, {new_grid, -1, n}}
-            end
-          _ ->
-            {:reply, {grid, score, drawn_number}
-       end
+    else
+      _ -> {:reply, false, {grid, score, drawn_number, false}}
     end
   end
 
-  def win?({r, c},  grid) do
+  def handle_call({:drawn, _}, _from, {grid, score, drawn_number, true}) do
+    {:reply, true, {grid, score, drawn_number, true}}
+  end
+
+  def win?({r, c}, grid) do
     row_visited =
       grid
       |> Enum.filter(fn {{row, _}, {_, visited?}} ->
@@ -83,13 +68,14 @@ defmodule BingoGrid do
       total_unmatched_ones =
         grid
         |> Enum.reduce(0, fn {_, {v, matched?}}, acc ->
-        case matched? do
-          true -> acc
-          false -> acc + v
+          case matched? do
+            true -> acc
+            false -> acc + v
+          end
+        end)
+        with {score, _} =  Map.get(grid, {r, c})do
+          {true, total_unmatched_ones * score}
         end
-      end)
-
-      {true, total_unmatched_ones * Map.get({r, c})}
     else
       {false, -1}
     end
