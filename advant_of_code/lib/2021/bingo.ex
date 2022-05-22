@@ -7,11 +7,27 @@ defmodule Bingo do
   end
 
   def init(boards_input) do
-    {:ok, generate_boards(boards_input)}
+    boards = generate_boards_from_input(boards_input)
+    state = %{}
+
+    {:ok, state}
   end
 
-  # We need to construct multiple boards as our state
-  def generate_boards(boards_input) do
-    state = %{}
+  def generate_boards_from_input(boards_input) do
+    # IO.inspect boards_input
+    
+    
+    boards =  boards_input
+    |> Enum.filter(fn x -> length(x) == 5 end)
+    |> Enum.with_index
+    |> Enum.reduce([], fn {row_input, i}, acc ->
+      case rem(i, 5) do
+        0 ->
+          [[row_input] | acc]
+        _ ->
+          [x | rest] = acc
+          [Enum.concat(x, [row_input]) | rest]
+      end
+    end)
   end
 end

@@ -17,12 +17,32 @@ defmodule BingoGrid do
   end
 
   def draw(pid, n) do
-    GenServer.call(pid, {:draw, n})
+    case GenServer.call(pid, {:draw, n}) do
+      {:ok, key} -> win?(pid, key)
+      _ -> false
+    end
   end
 
   # key is the {x, y} position on grid
   def win?(pid, key) do
     GenServer.call(pid, {:win?, key})
+  end
+
+  def score(pid, drawn_num) do
+    GenServer.call(pid, {:score, drawn_num})
+  end
+
+  def handle_call({:score, drawn_num}, _from, grid) do
+    total_unmatched_ones = grid
+    |> Enum.reduce(0, fn {_, {v, matched?}}, acc ->
+      case matched? do
+        true -> acc
+        false -> acc + v
+      end
+    end)
+
+    score = drawn_num * total_unmatched_ones
+    {:reply, score, grid}
   end
 
   def handle_call({:draw, n}, _from, grid) do
@@ -32,9 +52,8 @@ defmodule BingoGrid do
 
     case matched do
       [{key, {n, _}}] ->
-        {:reply, {:ok, key},
-         Map.get_and_update(grid, key, fn current_value -> {current_value, {n, true}} end)}
-
+        {_, new_grid} =  Map.get_and_update(grid, key, fn current_value -> {current_value, {n, true}} end)
+        {:reply, {:ok, key}, new_grid}
       _ ->
         {:reply, {:miss, n}, grid}
     end
@@ -53,7 +72,7 @@ defmodule BingoGrid do
         visited? == true && col == c
       end)
 
-    if Enum.length(row_visited) == 5 or Enum.length(col_visited) == 5 do
+    if length(row_visited) == 5 or length(col_visited) == 5 do
       {:reply, true, grid}
     else
       {:reply, false, grid}
