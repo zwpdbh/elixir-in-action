@@ -1,7 +1,7 @@
 defmodule Day05 do
   def convert_to_points({x1, y1}, {x2, y2}) when x1 != x2 and y1 != y2 do
-    # Enum.zip(x1..x2, y1..y2)
-    []
+    Enum.zip(x1..x2, y1..y2) # for corss cases, for part two.
+    # [] # for just vertical or horizontal, for part one.
   end
 
   def convert_to_points({x1, y1}, {x2, y2}) when x1 == x2 do

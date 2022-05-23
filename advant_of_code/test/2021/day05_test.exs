@@ -10,14 +10,14 @@ defmodule Day05Test do
 
   describe "part one" do
     test "baseline", %{baseline_input: baseline_input} do
-      assert 5 == baseline_input
+      assert 12 == baseline_input
       |> Day05.process_input
       |> Day05.produce_points_from_lines
       |> Day05.compute_overlap_points
     end
 
     test "part one", %{big_input_part_one: big_input_part_one} do
-    assert 6710  ==  big_input_part_one
+    assert 20121 ==  big_input_part_one
       |> Day05.process_input
       |> Day05.produce_points_from_lines
       |> Day05.compute_overlap_points
