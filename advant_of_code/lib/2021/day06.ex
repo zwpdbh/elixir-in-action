@@ -35,4 +35,12 @@ defmodule Day06 do
       end
     end)
   end
+
+  # Not fast enough
+  def simulate_large(fishes, n) do
+    fishes
+    |> Enum.frequencies_by(fn x -> x end)
+    |> IO.inspect
+    |> Enum.reduce(0, fn {k, v}, acc -> acc + v * simulate([k], n) end)
+  end
 end
