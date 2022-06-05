@@ -95,6 +95,8 @@ defmodule GPSV2 do
   # But it still has leap before you look problem:
   # For example: if the goal is (jump-off-cliff land-safely), think about it.
   # The problem arises because planning and execution are interleaved.
+  # Other problem includes
+  # 1) recursive sub-goal problem: try to solve a problem in term of itself. solution: use something to track what we have done.
   defp achieve_all(goals) do
     Enum.all?(goals, fn x -> achieve(x) end) and MapSet.subset?(MapSet.new(goals), MapSet.new(GPSAgent.get_state))
   end
