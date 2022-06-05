@@ -162,7 +162,7 @@ defmodule GPSV3 do
     %GPS.Op{op | add_lst: convert_op_aux(op.add_lst, op.action)}
   end
 
-  defp convert_op_aux([{"executing", _} | _] = add_lsst, action) do
+  defp convert_op_aux([{"executing", _} | _] = add_lsst, _) do
     add_lsst 
   end
 
