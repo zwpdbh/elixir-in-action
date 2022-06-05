@@ -150,3 +150,24 @@ defmodule GPSV2 do
     end
   end
 end
+
+
+
+defmodule GPSV3 do
+  # 4.11 GPS Version 2: A More General Problem Solver
+  # It should solve: "running around the block," "prerequisite clobbers sibling goal," "leaping before you look," and "recursive subgoal" problems.
+
+  def convert_op(op = %GPS.Op{}) do
+    # how to update struct
+    %GPS.Op{op | add_lst: convert_op_aux(op.add_lst, op.action)}
+  end
+
+  defp convert_op_aux([{"executing", _} | _] = add_lsst, action) do
+    add_lsst 
+  end
+
+  defp convert_op_aux(add_lst, action) do
+    Enum.concat([{"executing", action}], add_lst)
+  end
+
+end
