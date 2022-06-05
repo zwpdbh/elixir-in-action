@@ -77,6 +77,22 @@ defmodule Ch04Test do
 
       assert "solved" = GPS.gps(current_state, goals, school_ops)
     end
-    
+  end
+
+  describe "test sibling problem" do
+    test "should not solved", %{school_ops: school_ops}do
+      current_state = [
+        "son at home",
+        "car needs battery",
+        "have money",
+        "have phone book"
+      ]
+      goals = [
+        "have money",
+        "son at school"
+      ]
+
+      assert "not solved" = GPSV2.gps(current_state, goals, school_ops)
+    end
   end
 end
