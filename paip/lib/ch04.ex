@@ -91,7 +91,10 @@ end
 
 
 defmodule GPSV2 do
-  # to solve sibling goal problem
+  # To solve sibling goal problem
+  # But it still has leap before you look problem:
+  # For example: if the goal is (jump-off-cliff land-safely), think about it.
+  # The problem arises because planning and execution are interleaved.
   defp achieve_all(goals) do
     Enum.all?(goals, fn x -> achieve(x) end) and MapSet.subset?(MapSet.new(goals), MapSet.new(GPSAgent.get_state))
   end
