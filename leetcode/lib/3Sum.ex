@@ -16,6 +16,9 @@ defmodule ThreeSum do
   end
 
   def three_sum_aux(nums) do
+    nums
+    |> Enum.with_index
+    
     for x <- nums, y <- nums -- [x], z <- nums -- [x, y] do
       case x + y + z == 0 do
         true -> Result.add([x,y,z])
