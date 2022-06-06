@@ -8,7 +8,7 @@ This kind of problem ask you to find a combination of numbers(their indext) whic
 ** Summary 
 - There is no way to early return in Elixir! (see: [[https://www.headway.io/blog/how-to-return-early-from-elixir][There is no return in Elixir!!!]])
   - To do early return, we need to reconstruct our code to use different function signature.
-- Use ~for~ comprehensions is convonient!
+- Use ~for~ comprehensions is convonient! (see: [[https://hexdocs.pm/elixir/Kernel.SpecialForms.html#for/1][Kernal.for/1]])
   - Avaliable keywords include: reduce, when, unique.
 
     
