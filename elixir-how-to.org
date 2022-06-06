@@ -811,6 +811,8 @@ From maps to structs: Structs are extensions built on top of maps that provide c
     :    {1, 2} => {6, false}
     :  }}
 
+* How to produce permutation and combination from list
+- ref: [[https://github.com/tallakt/comb][Comb]]
 * Dynamic dispatch 
 - Ref: [[https://dnlserrano.dev/2019/12/21/behaviours-and-dynamic-dispatch.html][Behaviours and Dynamic dispatch]]
   - It shows how to use Behaviours to transform a dynamic dispatch on function to dynamic dispath on module.
