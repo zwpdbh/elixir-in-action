@@ -26,28 +26,31 @@ This kind of problem ask you to find a combination of numbers(their indext) whic
   # end
 
   defmodule Solution do
-    @spec add_two_numbers(l1 :: ListNode.t | nil, l2 :: ListNode.t | nil) :: ListNode.t | nil
+    @spec add_two_numbers(l1 :: ListNode.t() | nil, l2 :: ListNode.t() | nil) :: ListNode.t() | nil
     def add_two_numbers(l1, l2) do
       {n1, _} = list_to_num(l1)
       {n2, _} = list_to_num(l2)
       num_to_list(n1 + n2)
     end
-      
-    def list_to_num(lst) do 
-     {n, _} =lst
-        |> Enum.reverse
+
+    def list_to_num(lst) do
+      {n, _} =
+        lst
+        |> Enum.reverse()
         |> Enum.join("")
-        |> Integer.parse
+        |> Integer.parse()
+
       n
     end
-       
-    def num_to_list(n) do 
-       "#{n}"
-        |> String.graphemes
-        |> Enum.reverse
-        |> Enum.map(fn x -> 
-                           {n, _} = Integer.parse(x)
-                            n end)
+
+    def num_to_list(n) do
+      "#{n}"
+      |> String.graphemes()
+      |> Enum.reverse()
+      |> Enum.map(fn x ->
+        {n, _} = Integer.parse(x)
+        n
+      end)
     end
   end
 #+end_src
