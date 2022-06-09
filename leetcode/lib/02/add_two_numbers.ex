@@ -13,6 +13,7 @@ defmodule AddTwoNumbers do
     {n1, _} = list_to_num(l1)
     {n2, _} = list_to_num(l2)
     num_to_list(n1 + n2)
+    |> list_to_nodes
   end
 
   def list_to_num(lst) do
@@ -34,6 +35,14 @@ defmodule AddTwoNumbers do
       n
     end)
   end
+
+  def list_to_nodes([]) do
+    nil
+  end
+
+  def list_to_nodes([head|tail]) do
+    %ListNode{val: head, next: list_to_nodes(tail)}
+  end
 end
 
 
@@ -43,7 +52,7 @@ defimpl Enumerable, for: ListNode do
     {:done, acc}
   end
 
-  def reduce(%{ListNode{} = l}, {:cont, acc}, fun) do
+  def reduce(%ListNode{} = l, {:cont, acc}, fun) do
     reduce(l.next, fun.(l.val, acc), fun)
   end
 
@@ -54,9 +63,7 @@ defimpl Enumerable, for: ListNode do
   def reduce(%ListNode{} = l, {:suspend, acc}, fun) do
     {:suspended, acc, &reduce(l, &1, fun)}
   end
-end
 
-defimpl Enumerable, for: ListNode do
   def count(%ListNode{} = l) do
     count_aux(l, 0)
   end
@@ -68,9 +75,12 @@ defimpl Enumerable, for: ListNode do
   def count_aux(%ListNode{} = l, c) do
     count_aux(l.next, c+1)
   end
-end
 
-defimpl Enumerable, for: ListNode do
-  def member?(nil, target) do
+  def member?(_, _) do
+    {:error, __MODULE__}
+  end
+
+  def slice(_l)  do
+    {:error, __MODULE__}
   end
 end
