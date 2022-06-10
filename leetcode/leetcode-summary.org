@@ -13,7 +13,7 @@ This kind of problem ask you to find a combination of numbers(their indext) whic
 
     
 * List operations 
-** [[https://leetcode.com/problems/add-two-numbers/][02 -- Add Two Numbers]]
+** [[https://leetcode.com/problems/add-two-numbers/][02 -- Add Two Numbers]]                                             :medium:
 #+begin_src elixir
   # Definition for singly-linked list.
   defmodule ListNode do
@@ -57,3 +57,9 @@ This kind of problem ask you to find a combination of numbers(their indext) whic
 - So, how to implement some protocol for a custom struct?
   - ref: [[https://elixirschool.com/en/lessons/advanced/protocols][Protocols]]
   - ref: [[https://hexdocs.pm/elixir/1.13/Enumerable.html][Enumerable protocol]]
+
+    
+* Sliding window
+** [[https://leetcode.com/problems/longest-substring-without-repeating-characters/][3. Longest Substring Without Repeating Characters]]                 :medium:
+- Use Enum.reduce and Map
+  
