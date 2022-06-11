@@ -301,7 +301,6 @@ From maps to structs: Structs are extensions built on top of maps that provide c
 ** How to match n bytes in a binary 
 #+begin_src elixir
   iex> <<head::binary-size(2), rest::binary>> = <<0, 1, 2, 3>>
-                   <<0, 1, 2, 3>>
   iex> head
   <<0, 1>>
   iex> rest
@@ -326,25 +325,110 @@ From maps to structs: Structs are extensions built on top of maps that provide c
   #+begin_src elixir
     String.to_charlist("ABC")       
   #+end_src
-** Example: chunk from PNG 
-- Chunk format 
-  #+begin_src text
-      +--------------+----------------+-------------------+
-      |  Length (32) | Chunk type (32)| Data (Length size)|
-      +--------------+----------------+-------------------+
-      |   CRC (32)   |
-      +--------------+
-  #+end_src
-- Pattern matching the chunk format 
+** Example: [[https://zohaib.me/binary-pattern-matching-in-elixir/][Binary pattern matching in Elixir with PNG parsing example]]
+- Example 01
+  - Chunk format 
+    #+begin_src text
+      # The first 33 bytes containing the information about PNG. Numbers in brackets are number of bits for that data
+      +------------------+
+      |0x89504E470D0A1A0A| <- Static binary in start of PNG file
+      +------------------+----+------------------+
+      |    Length (32)   |IHDR|     Width (32)   |
+      +------------------+----+-------+----------+--+
+      |    Height (32)   |Bit depth(8)|Color Type(8)|
+      +---------------------+---------+------+-------------------+
+      |Compression method(8)|Filter method(8)|Interlace method(8)|
+      +---------------+------------------------------------------+
+      |    CRC (32)   |
+      +---------------+
+    #+end_src
+  - Pattern matching that chunk 
+    #+begin_src elixir
+      <<0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,
+        length  :: size(32),
+        "IHDR",
+        width   :: size(32),
+        height  :: size(32),
+        bit_depth,
+        color_type,
+        compression_method,
+        filter_method,
+        interlace_method,
+        crc     :: size(32),
+        chunks  :: binary >>
+    #+end_src
+    
+- Example 02
+  - Chunk format 
+    #+begin_src text
+        +--------------+----------------+-------------------+
+        |  Length (32) | Chunk type (32)| Data (Length size)|
+        +--------------+----------------+-------------------+
+        |   CRC (32)   |
+        +--------------+
+    #+end_src
+  - Pattern matching the chunk format 
+    #+begin_src elixir
+      <<length     :: size(32),
+        chunk_type :: size(32),
+        chunk_data :: binary - size(length),
+        crc        :: size(32),
+        chunks     :: binary>>
+    #+end_src
+    - Another way of *defining n byte length* is ~binary - size(n)~. 
+    - =Note=: we matched ~length~ in pattern and used in the pattern as well. 
+      - See: we first extract length from size(32), then use that value in binary - size(length).
+      - In Elixir pattern matching you can use the assigned variable in the pattern following it, thats why we are able to extract the ~chunk_data~ based on the ~length~.
+- The complete module which can parse PNG file 
   #+begin_src elixir
-    <<length     :: size(32),
-      chunk_type :: size(32),
-      chunk_data :: binary - size(length),
-      crc        :: size(32),
-                               chunks     :: binary>>
+    defmodule Expng do
+      defstruct [:width, :height, :bit_depth, :color_type, :compression, :filter, :interlace, :chunks]
+
+      def png_parse(<<
+      0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,
+                     _length :: size(32),
+                     "IHDR",
+                     width :: size(32),
+                     height :: size(32),
+                     bit_depth,
+                     color_type,
+                     compression_method,
+                     filter_method,
+                     interlace_method,
+                     _crc :: size(32),
+                     chunks :: binary>>) do
+        png = %Expng{
+          width: width,
+          height: height,
+          bit_depth: bit_depth,
+          color_type: color_type,
+          compression: compression_method,
+          filter: filter_method,
+          interlace: interlace_method,
+          chunks: []}
+
+        png_parse_chunks(chunks, png)
+      end
+
+      defp png_parse_chunks(<<
+                            length :: size(32),
+                            chunk_type :: size(32),
+                            chunk_data :: binary - size(length),
+                            crc :: size(32),
+                            chunks :: binary>>, png) do
+        chunk = %{length: length, chunk_type: chunk_type, data: chunk_data, crc: crc}
+        png = %{png | chunks: [chunk | png.chunks]}
+
+        png_parse_chunks(chunks, png)
+      end
+
+      defp png_parse_chunks(<<>>, png) do
+        %{png | chunks: Enum.reverse(png.chunks)}
+      end
+    end
+
+    File.read!("/path/to/png/file.png") |> Expng.png_parse
   #+end_src
-  - Another way of defining n byte length is ~binary - size(n)~. 
-  - =Note=: we matched ~length~ in pattern and used in the pattern as well. In Elixir pattern matching you can use the assigned variable in the pattern following it, thats why we are able to extract the ~chunk_data~ based on the ~length~.
 
 
 * How to represent string 
