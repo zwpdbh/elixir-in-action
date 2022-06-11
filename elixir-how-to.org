@@ -1,118 +1,118 @@
 * DONE How to organize code 
 CLOSED: [2022-04-03 周日 13:12]
-  - A module is a collection of functions, like namespace. Functions must be defined inside a module.
-  - A file can contain multiple module.
-  - Rules
-    - Module name starts with uppercase letter and is usually formated as CamelCase style.
-    - Use ~.~ in module to represent herachichy. We could also define child module inside module.
-    - Function name are like abc_def.
+- A module is a collection of functions, like namespace. Functions must be defined inside a module.
+- A file can contain multiple module.
+- Rules
+  - Module name starts with uppercase letter and is usually formated as CamelCase style.
+  - Use ~.~ in module to represent herachichy. We could also define child module inside module.
+  - Function name are like abc_def.
 
 * DONE How to call functions from other module 
 CLOSED: [2022-04-03 周日 13:13]
-  - We could import other module into current module, to allow us to call functions without module prefix.
-  - We could use change the module's name 
-    #+begin_src text
+- We could import other module into current module, to allow us to call functions without module prefix.
+- We could use change the module's name 
+  #+begin_src text
       alias IO, as: MyIO
-    #+end_src
-  - For example, you have a Geometry.Rectangle module. You can alias it in your client module and use a shorter name
-    #+begin_src elixir
-      defmodule MyModule do 
-        alias Geometry.Rectangle, as: Rectange 
-        
-        def my_fun do
-          Rectange.area(...)
-        end
+  #+end_src
+- For example, you have a Geometry.Rectangle module. You can alias it in your client module and use a shorter name
+  #+begin_src elixir
+    defmodule MyModule do 
+      alias Geometry.Rectangle, as: Rectange 
+
+      def my_fun do
+        Rectange.area(...)
       end
-    #+end_src
-    
+    end
+  #+end_src
+
 * DONE How to compile the code 
 CLOSED: [2022-04-03 周日 13:13]
-  - In Emacs, ~M-x alchemist-iex-send-last-sexp~.
-  - In terminal, ~iex geometry.ex~.
-  
+- In Emacs, ~M-x alchemist-iex-send-last-sexp~.
+- In terminal, ~iex geometry.ex~.
+
   The code will be compiled and resulting module is loaded into the runtime.
   
 * DONE How to do type specification
 CLOSED: [2022-04-03 周日 13:13]
-  #+begin_src elixir
-    defmodule Circle do
-      @pi 3.14
-      
-      @spec area(number) :: number 
-      def area(r) do
-        r * r * @pi
-      end
+#+begin_src elixir
+  defmodule Circle do
+    @pi 3.14
+
+    @spec area(number) :: number 
+    def area(r) do
+      r * r * @pi
     end
-  #+end_src
+  end
+#+end_src
   
 * DONE How to get the integer from div
 CLOSED: [2022-04-03 周日 13:13]
-  - The division operator ~/~ always return float.
-  - To get integer use 
-    - ~div~ to get the integer part.
-    - ~rem~ to get the remainder
-  
+- The division operator ~/~ always return float.
+- To get integer use 
+  - ~div~ to get the integer part.
+  - ~rem~ to get the remainder
+
 * DONE How to define constant 
 CLOSED: [2022-04-03 周日 13:13]
-  - *Atom*, like ~:this_is_an_atom~
+- *Atom*, like ~:this_is_an_atom~
 
 * How to use Tuples                                           :DataStructure:
-  #+begin_src elixir
-    person = {"bob", 25}
-    
-    age = elem(persion, 1) # => 25
-    put_elem(person, 1, 100) # => {"bob", 100}
-  #+end_src
-  - Untyped structure, or record, group a *fixed* number of element together.
+#+begin_src elixir
+  person = {"bob", 25}
+
+  age = elem(persion, 1) # => 25
+  put_elem(person, 1, 100) # => {"bob", 100}
+#+end_src
+- Untyped structure, or record, group a *fixed* number of element together.
 * How to use List                                             :DataStructure:
-  #+begin_src elixir
-    iex(11)>prime_numbers = [2, 3, 5, 7]
-    [2, 3, 5, 7]
-    iex(12)> length(prime_numbers)
-    length(prime_numbers)
-    4
-    iex(13)> Enum.at(prime_numbers, 1)
-    Enum.at(prime_numbers, 1)
-    3
-    iex(14)> 100 in prime_numbers
-    100 in prime_numbers
-    false
-    iex(15)> List.replace_at(prime_numbers, 0 , 11)
-    List.replace_at(prime_numbers, 0 , 11)
-    [11, 3, 5, 7]
-    iex(16)> prime_numbers
-    prime_numbers
-    [2, 3, 5, 7]
-    iex(17)> new_primes = List.replace_at(prime_numbers, 0 , 11)
-    new_primes = List.replace_at(prime_numbers, 0 , 11)
-    [11, 3, 5, 7]
-    iex(18)> new_primes = List.insert_at(new_primes, 3, 13)
-    new_primes = List.insert_at(new_primes, 3, 13)
-    [11, 3, 5, 13, 7]
-    iex(19)> new_primes
-    new_primes
-    [11, 3, 5, 13, 7]
-    iex(20)> new_primes = List.insert_at(new_primes, -1, 103)
-    new_primes = List.insert_at(new_primes, -1, 103)
-    [11, 3, 5, 13, 7, 103]
-    iex(21)> [1, 2, 3] ++ [4, 5]
-    [1, 2, 3] ++ [4, 5]
-    [1, 2, 3, 4, 5]
-    iex(22)> hd([1, 2, 3, 4])
-    hd([1, 2, 3, 4])
-    1
-    
-    iex(23)> tl([1, 2, 3, 4])
-    tl([1, 2, 3, 4])
-    [2, 3, 4]
-    
-    iex(24)> a_list = [5, :value, true]
-    a_list = [5, :value, true]
-    [5, :value, true]
-    iex(25)> new_list = [:new_element | a_list]
-    new_list = [:new_element | a_list]
-    [:new_element, 5, :value, true]
-  #+end_src
+#+begin_src elixir
+  iex(11)>prime_numbers = [2, 3, 5, 7]
+  [2, 3, 5, 7]
+  iex(12)> length(prime_numbers)
+  length(prime_numbers)
+  4
+  iex(13)> Enum.at(prime_numbers, 1)
+  Enum.at(prime_numbers, 1)
+  3
+  iex(14)> 100 in prime_numbers
+  100 in prime_numbers
+  false
+  iex(15)> List.replace_at(prime_numbers, 0 , 11)
+  List.replace_at(prime_numbers, 0 , 11)
+  [11, 3, 5, 7]
+  iex(16)> prime_numbers
+  prime_numbers
+  [2, 3, 5, 7]
+  iex(17)> new_primes = List.replace_at(prime_numbers, 0 , 11)
+  new_primes = List.replace_at(prime_numbers, 0 , 11)
+  [11, 3, 5, 7]
+  iex(18)> new_primes = List.insert_at(new_primes, 3, 13)
+  new_primes = List.insert_at(new_primes, 3, 13)
+  [11, 3, 5, 13, 7]
+  iex(19)> new_primes
+  new_primes
+  [11, 3, 5, 13, 7]
+  iex(20)> new_primes = List.insert_at(new_primes, -1, 103)
+  new_primes = List.insert_at(new_primes, -1, 103)
+  [11, 3, 5, 13, 7, 103]
+  iex(21)> [1, 2, 3] ++ [4, 5]
+  [1, 2, 3] ++ [4, 5]
+  [1, 2, 3, 4, 5]
+  iex(22)> hd([1, 2, 3, 4])
+  hd([1, 2, 3, 4])
+  1
+
+  iex(23)> tl([1, 2, 3, 4])
+  tl([1, 2, 3, 4])
+  [2, 3, 4]
+
+  iex(24)> a_list = [5, :value, true]
+  a_list = [5, :value, true]
+  [5, :value, true]
+  iex(25)> new_list = [:new_element | a_list]
+  new_list = [:new_element | a_list]
+  [:new_element, 5, :value, true]
+#+end_src
   
 * Tuples, keywork lists, map and struct                       :DataStructure:
 Two key pieces missing from tuples and lists:
@@ -246,33 +246,34 @@ From maps to structs: Structs are extensions built on top of maps that provide c
    
 
 * How to process binary
-  - A binary is a chunk of byte
-  - Create binary by enclosing the byte sequence
+** Basic 
+- A binary is a chunk of byte
+- Create binary by enclosing the byte sequence
+  #+begin_src elixir
+    <<1, 2, 3>>
+  #+end_src
+  - Each number represent the value of the corresponding byte.
+  - If the value is bigger than 255, it is truncated to the byte size
     #+begin_src elixir
-      <<1, 2, 3>>
+      <<257>> #=> <<1>>
     #+end_src
-    - Each number represent the value of the corresponding byte.
-    - If the value is bigger than 255, it is truncated to the byte size
-      #+begin_src elixir
-        <<257>> #=> <<1>>
-      #+end_src
-  - Specify the size of each value and tell the compiler how many bits to use for that particular value 
-    #+begin_src elixir
-      <<234::16>> # => <<0, 234>>, used 2 bytes, the first has value 0, the second is 234 
-      <<1234::32>> # => <<0, 0, 4, 210>>
-    #+end_src
-  - The size specifier is in *bits* and not needed to be a multiple of 8!!
-    #+begin_src elixir
-      <<1::4, 15::4>> # => <<31>>
-    #+end_src
-  - If the total size of all values is not a multiple of 8, it is called a bitstring -- a sequence of bits 
-    #+begin_src elixir
-      <<1::1, 0::1, 1::1>> # => <<5::size(3)>>
-    #+end_src
-  - Concatenate two binaries with ~<>~
-    #+begin_src elixir
-      <<1, 2>> <> <<3, 4>> # => <<1, 2, 3, 4>>
-    #+end_src
+- Specify the size of each value and tell the compiler how many bits to use for that particular value 
+  #+begin_src elixir
+    <<234::16>> # => <<0, 234>>, used 2 bytes, the first has value 0, the second is 234 
+    <<1234::32>> # => <<0, 0, 4, 210>>
+  #+end_src
+- The size specifier is in *bits* and not needed to be a multiple of 8!!
+  #+begin_src elixir
+    <<1::4, 15::4>> # => <<31>>
+  #+end_src
+- If the total size of all values is not a multiple of 8, it is called a bitstring -- a sequence of bits 
+  #+begin_src elixir
+    <<1::1, 0::1, 1::1>> # => <<5::size(3)>>
+  #+end_src
+- Concatenate two binaries with ~<>~
+  #+begin_src elixir
+    <<1, 2>> <> <<3, 4>> # => <<1, 2, 3, 4>>
+  #+end_src
 ** How to view a string's binary representation
 #+begin_src elixir
   # A common trick in Elixir when you want to see the inner binary representation of a string is to concatenate the null byte <<0>> to it:
@@ -300,7 +301,7 @@ From maps to structs: Structs are extensions built on top of maps that provide c
 ** How to match n bytes in a binary 
 #+begin_src elixir
   iex> <<head::binary-size(2), rest::binary>> = <<0, 1, 2, 3>>
-  <<0, 1, 2, 3>>
+                   <<0, 1, 2, 3>>
   iex> head
   <<0, 1>>
   iex> rest
@@ -318,14 +319,21 @@ From maps to structs: Structs are extensions built on top of maps that provide c
 #+end_src
 - Therefore, when pattern matching on strings, it is important to use the utf8 modifier.
 
+** How to convert between binary string to character list 
+- binary string is represent using ~""~ while character list is represent as ~''~.
+- Use binary string as much as possbile
+- Convert 
+  #+begin_src elixir
+    String.to_charlist("ABC")       
+  #+end_src
 ** Example: chunk from PNG 
 - Chunk format 
   #+begin_src text
-    +--------------+----------------+-------------------+
-    |  Length (32) | Chunk type (32)| Data (Length size)|
-    +--------------+----------------+-------------------+
-    |   CRC (32)   |
-    +--------------+
+      +--------------+----------------+-------------------+
+      |  Length (32) | Chunk type (32)| Data (Length size)|
+      +--------------+----------------+-------------------+
+      |   CRC (32)   |
+      +--------------+
   #+end_src
 - Pattern matching the chunk format 
   #+begin_src elixir
@@ -333,40 +341,34 @@ From maps to structs: Structs are extensions built on top of maps that provide c
       chunk_type :: size(32),
       chunk_data :: binary - size(length),
       crc        :: size(32),
-      chunks     :: binary>>
+                               chunks     :: binary>>
   #+end_src
   - Another way of defining n byte length is ~binary - size(n)~. 
   - =Note=: we matched ~length~ in pattern and used in the pattern as well. In Elixir pattern matching you can use the assigned variable in the pattern following it, thats why we are able to extract the ~chunk_data~ based on the ~length~.
-* How to represent string 
-  - String in elixir is either a binary or a list type.
-  - String inter -- evaluate values in string template
-    #+begin_src elixir
-      "embedded expression: #{1 + 3}" #=>"embedded expression: 4"
-    #+end_src
-  - How to include quote inside string
-    #+begin_src elixir
-      ~s("embedded expression": #{1 + 3}) #=> "\"embedded expression\": 4"
-      
-      """ 
-      embedded expression: "#{1 + 3}" 
-      """
-      # => "embedded expression: \"4\"\n"
-    #+end_src
-  - Aother way to represent string is use single-quote 
-    #+begin_src elixir
-      'ABC'
-      [65, 66, 67] 
-      # => they both produce 'ABC'
-    #+end_src
-    - The runtime doesn't distinguish between a list of integers and a character list.
 
-* How to convert between binary string to character list 
-  - binary string is represent using ~""~ while character list is represent as ~''~.
-  - Use binary string as much as possbile
-  - Convert 
-    #+begin_src elixir
-      String.to_charlist("ABC")       
-    #+end_src
+
+* How to represent string 
+- String in elixir is either a binary or a list type.
+- String inter -- evaluate values in string template
+  #+begin_src elixir
+    "embedded expression: #{1 + 3}" #=>"embedded expression: 4"
+  #+end_src
+- How to include quote inside string
+  #+begin_src elixir
+    ~s("embedded expression": #{1 + 3}) #=> "\"embedded expression\": 4"
+
+    """ 
+    embedded expression: "#{1 + 3}" 
+    """
+    # => "embedded expression: \"4\"\n"
+  #+end_src
+- Aother way to represent string is use single-quote 
+  #+begin_src elixir
+    'ABC'
+    [65, 66, 67] 
+    # => they both produce 'ABC'
+  #+end_src
+  - The runtime doesn't distinguish between a list of integers and a character list.
 
 * How to define Lambda function and use it 
 - basic lambda 
@@ -499,160 +501,160 @@ From maps to structs: Structs are extensions built on top of maps that provide c
 
 
 * How to check the type of a variable
-  - From REPL 
-    #+begin_src elixir
-      iex(10)> i x
-      i x
-      Term
-        1
-      Data type
-        Integer
-      Reference modules
-        Integer
-      Implemented protocols
-        IEx.Info, Inspect, List.Chars, String.Chars
-    #+end_src
-  - From code 
-    #+begin_src elixir
-      defmodule Util do
-          def typeof(a) do
-              cond do
-                  is_float(a)    -> "float"
-                  is_number(a)   -> "number"
-                  is_atom(a)     -> "atom"
-                  is_boolean(a)  -> "boolean"
-                  is_binary(a)   -> "binary"
-                  is_function(a) -> "function"
-                  is_list(a)     -> "list"
-                  is_tuple(a)    -> "tuple"
-                  true           -> "idunno"
-              end    
-          end
-      end
-      
-      cases = [
-          1.337, 
-          1337, 
-          :'1337', 
-          true, 
-          <<1, 3, 3, 7>>, 
-          (fn(x) -> x end), 
-          {1, 3, 3, 7}
-      ]
-      
-      Enum.each cases, fn(case) -> 
-          IO.puts (inspect case) <> " is a " <> (Util.typeof case)
-      end
-    #+end_src
-
-* How to chain multiple pattern matching
+- From REPL 
   #+begin_src elixir
-    defmodule ChainPattern do
-      # define some helper function
-      def extract_login(%{"login" => login}) do
-        {:ok, login}
-      end
-      def extract_login(_) do
-        {:error, "login missed"}
-      end
-    
-      def extract_email(%{"email" => email}) do
-        {:ok, email}
-      end
-      def extract_email(_) do
-        {:error, "email missed"}
-      end
-    
-      def extract_password(%{"password" => password}) do
-        {:ok, password}
-      end
-      def extract_password(_) do
-        {:error, "password missed"}
-      end
-    
-    
-      def extract_info(submitted) do
-        with {:ok, login} <-extract_login(submitted),
-          {:ok, email} <-extract_email(submitted),
-          {:ok, password} <-extract_password(submitted) do
-          {:ok, %{login: login, email: email, password: password}}
-        end
+    iex(10)> i x
+    i x
+    Term
+    1
+    Data type
+    Integer
+    Reference modules
+    Integer
+    Implemented protocols
+    IEx.Info, Inspect, List.Chars, String.Chars
+  #+end_src
+- From code 
+  #+begin_src elixir
+    defmodule Util do
+      def typeof(a) do
+        cond do
+          is_float(a)    -> "float"
+          is_number(a)   -> "number"
+          is_atom(a)     -> "atom"
+          is_boolean(a)  -> "boolean"
+          is_binary(a)   -> "binary"
+          is_function(a) -> "function"
+          is_list(a)     -> "list"
+          is_tuple(a)    -> "tuple"
+          true           -> "idunno"
+        end    
       end
     end
-    
-    submitted = %{
-      "login" => "alice",
-      "email" => "some_email",
-      "password" => "password",
-      "other_field" => "some_value",
-      "yet_another_not_wanted_field" => "..."
-    }
-    
-    # iex(20)> ChainPattern.extract_info(submitted)
-    # ChainPattern.extract_info(submitted)
-    # {:ok, %{email: "some_email", login: "alice", password: "password"}}
+
+    cases = [
+      1.337, 
+      1337, 
+      :'1337', 
+      true, 
+      <<1, 3, 3, 7>>, 
+      (fn(x) -> x end), 
+      {1, 3, 3, 7}
+    ]
+
+    Enum.each cases, fn(case) -> 
+      IO.puts (inspect case) <> " is a " <> (Util.typeof case)
+    end
   #+end_src
+
+* How to chain multiple pattern matching
+#+begin_src elixir
+  defmodule ChainPattern do
+    # define some helper function
+    def extract_login(%{"login" => login}) do
+      {:ok, login}
+    end
+    def extract_login(_) do
+      {:error, "login missed"}
+    end
+
+    def extract_email(%{"email" => email}) do
+      {:ok, email}
+    end
+    def extract_email(_) do
+      {:error, "email missed"}
+    end
+
+    def extract_password(%{"password" => password}) do
+      {:ok, password}
+    end
+    def extract_password(_) do
+      {:error, "password missed"}
+    end
+
+
+    def extract_info(submitted) do
+      with {:ok, login} <-extract_login(submitted),
+           {:ok, email} <-extract_email(submitted),
+           {:ok, password} <-extract_password(submitted) do
+        {:ok, %{login: login, email: email, password: password}}
+      end
+    end
+  end
+
+  submitted = %{
+    "login" => "alice",
+    "email" => "some_email",
+    "password" => "password",
+    "other_field" => "some_value",
+    "yet_another_not_wanted_field" => "..."
+  }
+
+  # iex(20)> ChainPattern.extract_info(submitted)
+  # ChainPattern.extract_info(submitted)
+  # {:ok, %{email: "some_email", login: "alice", password: "password"}}
+#+end_src
 * How to build abstraction 
-  - Princple
-    - Module is used as the abstraction over the data type.
-    - Modifier functions should return data of the same type. 
-    - Query functions expect an instance of the data abstraction as the first argument and return another type of information.
+- Princple
+  - Module is used as the abstraction over the data type.
+  - Modifier functions should return data of the same type. 
+  - Query functions expect an instance of the data abstraction as the first argument and return another type of information.
 * How to update hierachical data 
-  - In general
-    - We can't directly modify part of it that resides deep in its tree.
-    - We have to walk down the tree to particular part that needs to be modified, and then transform it and all of its ancestors.
-    - The result is a copy of the entire model.
-  - Useful macros from Kernel:
-    - ~put_in/2~
-    - ~put_in/3~
-    - ~get_in/2~
-    - ~update_in/2~
-    - ~get_and_update_in/2~
-  - Those macros rely on the *Access* module. So, if we want our custom data to work with Access, we need to implement a couple of function required by *Access* contract. See: [[https://hexdocs.pm/elixir/Access.html][Access behaviour]]
+- In general
+  - We can't directly modify part of it that resides deep in its tree.
+  - We have to walk down the tree to particular part that needs to be modified, and then transform it and all of its ancestors.
+  - The result is a copy of the entire model.
+- Useful macros from Kernel:
+  - ~put_in/2~
+  - ~put_in/3~
+  - ~get_in/2~
+  - ~update_in/2~
+  - ~get_and_update_in/2~
+- Those macros rely on the *Access* module. So, if we want our custom data to work with Access, we need to implement a couple of function required by *Access* contract. See: [[https://hexdocs.pm/elixir/Access.html][Access behaviour]]
 
 
 * How to register a process
-  - If you know there will always be only one instance of some type of server, you can give the process a local name and use that name to send messages to the process. The name is called local because it has meaning only in the currently running BEAM instance.
-  - Using the registered server is much simpler becaue we don't need to pass server pid around through interface.
-  - Example
-    #+begin_src elixir
-      Process.register(self(), :some_name)
-      
-      send(:some_name, :msg)
-      receive do
-        msg -> IO.puts("received #{msg}")
-      end
-    #+end_src
+- If you know there will always be only one instance of some type of server, you can give the process a local name and use that name to send messages to the process. The name is called local because it has meaning only in the currently running BEAM instance.
+- Using the registered server is much simpler becaue we don't need to pass server pid around through interface.
+- Example
+  #+begin_src elixir
+    Process.register(self(), :some_name)
+
+    send(:some_name, :msg)
+    receive do
+      msg -> IO.puts("received #{msg}")
+    end
+  #+end_src
 * How to handle unlimited process mailbox problem
-  - If a message is not match, it will be stored in mailbox with unlimited number. If we don't process them, they will slow down the system and even crash the system when all memory is consumed.
-  - For each server process, we should introduce a *match-all* receive clause that deals with unexpected kind of messages.
+- If a message is not match, it will be stored in mailbox with unlimited number. If we don't process them, they will slow down the system and even crash the system when all memory is consumed.
+- For each server process, we should introduce a *match-all* receive clause that deals with unexpected kind of messages.
 
 * How to implement a general server process
-  - In general, there are 5 things to do 
-    - spawn a seperate process
-    - loop to infinite in that process  
-    - receive message
-    - send message back to the caller
-    - maintain state
+- In general, there are 5 things to do 
+  - spawn a seperate process
+  - loop to infinite in that process  
+  - receive message
+  - send message back to the caller
+  - maintain state
 
 
 * How to debug
-  - Check the representation of a struct 
-    #+begin_src elixir
-      Fraction.new(1,4)
-      |> IO.inspect() 
-      |> Fraction.add(Fraction.new(1,4))
-      |> IO.inspect()
-      |> Fraction.value()
-      
-      # %Fraction{a: 1, b: 4}
-      # iex(70)> %Fraction{a: 1, b: 4}
-      # %Fraction{a: 1, b: 4}
-      # iex(71)> %Fraction{a: 8, b: 16}
-      # iex(72)> %Fraction{a: 8, b: 16}
-      # %Fraction{a: 8, b: 16}
-      # iex(73)> 0.5
-    #+end_src
+- Check the representation of a struct 
+  #+begin_src elixir
+    Fraction.new(1,4)
+    |> IO.inspect() 
+    |> Fraction.add(Fraction.new(1,4))
+    |> IO.inspect()
+    |> Fraction.value()
+
+    # %Fraction{a: 1, b: 4}
+    # iex(70)> %Fraction{a: 1, b: 4}
+    # %Fraction{a: 1, b: 4}
+    # iex(71)> %Fraction{a: 8, b: 16}
+    # iex(72)> %Fraction{a: 8, b: 16}
+    # %Fraction{a: 8, b: 16}
+    # iex(73)> 0.5
+  #+end_src
 
 * How to get the number of currently running process 
 #+begin_src elixir
@@ -675,14 +677,14 @@ From maps to structs: Structs are extensions built on top of maps that provide c
     end
   #+end_src
 * Some notes 
-  - Always keep in mind that a Boolean is just an atom that has a value of true or false.
-  - short-circuit operators: ~||~, ~&&~, ~!~.
-    - ~||~ returns the first expression that isn't falsy.
-      - Use for like 
-        #+begin_src elixir
-          read_cache || read_from_disk || read_from_database
-        #+end_src
-    
+- Always keep in mind that a Boolean is just an atom that has a value of true or false.
+- short-circuit operators: ~||~, ~&&~, ~!~.
+  - ~||~ returns the first expression that isn't falsy.
+    - Use for like 
+      #+begin_src elixir
+        read_cache || read_from_disk || read_from_database
+      #+end_src
+
 * How to use elixir to request access token 
 #+begin_src elixir
   defmodule Script do
@@ -702,7 +704,7 @@ From maps to structs: Structs are extensions built on top of maps that provide c
           body
           |> Poison.decode
           |> fetch_access_token
-          # |> IO.puts
+        # |> IO.puts
 
         {:ok, %HTTPoison.Response{status_code: 404}} ->
           IO.puts "Not found :("
@@ -735,7 +737,7 @@ From maps to structs: Structs are extensions built on top of maps that provide c
     def header() do
       [{"Content-type", "application/x-www-form-urlencoded"}]
     end
-  
+
     def urlencoded_body() do
       %{"client_id" => @client_id,
         "client_secret" => @secret,
@@ -879,28 +881,28 @@ From maps to structs: Structs are extensions built on top of maps that provide c
     
   
 ** 02-27
-   - A view in Phoenix is just a module, and templates are just functions.
-   - How to persistent out model data with database?
-     1) Modify models from lib: for example, ~lib/rumbl/accounts/user.ex~.
-        - This is for schema definition.
-     2) run ~ecto.gen.migration~
-        #+begin_src sh
-          mix ecto.gen.migration create_users
-        #+end_src
-        - This will create migration ~<timesteamp>_create_users.exs~ file in path ~priv/migrations/~. 
-        - Edit the generated ~.exs~ file to define. This is for use code to operator database to create corresponding tables.
-        - In general, we write elixir code to create/update table schema.
-     3) run ~mix ecto.migrate~
-        - In this step, the actual table is created. 
+- A view in Phoenix is just a module, and templates are just functions.
+- How to persistent out model data with database?
+  1) Modify models from lib: for example, ~lib/rumbl/accounts/user.ex~.
+     - This is for schema definition.
+  2) run ~ecto.gen.migration~
+     #+begin_src sh
+       mix ecto.gen.migration create_users
+     #+end_src
+     - This will create migration ~<timesteamp>_create_users.exs~ file in path ~priv/migrations/~. 
+     - Edit the generated ~.exs~ file to define. This is for use code to operator database to create corresponding tables.
+     - In general, we write elixir code to create/update table schema.
+  3) run ~mix ecto.migrate~
+     - In this step, the actual table is created. 
 
-          
-     In general, 3 steps 
-     - In lib modify our model 
-       - Define schema using ~Ecto.Schema~
-       - Define corresponding changeset.
-     - Generate migration file, in which we define database operations.
-     - Execute migration, by ~mix ecto.migrate~.
-       
+
+In general, 3 steps 
+- In lib modify our model 
+  - Define schema using ~Ecto.Schema~
+  - Define corresponding changeset.
+- Generate migration file, in which we define database operations.
+- Execute migration, by ~mix ecto.migrate~.
+
 ** 02-28
 - After 
 - Use ~mix phx.routes~ to check all available routes in our web application.
@@ -980,7 +982,7 @@ From maps to structs: Structs are extensions built on top of maps that provide c
     
 - Problem01
   #+begin_src text
-    lib/rumbl/accounts.ex:48: Users.__struct__/1 is undefined, cannot expand struct Users. Make sure the struct name is correct. If the struct name exists and is correct but it still cannot be found, you likely have cyclic module usage in your code
+      lib/rumbl/accounts.ex:48: Users.__struct__/1 is undefined, cannot expand struct Users. Make sure the struct name is correct. If the struct name exists and is correct but it still cannot be found, you likely have cyclic module usage in your code
   #+end_src
   - When I add a new user, it shows this.
   - Following error message, I could solve this: there is a typo in accounts.ex which I use ~%Users{}~ instead of should use ~%User{}~.
@@ -1000,12 +1002,12 @@ From maps to structs: Structs are extensions built on top of maps that provide c
 - Problem01
   - When I go home to execute steps from check point02. I got error:
     #+begin_src text
-      iex(3)> for u <- Repo.all(User) do 
-          Repo.update!(User.registration_changeset(u, %{password: "tmppass"}))
-      end
-      ...(3)> ...(3)> ** (Protocol.UndefinedError) protocol Ecto.Queryable not implemented for User of type Atom, the given module does not exist. This protocol is implemented for the following type(s): Atom, BitString, Ecto.Query, Ecto.SubQuery, Tuple
-          (ecto 3.7.1) lib/ecto/queryable.ex:40: Ecto.Queryable.Atom.to_query/1
-          (ecto 3.7.1) lib/ecto/repo/queryable.ex:16: Ecto.Repo.Queryable.all/3
+        iex(3)> for u <- Repo.all(User) do 
+            Repo.update!(User.registration_changeset(u, %{password: "tmppass"}))
+        end
+        ...(3)> ...(3)> ** (Protocol.UndefinedError) protocol Ecto.Queryable not implemented for User of type Atom, the given module does not exist. This protocol is implemented for the following type(s): Atom, BitString, Ecto.Query, Ecto.SubQuery, Tuple
+            (ecto 3.7.1) lib/ecto/queryable.ex:40: Ecto.Queryable.Atom.to_query/1
+            (ecto 3.7.1) lib/ecto/repo/queryable.ex:16: Ecto.Repo.Queryable.all/3
     #+end_src
     - Here, I forgot to refer User as ~alias Rumbl.Accounts.User~. After execute ~alias Rumbl.Accounts.User~. The problem solved.
       
@@ -1088,16 +1090,16 @@ From maps to structs: Structs are extensions built on top of maps that provide c
    - `Rumbl.Multimedia.Video` that was not loaded when try to associate a video with a user 
      #+begin_src elixir
        {:ok, video} = Rumbl.Multimedia.create_video(%{title: "new video", url: "http://example.com",
-                                               
-       alias Ecto.Changeset
-       alias Rumbl.Repo
 
-       user = Rumbl.Accounts.get_user_by(username: "zhaowei")
-       changeset = video |> Changeset.change() |> Changeset.put_assoc(:user, user)
+                                                      alias Ecto.Changeset
+                                                      alias Rumbl.Repo
+
+                                                      user = Rumbl.Accounts.get_user_by(username: "zhaowei")
+                                                      changeset = video |> Changeset.change() |> Changeset.put_assoc(:user, user)
      #+end_src
      - Error message 
        #+begin_src text
-         ,** (RuntimeError) attempting to cast or change association `user` from `Rumbl.Multimedia.Video` that was not loaded. Please preload your associations before manipulating them through changesets
+           ,** (RuntimeError) attempting to cast or change association `user` from `Rumbl.Multimedia.Video` that was not loaded. Please preload your associations before manipulating them through changesets
        #+end_src
        - The error message says the Video.user is not loaded.
 
@@ -1253,7 +1255,7 @@ From maps to structs: Structs are extensions built on top of maps that provide c
       alias Rumbl.Multimedia
 
       for category <- ~w(Action Drama Romance Comedy Sci-fi) do
-        Multimedia.create_category!(category)
+          Multimedia.create_category!(category)
       end
     #+end_src
   - Why my changeset doesn't impose constraint?
@@ -1387,16 +1389,16 @@ From maps to structs: Structs are extensions built on top of maps that provide c
 - Workflow could be defined at runtime (probably from external sources)
 - Workflows can be executed as trees.
   #+begin_src text
-                 +-------+      +-------+
-                 |       |      |       |
-        +-------->   F   +------>   B   |
-        |        |       |      |       |
-        |        +-------+      +-------+
-    +---+---+    +-------+      +-------+
-    |       |    |       |      |       |
-    |   X   +---->   Y   +----->+   Z   |
-    |       |    |       |      |       |
-    +-------+    +-------+      +-------+
+                   +-------+      +-------+
+                   |       |      |       |
+          +-------->   F   +------>   B   |
+          |        |       |      |       |
+          |        +-------+      +-------+
+      +---+---+    +-------+      +-------+
+      |       |    |       |      |       |
+      |   X   +---->   Y   +----->+   Z   |
+      |       |    |       |      |       |
+      +-------+    +-------+      +-------+
   #+end_src
   - F, and Y depend on X, so F and Y could be run only when X is true.
   - ANd F and Y are independent to each other. They can run in parallel.
@@ -1415,7 +1417,7 @@ From maps to structs: Structs are extensions built on top of maps that provide c
      - A simple example could be 
        #+begin_src elixir
          defmodule St.Workflow do
-  
+
            def step01(params) do
              IO.puts("step01")
              params
