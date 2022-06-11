@@ -63,3 +63,10 @@ This kind of problem ask you to find a combination of numbers(their indext) whic
 ** [[https://leetcode.com/problems/longest-substring-without-repeating-characters/][3. Longest Substring Without Repeating Characters]]                 :medium:
 - Use Enum.reduce and Map
   
+
+
+
+
+* Others 
+** [[https://leetcode.com/problems/median-of-two-sorted-arrays/][4. Median of Two Sorted Arrays]]                                      :hard:
+- Use functions pattern matching.
