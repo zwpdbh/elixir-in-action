@@ -430,6 +430,26 @@ From maps to structs: Structs are extensions built on top of maps that provide c
     File.read!("/path/to/png/file.png") |> Expng.png_parse
   #+end_src
 
+** Notes recorded for [[https://www.youtube.com/watch?v=UoxzAPBVuQs&t=244s][Building a MySQL Database Driver in Elixir by Mohd Maqbool]]
+- Code segments to find if a binary object is png or jpg image object.
+  #+begin_src elixir
+    defmodule ImageTyper do
+      @png_sigature <<137::size(8), 80::size(8), 78::size(8), 71::size(8), 13::size(8), 10:size(8), 26::size(8), 10::size(8)>>
+      @jpg_sigature <<255::size(8), 216::size(8)>>
+
+      def type(<<@png_sigature, rest::binary>>) do
+        :png
+      end
+
+      def type(<<@jpg_sigature, rest::binary>>) do
+        :jpg
+      end
+
+      def type(_) do
+        :unknown
+      end
+    end
+  #+end_src
 
 * How to represent string 
 - String in elixir is either a binary or a list type.
