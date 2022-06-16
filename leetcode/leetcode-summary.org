@@ -56,3 +56,9 @@ This kind of problem ask you to find a combination of numbers(their indext) whic
 #+end_src
 - When I run the code, it said to me: protocol Enumerable not implemented for %ListNode{}.
 - So, how to implement some protocol for a custom struct?
+
+  
+* Dynamic Programming 
+A lot of DP problem can be checked from [[https://leetcode.com/tag/dynamic-programming/][Dynamic Programming]]
+
+** [[https://leetcode.com/problems/longest-palindromic-substring/][05 -- Longest Palindromic Substring]]

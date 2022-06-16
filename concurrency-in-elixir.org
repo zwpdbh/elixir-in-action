@@ -510,7 +510,6 @@ For example, we have multple GenServer process(Sequence.Server) which may crash 
    
      
    
-
 * About GenStage 
 ** Why and when we use GenStage 
 - You only add stages acoording to the runtime needs, typically when we need to provide back-pressure or leverage concurrency.

@@ -12,6 +12,7 @@ defmodule GPS.Op do
 end
 
 defmodule GPSAgent do
+  # This module acts like global variable to store state needed by GPS.
   use Agent
 
   def start_link({state, ops}) do
