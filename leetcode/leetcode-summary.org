@@ -13,17 +13,16 @@ This kind of problem ask you to find a combination of numbers(their indext) whic
 
     
 * List operations 
-** [[https://leetcode.com/problems/add-two-numbers/][02 -- Add Two Numbers]]
+** [[https://leetcode.com/problems/add-two-numbers/][02 -- Add Two Numbers]]                                             :medium:
 #+begin_src elixir
   # Definition for singly-linked list.
-  #
-  # defmodule ListNode do
-  #   @type t :: %__MODULE__{
-  #           val: integer,
-  #           next: ListNode.t() | nil
-  #         }
-  #   defstruct val: 0, next: nil
-  # end
+  defmodule ListNode do
+    @type t :: %__MODULE__{
+            val: integer,
+            next: ListNode.t() | nil
+          }
+    defstruct val: 0, next: nil
+  end
 
   defmodule Solution do
     @spec add_two_numbers(l1 :: ListNode.t() | nil, l2 :: ListNode.t() | nil) :: ListNode.t() | nil
@@ -54,7 +53,7 @@ This kind of problem ask you to find a combination of numbers(their indext) whic
     end
   end
 #+end_src
-- When I run the code, it said to me: protocol Enumerable not implemented for %ListNode{}.
+- When I run the code in leetcode browser, it said to me: protocol Enumerable not implemented for %ListNode{}.
 - So, how to implement some protocol for a custom struct?
 
   
@@ -62,3 +61,18 @@ This kind of problem ask you to find a combination of numbers(their indext) whic
 A lot of DP problem can be checked from [[https://leetcode.com/tag/dynamic-programming/][Dynamic Programming]]
 
 ** [[https://leetcode.com/problems/longest-palindromic-substring/][05 -- Longest Palindromic Substring]]
+  - ref: [[https://elixirschool.com/en/lessons/advanced/protocols][Protocols]]
+  - ref: [[https://hexdocs.pm/elixir/1.13/Enumerable.html][Enumerable protocol]]
+
+    
+* Sliding window
+** [[https://leetcode.com/problems/longest-substring-without-repeating-characters/][3. Longest Substring Without Repeating Characters]]                 :medium:
+- Use Enum.reduce and Map
+  
+
+
+
+
+* Others 
+** [[https://leetcode.com/problems/median-of-two-sorted-arrays/][4. Median of Two Sorted Arrays]]                                      :hard:
+- Use functions pattern matching.
