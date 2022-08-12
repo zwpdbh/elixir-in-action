@@ -1573,7 +1573,69 @@ In general, 3 steps
   2. Module each step in workflow as a elixir process which receive and send messages.
        
 
+* How to handle error/execption like computation expression in Elixir 
+- [[https://hexdocs.pm/ok/readme.html][OK]]
+  #+begin_src elixir
+    require OK
 
+    OK.for do
+      user <- fetch_user(1)             # `<-` operator means func returns {:ok, user}
+      cart <- fetch_cart(1)             # `<-` again, {:ok, cart}
+      order = checkout(cart, user)      # `=` allows pattern matching on non-tagged funcs
+      saved_order <- save_order(order)
+    after
+      saved_order                       # Value will be wrapped if not already a result tuple
+    end
+  #+end_src
+  
+  Another example with error handling 
+  #+begin_src elixir
+    require OK
+    import Raxx
+
+    OK.try do
+      user <- fetch_user(1)             # `<-` operator means func returns {:ok, user}
+      cart <- fetch_cart(1)             # `<-` again, {:ok, cart}
+      order = checkout(cart, user)      # `=` allows pattern matching on non-tagged funcs
+      saved_order <- save_order(order)
+    after
+      response(:created)                # Value will be returned unwrapped
+    rescue
+      :user_not_found ->
+        response(:not_found)
+      :could_not_save ->
+        response(:internal_server_error)
+    end
+  #+end_src
+* How to define sum type in Elixir to model our business 
+- Example01 
+  #+begin_src elixir
+    defmodule Issue do
+      defstruct name: "",
+                description: "",
+                state: :searching_for_assignee
+
+      @type assignee :: String.t()
+      @type reviewer :: String.t()
+      @type state ::
+              :searching_for_assignee
+              | {:not_started, assignee}
+              | {:in_progress, assignee}
+              | {:in_review, assignee, reviewer}
+              | {:done, assignee, reviewer}
+
+      @type t :: %__MODULE__{
+              name: String.t(),
+              description: String.t(),
+              state: state
+            }
+
+      @spec add_assignee(Issue.t(), assignee) :: Issue.t
+      def add_assignee(%{state: :searching_for_assignee} = issue, assignee_name) do
+        %{issue | state: {:not_started, assignee_name}}
+      end
+    end
+  #+end_src
 * Preparation for my website 
 ** How to process PDF (extract text from a large PDF file)
 1) PDF format explain 
